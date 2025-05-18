@@ -411,7 +411,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
- <script>
+    <script>
 document.addEventListener('DOMContentLoaded', function() {
     const loginSection = document.getElementById('login-section');
     const dashboardSection = document.getElementById('dashboard-section');
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxD-SSMSpwqyIxOfmfrzdWcPIhQT71gn4kMztCnEiPguctcsK5oF2eXSugAutI417Th/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbz_8n3FLajoJI-NBz-3ecIBluTT-EwUBC6Godl__iDt12lYlZWDcA88DuZ4DdWNUF3j/exec';
     
     // 檢查是否已登入
     if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -734,12 +734,13 @@ document.addEventListener('DOMContentLoaded', function() {
         submitInventoryBtn.disabled = true;
         submitInventoryBtn.textContent = '送出中...';
         
-        fetch(`${scriptUrl}?action=submitInventory`, {
+        fetch(scriptUrl, {  // 移除URL中的?action=submitInventory，將action放入body
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                action: 'submitInventory',  // 將action放入body
                 timestamp: currentTime,
                 department: department,
                 username: username,
@@ -748,7 +749,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 sheetName: '定期紀錄' // 指定要寫入的工作表名稱
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             submitInventoryBtn.disabled = false;
             submitInventoryBtn.textContent = '送出';
@@ -765,8 +771,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             submitInventoryBtn.disabled = false;
             submitInventoryBtn.textContent = '送出';
-            alert('系統錯誤，請稍後再試');
-            console.error('Error:', error);
+            if (error.message.includes('Failed to fetch')) {
+                alert('系統錯誤：無法連接到後端，請檢查網路或後端服務是否可用');
+            } else {
+                alert(`系統錯誤: ${error.message}`);
+            }
+            console.error('錯誤詳情:', error);
         });
     });
     
@@ -846,7 +856,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const username = localStorage.getItem('username');
         
         // 發送更改密碼請求到後端
-        fetch(`${scriptUrl}?action=changePassword&username=${encodeURIComponent(username)}&currentPassword=${encodeURIComponent(currentPassword)}&newPassword=${encodeURIComponent(newPassword)}`)
+        fetch(`${scriptUrl}?action=changePassword&username=${encodeURIComponent(username)}¤tPassword=${encodeURIComponent(currentPassword)}&newPassword=${encodeURIComponent(newPassword)}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -912,9 +922,6 @@ document.addEventListener('DOMContentLoaded', function() {
         resetInactivityTimer();
     }
 });
-
-
-</script>
-
+    </script>
 </body>
 </html>
