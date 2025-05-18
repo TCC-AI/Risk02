@@ -734,40 +734,45 @@ document.addEventListener('DOMContentLoaded', function() {
         submitInventoryBtn.disabled = true;
         submitInventoryBtn.textContent = '送出中...';
         
-        fetch(`${scriptUrl}?action=submitInventory`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                timestamp: currentTime,
-                department: department,
-                username: username,
-                name: name,
-                responses: responses,
-                sheetName: '定期紀錄' // 指定要寫入的工作表名稱
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            submitInventoryBtn.disabled = false;
-            submitInventoryBtn.textContent = '送出';
-            
-            if (data.success) {
-                alert('部門週期盤點已成功送出');
-                showDashboard();
-            } else {
-                alert(data.message || '送出失敗，請稍後再試');
-            }
-            // 重置計時器
-            resetInactivityTimer();
-        })
-        .catch(error => {
-            submitInventoryBtn.disabled = false;
-            submitInventoryBtn.textContent = '送出';
-            alert('系統錯誤，請稍後再試');
-            console.error('Error:', error);
-        });
+       fetch(`${scriptUrl}?action=submitInventory`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        timestamp: currentTime,
+        department: department,
+        username: username,
+        name: name,
+        responses: responses,
+        sheetName: '定期紀錄'
+    })
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
+    }
+    return response.json();
+})
+.then(data => {
+    submitInventoryBtn.disabled = false;
+    submitInventoryBtn.textContent = '送出';
+    
+    if (data.success) {
+        alert('部門週期盤點已成功送出');
+        showDashboard();
+    } else {
+        alert(`送出失敗: ${data.message || '未知錯誤'}`);
+        console.error('錯誤詳情:', data);
+    }
+})
+.catch(error => {
+    submitInventoryBtn.disabled = false;
+    submitInventoryBtn.textContent = '送出';
+    alert(`系統錯誤: ${error.message}`);
+    console.error('錯誤詳情:', error);
+});
+
     });
     
     // 重置按鈕點擊事件
