@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>昶青實業-AI控制管理中心</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* ===== Reset & Global ===== */
+    *{box-sizing:border-box;font-family:"微軟正黑體",Arial,sans-serif}
+    body{min-height:100vh;background:#f5f5f5;padding:20px}
+
+    /* ===== 共同卡片樣式 ===== */
+    .card-box{background:#fff;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1);padding:30px}
+    h1{font-size:24px;text-align:center;margin-bottom:30px;color:#333}
+
+    /* ===== 登入 ===== */
+    #login-section .form-control{padding:12px;font-size:16px}
+    #login-section .btn-main{background:#4285f4;color:#fff}
+    #login-section .btn-main:hover{background:#3367d6}
+
+    /* ===== Dashboard ===== */
+    .user-info{text-align:right;font-size:14px;margin-bottom:15px;color:#555}
+    .user-info strong{color:#4285f4}
+    .feature-btn{padding:20px;font-size:18px;font-weight:700}
+    #inventory-btn{background:#34a853} #inventory-btn:hover{background:#2d9249}
+    #event-btn{background:#ea4335}    #event-btn:hover{background:#d33426}
+
+    /* ===== Inventory ===== */
+    #inventory-section{max-width:900px;margin:20px auto}
+    .inventory-table{width:100%;border-collapse:collapse}
+    .inventory-table th,.inventory-table td{border:1px solid #ddd;padding:12px}
+    .inventory-table th{background:#f8f9fa}
+    .inventory-table tr:nth-child(even){background:#f2f2f2}
+    .inventory-actions{display:flex;gap:15px;justify-content:center;margin-top:20px}
+    .submit-btn{background:#34a853;width:150px}.submit-btn:hover{background:#2d9249}
+    .reset-btn{background:#ea4335;width:150px}.reset-btn:hover{background:#d33426}
+    .select-container select,.input-container input{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px}
+    .input-container input[disabled]{background:#e9ecef}
+
+    /* ===== 隱藏工具 ===== */
+    .hidden{display:none}
+
+    /* ===== RWD ===== */
+    @media(max-width:768px){
+      .feature-btn{padding:15px;font-size:16px}
+      .inventory-actions{flex-direction:column}
+      .submit-btn,.reset-btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========= 容器 ========= -->
+  <div class="container" id="root">
+
+    <!-- ===== 登入 ===== -->
+    <div id="login-section" class="card-box">
+      <h1>昶青實業-AI控制管理中心</h1>
+      <div class="mb-3">
+        <label class="form-label" for="username">帳號</label>
+        <input id="username" class="form-control" type="text" placeholder="請輸入帳號">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="password">密碼</label>
+        <input id="password" class="form-control" type="password" placeholder="請輸入密碼">
+      </div>
+      <button id="login-btn" class="btn w-100 btn-main">登入</button>
+      <p id="loading" class="text-center mt-3 hidden">驗證中…</p>
+      <p id="error-message" class="text-danger mt-3" aria-live="polite"></p>
+    </div>
+
+    <!-- ===== Dashboard ===== -->
+    <div id="dashboard-section" class="card-box hidden">
+      <div class="user-info">歡迎：<strong id="user-department"></strong> - <strong id="user-name"></strong></div>
+      <h1>昶青實業-AI控制管理中心</h1>
+
+      <div class="d-grid gap-3 my-4">
+        <button id="inventory-btn" class="feature-btn text-white">部門週期盤點</button>
+        <button id="event-btn"     class="feature-btn text-white">事件登錄</button>
+      </div>
+
+      <!-- Dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle w-100 py-2" id="logoutDropdown" data-bs-toggle="dropdown">
+          登出選項
+        </button>
+        <ul class="dropdown-menu w-100">
+          <li><a class="dropdown-item" href="#" id="changePasswordBtn">更改密碼</a></li>
+          <li><a class="dropdown-item" href="#" id="logoutBtn">登出</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== 更改密碼 Modal ===== -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+      <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">更改密碼</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="changePasswordForm">
+            <div class="mb-3">
+              <label class="form-label" for="currentPassword">目前密碼</label>
+              <input id="currentPassword" class="form-control" type="password" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="newPassword">新密碼</label>
+              <input id="newPassword" class="form-control" type="password" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="confirmPassword">確認新密碼</label>
+              <input id="confirmPassword" class="form-control" type="password" required>
+            </div>
+            <div id="passwordChangeMessage" class="alert hidden"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button class="btn btn-primary" id="submitChangePassword">確認更改</button>
+        </div>
+      </div></div>
+    </div>
+
+  </div><!-- /container -->
+
+  <!-- ===== Inventory ===== -->
+  <div id="inventory-section" class="hidden">
+    <div class="card-box">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="m-0">部門週期盤點</h1>
+        <button id="back-btn" class="btn btn-secondary">返回前頁</button>
+      </div>
+
+      <div id="inventory-loading" class="text-center">載入中，請稍候…</div>
+
+      <div id="inventory-content" class="hidden">
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th style="width:40%">風險項目</th>
+              <th style="width:20%">本月是否增加</th>
+              <th style="width:15%">發生次數</th>
+              <th style="width:25%">原因</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-body"></tbody>
+        </table>
+
+        <div class="inventory-actions">
+          <button id="submit-inventory-btn" class="btn submit-btn text-white">送出</button>
+          <button id="reset-inventory-btn"  class="btn reset-btn  text-white">重置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+  <!-- ============ 主程式 ============ -->
+  <script>
+  /********** 共用變數 **********/
+  const scriptUrl   = 'https://script.google.com/macros/s/AKfycbwbTfKyFXMR1wM164aNKIA330G-eDiFnFXs-he9yiQSZeIpbpGrgQfag_a1G8SvrD7C/exec';
+  const loginBtn    = qs('#login-btn');
+  const loadingMsg  = qs('#loading');
+  const errorMsg    = qs('#error-message');
+
+  /* ===== DOM 快捷 ===== */
+  function qs(sel){return document.querySelector(sel)}
+  function qsa(sel){return [...document.querySelectorAll(sel)]}
+
+  /* ===== SHA-256 雜湊 ===== */
+  async function sha256Hex(str){
+    const buf = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  /* ===== 自動閒置登出 ===== */
+  let idleTimer; const idleLimit = 15*60*1000; // 15分鐘
+  function resetIdle(){
+    clearTimeout(idleTimer);
+    if(sessionStorage.getItem('token')) idleTimer = setTimeout(autoLogout,idleLimit);
+  }
+  function autoLogout(){
+    alert('因長時間未操作，系統已自動登出');
+    doLogout();
+  }
+  ['mousedown','mousemove','keypress','scroll','touchstart','touchmove','visibilitychange']
+    .forEach(evt=>document.addEventListener(evt,resetIdle,true));
+
+  /* ===== 登入 ===== */
+  loginBtn.addEventListener('click',async()=>{
+    const username = qs('#username').value.trim();
+    const password = qs('#password').value.trim();
+    if(!username||!password){errorMsg.textContent='請輸入帳號和密碼';return;}
+
+    // 雜湊
+    const pwHash = await sha256Hex(`${username}:${password}`);
+
+    toggleLoginUI(true);
+    fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'login',username,passwordHash:pwHash})})
+    .then(r=>r.json()).then(data=>{
+      toggleLoginUI(false);
+      if(data.success){
+        // 保存 session
+        sessionStorage.setItem('token',data.token);
+        sessionStorage.setItem('username',username);
+        sessionStorage.setItem('department',data.department||'');
+        sessionStorage.setItem('name',data.name||'');
+
+        qs('#user-department').textContent=data.department||'';
+        qs('#user-name').textContent=data.name||'';
+        showDashboard();
+      }else errorMsg.textContent=data.message||'帳號或密碼錯誤';
+    })
+    .catch(err=>{toggleLoginUI(false);errorMsg.textContent='系統錯誤，請稍後再試';console.error(err)});
+  });
+  function toggleLoginUI(isLoading){
+    loadingMsg.classList.toggle('hidden',!isLoading);
+    loginBtn.disabled=isLoading;
+  }
+
+  /* ===== 介面顯示函式 ===== */
+  function showLogin(){
+    hide('#dashboard-section','#inventory-section');
+    show('#login-section');
+    qs('#username').value=''; qs('#password').value='';
+    errorMsg.textContent='';
+  }
+  function showDashboard(){
+    hide('#login-section','#inventory-section');
+    show('#dashboard-section');
+    resetIdle();
+  }
+  function showInventory(){
+    hide('#login-section','#dashboard-section');
+    show('#inventory-section');
+    resetIdle();
+  }
+  function show(...sel){sel.forEach(s=>qs(s).classList.remove('hidden'))}
+  function hide(...sel){sel.forEach(s=>qs(s).classList.add('hidden'))}
+
+  /* ===== 登出 ===== */
+  qs('#logoutBtn').addEventListener('click',doLogout);
+  function doLogout(){
+    sessionStorage.clear();clearTimeout(idleTimer);showLogin();
+  }
+
+  /* ===== 盤點流程 ===== */
+  qs('#inventory-btn').addEventListener('click',()=>{showInventory();loadRiskItems();});
+  qs('#back-btn').addEventListener('click',showDashboard);
+
+  async function loadRiskItems(){
+    qs('#inventory-loading').classList.remove('hidden');
+    qs('#inventory-content').classList.add('hidden');
+    qs('#inventory-table-body').innerHTML='';
+
+    const token = sessionStorage.getItem('token');
+    const dept  = sessionStorage.getItem('department');
+
+    const res = await fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'getRiskItems',token,department:dept})}).then(r=>r.json());
+
+    qs('#inventory-loading').classList.add('hidden');
+    if(!res.success){alert(res.message||'取風險清單失敗');return;}
+    renderRiskItems(res.items||[]);
+    qs('#inventory-content').classList.remove('hidden');
+  }
+
+  function renderRiskItems(items){
+    const tbody = qs('#inventory-table-body');
+    if(items.length===0){tbody.innerHTML='<tr><td colspan="4" class="text-center">沒有風險項目</td></tr>';return;}
+    items.forEach((item,i)=>{
+      const tr=document.createElement('tr');tr.dataset.rid=i;
+      tr.innerHTML=`
+        <td>
+          <div class="fw-bold">${item.name}</div>
+          <div class="text-muted small">${item.description}</div>
+          <div class="small">類別:${item.category} / 風險等級:${item.level}</div>
+          <div class="small">相關聯部門:${item.relatedDepartments}</div>
+        </td>
+        <td>
+          <select class="form-select increase-select" data-i="${i}">
+            <option value="">請選擇</option><option value="yes">是</option><option value="no">否</option>
+          </select>
+        </td>
+        <td><input class="form-control form-control-sm occurrence-input"  data-i="${i}" type="number" min="0" disabled></td>
+        <td><input class="form-control form-control-sm reason-input"      data-i="${i}" type="text"   disabled></td>`;
+      tbody.appendChild(tr);
+    });
+
+    qsa('.increase-select').forEach(sel=>{
+      sel.addEventListener('change',()=>{
+        const i=sel.dataset.i;
+        const occ=qs(`.occurrence-input[data-i="${i}"]`);
+        const rea=qs(`.reason-input[data-i="${i}"]`);
+        const enable = sel.value==='yes';
+        [occ,rea].forEach(el=>{el.disabled=!enable; if(!enable) el.value='';});
+      });
+    });
+  }
+
+  /* ===== 盤點送出 ===== */
+  qs('#submit-inventory-btn').addEventListener('click',async()=>{
+    let valid=true,responses=[];
+    qsa('.increase-select').forEach(sel=>{
+      const i=sel.dataset.i;
+      const occ=qs(`.occurrence-input[data-i="${i}"]`);
+      const rea=qs(`.reason-input[data-i="${i}"]`);
+      if(sel.value===''){valid=false;sel.classList.add('border-danger');}
+      else sel.classList.remove('border-danger');
+
+      if(sel.value==='yes'){
+        const occVal=parseInt(occ.value,10);
+        if(isNaN(occVal)||occVal<0){valid=false;occ.classList.add('border-danger');}
+        else occ.classList.remove('border-danger');
+        if(!rea.value.trim()){valid=false;rea.classList.add('border-danger');}
+        else rea.classList.remove('border-danger');
+      }
+      const row=sel.closest('tr');
+      responses.push({
+        riskName:row.querySelector('.fw-bold').textContent,
+        riskDescription:row.querySelector('.text-muted').textContent,
+        riskCategory: row.children[0].querySelectorAll('.small')[0].textContent.replace('類別:','').split('/')[0].trim(),
+        riskLevel: row.children[0].querySelectorAll('.small')[0].textContent.replace(/^.*風險等級:/,'').trim(),
+        relatedDepartments: row.children[0].querySelectorAll('.small')[1].textContent.replace('相關聯部門:','').trim(),
+        increased: sel.value==='yes',
+        occurrences: sel.value==='yes'?occ.value:0,
+        reason: sel.value==='yes'?rea.value:''
+      });
+    });
+    if(!valid){alert('請填寫所有必填欄位');return;}
+
+    const btn=qs('#submit-inventory-btn');
+    btn.disabled=true;btn.textContent='送出中…';
+    const payload={
+      action:'submitInventory',
+      token:sessionStorage.getItem('token'),
+      timestamp:new Date().toISOString(),
+      department:sessionStorage.getItem('department'),
+      username:sessionStorage.getItem('username'),
+      name:sessionStorage.getItem('name'),
+      responses
+    };
+    fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(r=>r.json()).then(data=>{
+      btn.disabled=false;btn.textContent='送出';
+      if(data.success){alert('部門週期盤點已成功送出');showDashboard();}
+      else alert(data.message||'送出失敗');
+    }).catch(e=>{btn.disabled=false;btn.textContent='送出';alert('系統錯誤，請稍後再試');console.error(e)});
+  });
+
+  qs('#reset-inventory-btn').addEventListener('click',()=>{
+    qsa('.increase-select').forEach(sel=>{sel.value='';sel.dispatchEvent(new Event('change'));});
+  });
+
+  /* ===== 更改密碼 ===== */
+  qs('#changePasswordBtn').addEventListener('click',()=>{
+    qs('#changePasswordForm').reset();
+    hide('#passwordChangeMessage');
+    new bootstrap.Modal('#changePasswordModal').show();
+  });
+
+  qs('#submitChangePassword').addEventListener('click',async()=>{
+    const cur   = qs('#currentPassword').value;
+    const nw    = qs('#newPassword').value;
+    const conf  = qs('#confirmPassword').value;
+    const msg   = qs('#passwordChangeMessage');
+    if(nw!==conf){showMsg('danger','新密碼與確認密碼不一致');return;}
+    const username=sessionStorage.getItem('username');
+    const curHash=await sha256Hex(`${username}:${cur}`);
+    const newHash=await sha256Hex(`${username}:${nw}`);
+
+    const res = await fetch(scriptUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      action:'changePassword',token:sessionStorage.getItem('token'),
+      currentHash:curHash,newHash:newHash
+    })}).then(r=>r.json()).catch(e=>({success:false,message:'系統錯誤'}));
+
+    if(res.success){showMsg('success','密碼更改成功，將自動關閉');setTimeout(()=>bootstrap.Modal.getInstance('#changePasswordModal').hide(),2000);}
+    else showMsg('danger',res.message||'密碼更改失敗');
+    function showMsg(type,text){msg.className=`alert alert-${type}`;msg.textContent=text;msg.classList.remove('hidden');}
+  });
+
+  /* ===== 初始：若有 sessionToken 自動進入 dashboard ===== */
+  if(sessionStorage.getItem('token')){
+    qs('#user-department').textContent=sessionStorage.getItem('department')||'';
+    qs('#user-name').textContent      =sessionStorage.getItem('name')      ||'';
+    showDashboard();
+  }else showLogin();
+  </script>
+</body>
+</html>
