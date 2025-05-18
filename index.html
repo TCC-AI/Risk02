@@ -84,6 +84,11 @@
             text-align: center;
         }
 
+        .loading {
+            text-align: center;
+            margin-top: 15px;
+        }
+
         .button-group {
             display: flex;
             flex-direction: column;
@@ -115,11 +120,6 @@
 
         .hidden {
             display: none;
-        }
-
-        .loading {
-            text-align: center;
-            margin-top: 15px;
         }
 
         /* 使用者資訊區塊的樣式 */
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyLv7s4ptx02r1OhIELb384moKYL_5f6aTFo4NusYNE0Wr1LS7V3CKlQlAXccLK5rd2/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxEUiqAwA5IESbLS4YPWDYtWVTdAe5nao3IEowZmB0T0CTpCNHAQCsi6KkBMdIHwnXF/exec';
     
     // 檢查是否已登入
     if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -812,8 +812,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearTimeout(inactivityTimer);
         showLogin();
     });
-    
-    // 更改密碼按鈕點擊事件
+        // 更改密碼按鈕點擊事件
     changePasswordBtn.addEventListener('click', function() {
         // 重置表單和訊息
         document.getElementById('changePasswordForm').reset();
@@ -912,9 +911,6 @@ document.addEventListener('DOMContentLoaded', function() {
         resetInactivityTimer();
     }
 });
-
-
 </script>
-
 </body>
 </html>
