@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbycBHvQR96_wFqM46YoQ3a-0b7QU8vnO_pizMkeErqQbpjsBuXfdnkJ58yyYkZeiwcU/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbzzVKwT_2KC3-0Bex52tbYtiOyIQW1xBit7CDbDGnPhOH24hS5C6jKfuz3sGvKx9Znh/exec';
     
     // 檢查是否已登入
     if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -769,6 +769,7 @@ submitInventoryBtn.addEventListener('click', function() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+            action: 'submitInventory', // <--- action放body
             timestamp: currentTime,
             department: department,
             username: username,
