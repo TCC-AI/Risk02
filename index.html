@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbznCA4f6BCTdPuBnYXjPLZvShfTxWYkqp4j-DS7x-XHQE6IGNKlX6MLF5EiBk1LXEnT/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbycBHvQR96_wFqM46YoQ3a-0b7QU8vnO_pizMkeErqQbpjsBuXfdnkJ58yyYkZeiwcU/exec';
     
     // 檢查是否已登入
     if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -763,17 +763,18 @@ submitInventoryBtn.addEventListener('click', function() {
         });
     });
     
-    fetch(scriptUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        action: 'submitInventory', // <--- action放body
-        timestamp: currentTime,
-        department: department,
-        username: username,
-        name: name,
-        responses: tableData,
-        sheetName: '部門週期盤點紀錄'
+    fetch(`${scriptUrl}?action=submitInventory`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            timestamp: currentTime,
+            department: department,
+            username: username,
+            name: name,
+            responses: tableData,
+            sheetName: '部門週期盤點紀錄' // 指定要寫入的工作表名稱
         })
     })
     .then(response => response.json())
