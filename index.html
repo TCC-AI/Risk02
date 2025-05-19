@@ -763,19 +763,17 @@ submitInventoryBtn.addEventListener('click', function() {
         });
     });
     
-    fetch(`${scriptUrl}?action=submitInventory`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            action: 'submitInventory', // <--- action放body
-            timestamp: currentTime,
-            department: department,
-            username: username,
-            name: name,
-            responses: tableData,
-            sheetName: '部門週期盤點紀錄' // 指定要寫入的工作表名稱
+    fetch(scriptUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        action: 'submitInventory', // <--- action放body
+        timestamp: currentTime,
+        department: department,
+        username: username,
+        name: name,
+        responses: tableData,
+        sheetName: '部門週期盤點紀錄'
         })
     })
     .then(response => response.json())
