@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -373,6 +374,30 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
         padding: 0.5rem;
     }
 }
+
+        /* 風險燈號樣式 */
+.risk-light {
+    display: inline-block;
+    font-size: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.green-light {
+    color: #34a853;
+    text-shadow: 0 0 5px rgba(52, 168, 83, 0.7);
+}
+
+.yellow-light {
+    color: #fbbc05;
+    text-shadow: 0 0 5px rgba(251, 188, 5, 0.7);
+}
+
+.red-light {
+    color: #ea4335;
+    text-shadow: 0 0 5px rgba(234, 67, 53, 0.7);
+}
+
 
         
         
@@ -783,7 +808,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                         <h5 class="modal-title" id="changePasswordModalLabel">更改密碼</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                                        <div class="modal-body">
                         <form id="changePasswordForm">
                             <div class="mb-3">
                                 <label for="currentPassword" class="form-label">目前密碼</label>
@@ -800,7 +825,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                             <div id="passwordChangeMessage" class="alert" style="display: none;"></div>
                         </form>
                     </div>
-                                        <div class="modal-footer">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                         <button type="button" class="btn btn-primary" id="submitChangePassword">確認更改</button>
                     </div>
@@ -944,7 +969,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
         });
         
         // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbxiY3j5PmpdSHawt04Qwj2IoeKaZ81HKkvXmPJWKRIaCFYHr8Bj27aeOu4mRBlNVEKI/exec';
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbw59qaT8cEKwPd6tWs6wBTf6sq71hdTgU3NrjETNFNteQF86ll3HnhwWJ_SUE5rZVFF/exec';
         
         // 檢查是否已登入
         if (localStorage.getItem('isLoggedIn') === 'true') {
@@ -972,6 +997,8 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
         backFromRiskBtn.addEventListener('click', function() {
             deptRiskIndexPage.style.display = 'none';
             dashboardSection.style.display = 'block';
+            // 強制重新整理頁面
+    window.location.reload();
             
             // 重置計時器
             resetInactivityTimer();
@@ -1003,26 +1030,41 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
         }
         
         // 更新風險表格的函數
-        function updateRiskTable(riskData) {
-            const tableBody = document.getElementById('risk-index-table-body');
-            
-            if (riskData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="2" class="text-center">無數據</td></tr>';
-                return;
-            }
-            
-            // 創建表格行
-            const rows = riskData.map(item => {
-                return `
-                    <tr>
-                        <td>${item.department}</td>
-                        <td>${item.riskIndex}</td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tableBody.innerHTML = rows;
+       // 更新風險表格的函數
+function updateRiskTable(riskData) {
+    const tableBody = document.getElementById('risk-index-table-body');
+    
+    if (riskData.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="2" class="text-center">無數據</td></tr>';
+        return;
+    }
+    
+    // 創建表格行
+    const rows = riskData.map(item => {
+        // 解析風險係數值（去除 "R" 後綴）
+        const riskValue = parseInt(item.riskIndex.replace('R', '')) || 0;
+        
+        // 根據風險係數決定燈號(調整燈號)
+        let lightIcon = '';
+        if (riskValue <= 15) {
+            lightIcon = '<span class="risk-light green-light">●</span>'; // 綠燈
+        } else if (riskValue <= 30) {
+            lightIcon = '<span class="risk-light yellow-light">●</span>'; // 黃燈
+        } else {
+            lightIcon = '<span class="risk-light red-light">●</span>'; // 紅燈
         }
+        
+        return `
+            <tr>
+                <td>${lightIcon} ${item.department}</td>
+                <td>${item.riskIndex}</td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
+}
+
 
         // 一鍵全否按鈕點擊事件
         const allNoBtn = document.getElementById('all-no-btn');
@@ -1355,16 +1397,41 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
             resetInactivityTimer();
         });
         
-        // 登出按鈕點擊事件
-        logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('username');
-            localStorage.removeItem('department');
-            localStorage.removeItem('name');
-            // 清除自動登出計時器
-            clearTimeout(inactivityTimer);
-            showLogin();
-        });
+// 登出按鈕點擊事件
+logoutBtn.addEventListener('click', function() {
+    // 立即執行本地登出
+    performLocalLogout();
+    
+    // 在背景發送登出請求到後端
+    const username = localStorage.getItem('username') || '';
+    fetch(`${apiUrl}?action=logout&username=${encodeURIComponent(username)}`)
+        .then(response => response.json())
+        .catch(error => console.error('登出請求失敗:', error));
+});
+
+// 本地登出函數
+function performLocalLogout() {
+    // 清除本地儲存的登入資訊
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
+    localStorage.removeItem('department');
+    localStorage.removeItem('name');
+    
+    // 顯示登入頁面，隱藏其他頁面
+    loginSection.classList.remove('hidden');
+    dashboardSection.classList.add('hidden');
+    inventorySection.classList.add('hidden');
+    deptRiskIndexPage.style.display = 'none';
+    document.querySelector('.container').classList.remove('hidden');
+    
+    // 清空登入表單
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    
+    // 停止計時器
+    clearTimeout(inactivityTimeout);
+}
+
         
         // 更改密碼按鈕點擊事件
         changePasswordBtn.addEventListener('click', function() {
@@ -1457,7 +1524,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
             clearTimeout(inactivityTimer);
         }
         
-        // 顯示部門週期盤點頁面
+                // 顯示部門週期盤點頁面
         function showInventorySection() {
             loginSection.classList.add('hidden');
             dashboardSection.classList.add('hidden');
