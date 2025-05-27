@@ -1601,7 +1601,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbwg5BchSTKO-zRjGkGhzSbC1u6R4VlrnvsVcyWtq61prqYJGEeMafG9FXAp7HcumlCD/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbyM2JHyatvnyjWhh3dnkqHI1LdoCRIBJg225UDMe3oZS1hi4nIqDdpuzoNIsM_yFQJh/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -1818,9 +1818,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateUserInfo() {
         const permission = localStorage.getItem('permission') || 's1';
         const permissionText = {
-            's1': '一般使用者',
-            's2': '進階使用者', 
-            's3': '管理員'
+            's1': 's1級',
+            's2': 's2級', 
+            's3': 's3級'
         };
         
         document.getElementById('user-info').innerHTML = `
