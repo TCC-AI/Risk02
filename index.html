@@ -74,7 +74,7 @@
         }
 
         .logo:hover {
-            transform: scale(1.05);
+            transform: none;
         }
 
         /* 歡迎詞置中樣式 */
@@ -1613,6 +1613,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
+
 /* 響應式調整 */
 @media (max-width: 768px) {
     .prediction-stats,
@@ -1624,11 +1625,83 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
         margin-bottom: 15px;
     }
     
-    #refreshAnalysisBtn,
-    #exportAnalysisBtn {
-        width: 100%;
-        margin-bottom: 10px;
+    /* 🆕 修正手機版按鈕高度不一致問題 */
+    #refreshPredictionBtn,
+    #exportPredictionBtn {
+        width: 100% !important;
+        margin-bottom: 10px !important;
+        height: 48px !important; /* 🔑 統一按鈕高度 */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        line-height: 1.2 !important;
     }
+    
+    /* 🆕 確保按鈕容器在手機版的佈局 */
+    #prediction-controls-standalone .col-md-3:last-child {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    
+    #prediction-controls-standalone .col-md-3:last-child .d-flex {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    #prediction-controls-standalone .col-md-3:last-child .btn {
+        margin: 0 !important;
+        margin-bottom: 8px !important;
+    }
+}
+
+/* 完全禁用 LOGO 的所有互動效果 */
+.logo {
+    pointer-events: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    transform: none !important;
+    transition: none !important;
+}
+
+.logo:hover,
+.logo:active,
+.logo:focus,
+.logo:visited {
+    transform: none !important;
+    transition: none !important;
+}
+
+/* 針對移動端的特殊處理 */
+@media (max-width: 768px) {
+    .logo {
+        position: relative !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 auto !important;
+        transform: none !important;
+    }
+}
+/* 儀表板圖樣式 */
+#gaugeValue {
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 熱力圖容器 */
+#heatmapChart {
+    max-height: 250px;
+}
+
+/* 雷達圖容器 */
+#radarChart {
+    max-height: 250px;
 }
 
 
@@ -1750,7 +1823,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">🔮 智能分析控制台</h5>
+                    <h5 class="mb-0 text-center">🔮 智能分析控制台</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -2183,6 +2256,48 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                 </div>
             </div>
         </div>
+    <!-- 在原有的圖表區域後面加入 -->
+<div class="row mt-4">
+    <!-- 儀表板圖 -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>整體風險指標</h6>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <div style="position: relative; width: 200px; height: 100px;">
+                    <canvas id="gaugeChart"></canvas>
+                    <div id="gaugeValue" class="position-absolute" style="top: 70%; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: bold;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 雷達圖 -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>部門能力評估</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 熱力圖 -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-warning text-white">
+                <h6 class="mb-0"><i class="fas fa-fire me-2"></i>風險熱點分布</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="heatmapChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 
      
     
@@ -2345,7 +2460,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbzWgNqMbHF_F6V_fMXMTEx8Xmh7y2ohcb46JFSdAW4JHPqo9s7EL3nO9v37IETMRxR9/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbyRvwrImfYPIJwciZaymq5hI5WBw_a2-RMfTTYTRlmxrFGc0VDXBAVG8zfWCsHdhCE9/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -2420,15 +2535,16 @@ function convertMarkdownToHTML(markdown) {
     return `<div class="markdown-content">${html}</div>`;
 }
 
-// 🆕 權限檢查函數
+// 🔄 覆蓋原有的 checkPermission 函數
 function checkPermission(requiredLevel) {
     const userPermission = localStorage.getItem('permission') || 's1';
     
-    // 權限等級對照：s3 > s2 > s1
+    // 權限等級對照：s4 > s3 > s2 > s1 (新增 s4)
     const permissionLevels = {
         's1': 1,
         's2': 2,
-        's3': 3
+        's3': 3,
+        's4': 4  // 🆕 新增這行
     };
     
     const userLevel = permissionLevels[userPermission] || 1;
@@ -2436,6 +2552,7 @@ function checkPermission(requiredLevel) {
     
     return userLevel >= requiredLevelNum;
 }
+
 
 // 🆕 全域變數定義
 const loginSection = document.getElementById('login-section');
@@ -2481,14 +2598,21 @@ document.addEventListener('DOMContentLoaded', function() {
    
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
 
-    // 🆕 風險趨勢預判分析按鈕點擊事件
-    if (riskPredictionBtn) {
-        riskPredictionBtn.addEventListener('click', function() {
-            showRiskPredictionPage();
-            loadStandalonePredictionAnalysis();
-            resetInactivityTimer();
-        });
-    }
+// 🆕 風險趨勢預判分析按鈕點擊事件 - 需要s3以上權限
+if (riskPredictionBtn) {
+    riskPredictionBtn.addEventListener('click', function() {
+        // 🆕 檢查s3以上權限
+        if (!checkPermission('s3')) {
+            alert('權限不足，無法訪問風險趨勢預判分析功能\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+            return;
+        }
+        
+        showRiskPredictionPage();
+        loadStandalonePredictionAnalysis();
+        resetInactivityTimer();
+    });
+}
+
     
     // 🆕 返回按鈕
     if (backFromPredictionBtn) {
@@ -2542,17 +2666,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     
-    // 檢查元素是否存在
-    if (alertSettingsBtn) {
-        alertSettingsBtn.addEventListener('click', function() {
-             // 移除閃爍效果
-    this.classList.remove('alert-button-warning');
-            showAlertSettingsPage();
-            loadAlertSettings();
-            loadAlertHistory();
-            resetInactivityTimer();
-        });
-    }
+// 檢查預警設定按鈕是否存在並添加s4權限檢查
+if (alertSettingsBtn) {
+    alertSettingsBtn.addEventListener('click', function() {
+        // 🆕 檢查s4權限
+        if (!checkPermission('s4')) {
+            alert('權限不足，無法訪問風險預警設定功能\n需要權限：s4 管理權限\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+            return;
+        }
+        
+        // 移除閃爍效果
+        this.classList.remove('alert-button-warning');
+        showAlertSettingsPage();
+        loadAlertSettings();
+        loadAlertHistory();
+        resetInactivityTimer();
+    });
+}
+
     
     if (backFromAlertBtn) {
         backFromAlertBtn.addEventListener('click', function() {
@@ -3079,33 +3210,131 @@ function formatDateTime(dateTime) {
         document.addEventListener(event, resetInactivityTimer, true);
     });
     
-    // 🆕 設置按鈕權限狀態
-    function setButtonPermissions() {
-        // 檢查是否有s3權限
+// 🆕 設置按鈕權限狀態 (修正版)
+function setButtonPermissions() {
+    // 🔄 部門風險係數按鈕 - s1不行，其餘皆可 (需要s2以上)
+    if (!checkPermission('s2')) {
+        deptRiskIndexBtn.disabled = true;
+        deptRiskIndexBtn.style.opacity = '0.5';
+        deptRiskIndexBtn.style.cursor = 'not-allowed';
+        deptRiskIndexBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+        deptRiskIndexBtn.title = '此功能需要 s2 以上權限';
+        
+        // 移除原有事件並添加權限提示
+        deptRiskIndexBtn.replaceWith(deptRiskIndexBtn.cloneNode(true));
+        const newDeptBtn = document.getElementById('dept-risk-index-btn');
+        newDeptBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+        });
+    } else {
+        deptRiskIndexBtn.disabled = false;
+        deptRiskIndexBtn.style.opacity = '1';
+        deptRiskIndexBtn.style.cursor = 'pointer';
+        deptRiskIndexBtn.style.background = 'linear-gradient(to right, #1a6fc4, #34c3aa)';
+        deptRiskIndexBtn.title = '';
+    }
+
+    // 🔄 數據分析儀表板按鈕 - s1、s2不行，其餘皆可 (需要s3以上)
+    if (!checkPermission('s3')) {
+        dataAnalyticsBtn.disabled = true;
+        dataAnalyticsBtn.style.opacity = '0.5';
+        dataAnalyticsBtn.style.cursor = 'not-allowed';
+        dataAnalyticsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+        dataAnalyticsBtn.title = '此功能需要 s3 以上權限';
+        
+        // 移除原有事件並添加權限提示
+        dataAnalyticsBtn.replaceWith(dataAnalyticsBtn.cloneNode(true));
+        const newAnalyticsBtn = document.getElementById('data-analytics-btn');
+        newAnalyticsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+        });
+    } else {
+        dataAnalyticsBtn.disabled = false;
+        dataAnalyticsBtn.style.opacity = '1';
+        dataAnalyticsBtn.style.cursor = 'pointer';
+        dataAnalyticsBtn.style.background = 'linear-gradient(to right, #9c27b0, #e91e63)';
+        dataAnalyticsBtn.title = '';
+    }
+
+    // 🔄 風險趨勢預判分析按鈕 - s1、s2不行，其餘皆可 (需要s3以上)
+    const riskPredictionBtn = document.getElementById('risk-prediction-btn');
+    if (riskPredictionBtn) {
         if (!checkPermission('s3')) {
-            // 沒有權限：禁用按鈕並改變樣式
-            dataAnalyticsBtn.disabled = true;
-            dataAnalyticsBtn.style.opacity = '0.5';
-            dataAnalyticsBtn.style.cursor = 'not-allowed';
-            dataAnalyticsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+            riskPredictionBtn.disabled = true;
+            riskPredictionBtn.style.opacity = '0.5';
+            riskPredictionBtn.style.cursor = 'not-allowed';
+            riskPredictionBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+            riskPredictionBtn.title = '此功能需要 s3 以上權限';
             
-            // 🆕 添加權限提示
-            dataAnalyticsBtn.title = '此功能需要 s3 權限等級';
-            
-            // 🆕 移除點擊事件，添加權限提示
-            dataAnalyticsBtn.addEventListener('click', function(e) {
+            // 移除原有事件並添加權限提示
+            riskPredictionBtn.replaceWith(riskPredictionBtn.cloneNode(true));
+            const newPredictionBtn = document.getElementById('risk-prediction-btn');
+            newPredictionBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
             });
         } else {
-            // 有權限：確保按鈕可用
-            dataAnalyticsBtn.disabled = false;
-            dataAnalyticsBtn.style.opacity = '1';
-            dataAnalyticsBtn.style.cursor = 'pointer';
-            dataAnalyticsBtn.style.background = 'linear-gradient(to right, #9c27b0, #e91e63)';
-            dataAnalyticsBtn.title = '';
+            riskPredictionBtn.disabled = false;
+            riskPredictionBtn.style.opacity = '1';
+            riskPredictionBtn.style.cursor = 'pointer';
+            riskPredictionBtn.style.background = 'linear-gradient(to right, #8e44ad, #3498db)';
+            riskPredictionBtn.title = '';
         }
     }
+     // 🆕 檢查並設置現有預警詳情按鈕的權限
+    const existingViewDetailsBtn = document.getElementById('viewDetailsBtn');
+    if (existingViewDetailsBtn) {
+        if (!checkPermission('s2')) {
+            existingViewDetailsBtn.disabled = true;
+            existingViewDetailsBtn.style.opacity = '0.5';
+            existingViewDetailsBtn.style.cursor = 'not-allowed';
+            existingViewDetailsBtn.title = '此功能需要 s2 以上權限';
+            
+            // 移除原有事件並添加權限提示
+            existingViewDetailsBtn.replaceWith(existingViewDetailsBtn.cloneNode(true));
+            const newViewDetailsBtn = document.getElementById('viewDetailsBtn');
+            newViewDetailsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('抱歉，您的權限等級不足，無法查看緊急預警詳情。\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+            });
+        } else {
+            existingViewDetailsBtn.disabled = false;
+            existingViewDetailsBtn.style.opacity = '1';
+            existingViewDetailsBtn.style.cursor = 'pointer';
+            existingViewDetailsBtn.title = '';
+        }
+    }
+
+    // 🔄 風險預警設定按鈕 - 只有s4可以
+    const alertSettingsBtn = document.getElementById('alert-settings-btn');
+    if (alertSettingsBtn) {
+        if (!checkPermission('s4')) {
+            alertSettingsBtn.disabled = true;
+            alertSettingsBtn.style.opacity = '0.5';
+            alertSettingsBtn.style.cursor = 'not-allowed';
+            alertSettingsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+            alertSettingsBtn.title = '此功能僅限 s4 管理權限';
+            
+            // 移除原有事件並添加權限提示
+            alertSettingsBtn.replaceWith(alertSettingsBtn.cloneNode(true));
+            const newAlertBtn = document.getElementById('alert-settings-btn');
+            newAlertBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s4 管理權限\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+            });
+        } else {
+            alertSettingsBtn.disabled = false;
+            alertSettingsBtn.style.opacity = '1';
+            alertSettingsBtn.style.cursor = 'pointer';
+            alertSettingsBtn.style.background = 'linear-gradient(to right, #ff6b35, #f7931e)';
+            alertSettingsBtn.title = '';
+        }
+    }
+}
+
+
     
     // 顯示主頁面
 // 修改 showDashboard 函數
@@ -3121,7 +3350,12 @@ function showDashboard() {
     document.querySelector('.container').classList.remove('hidden');
     dashboardSection.classList.remove('hidden');
     document.querySelector('.container').style.maxWidth = '500px';
-    
+        // 🆕 隱藏 s4 專屬頁面 (新增這段)
+    const s4Pages = ['user-management-page', 'system-settings-page', 'data-backup-page'];
+    s4Pages.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) page.style.display = 'none';
+    });
     // 設置按鈕權限
     setButtonPermissions();
     
@@ -3130,12 +3364,15 @@ function showDashboard() {
     
     // 🆕 檢查當前預警狀態
     checkCurrentAlertStatus();
+
+    // 🆕 為 s4 用戶添加管理功能 (新增這行)
+    addManagementFeatures();
     
     // 重置計時器
     resetInactivityTimer();
 }
 
-// 🆕 檢查當前預警狀態
+// 🆕 檢查當前預警狀態 (修正版)
 async function checkCurrentAlertStatus() {
     try {
         const response = await fetch(`${scriptUrl}?action=getCurrentAlertStatus`);
@@ -3146,7 +3383,10 @@ async function checkCurrentAlertStatus() {
             
             // 如果有緊急預警，讓預警設定按鈕閃爍
             if (result.criticalCount > 0) {
-                document.getElementById('alert-settings-btn').classList.add('alert-button-warning');
+                const alertSettingsBtn = document.getElementById('alert-settings-btn');
+                if (alertSettingsBtn) {
+                    alertSettingsBtn.classList.add('alert-button-warning');
+                }
             }
         } else {
             hideAlertStatusIndicator();
@@ -3155,6 +3395,7 @@ async function checkCurrentAlertStatus() {
         console.error('檢查預警狀態失敗:', error);
     }
 }
+
 
 // 🟢 修正後的 showAlertStatusIndicator 函數
 function showAlertStatusIndicator(alertCount, criticalCount) {
@@ -3165,7 +3406,6 @@ function showAlertStatusIndicator(alertCount, criticalCount) {
     }
 
     if (criticalCount > 0) {
-        indicator.className = 'alert-status-container';
         indicator.innerHTML = `
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>
@@ -3178,7 +3418,6 @@ function showAlertStatusIndicator(alertCount, criticalCount) {
         `;
         
     } else if (alertCount > 0) {
-        indicator.className = 'alert-status-container';
         indicator.innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
@@ -3189,7 +3428,6 @@ function showAlertStatusIndicator(alertCount, criticalCount) {
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button>
             </div>
         `;
-        
     } else {
         indicator.style.display = 'none';
         return;
@@ -3197,16 +3435,31 @@ function showAlertStatusIndicator(alertCount, criticalCount) {
 
     indicator.style.display = 'block';
     
-    // 重新綁定查看詳情按鈕事件
+    // 🆕 為查看詳情按鈕添加權限控制 - s1不行，其餘皆可
     setTimeout(() => {
         const viewDetailsBtn = document.getElementById('viewDetailsBtn');
         if (viewDetailsBtn) {
-            viewDetailsBtn.addEventListener('click', function() {
-                showDeptRiskIndexPage();
-            });
+            if (!checkPermission('s2')) {
+                // s1用戶：禁用按鈕並添加權限提示
+                viewDetailsBtn.disabled = true;
+                viewDetailsBtn.style.opacity = '0.5';
+                viewDetailsBtn.style.cursor = 'not-allowed';
+                viewDetailsBtn.title = '此功能需要 s2 以上權限';
+                
+                viewDetailsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('抱歉，您的權限等級不足，無法查看緊急預警詳情。\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+                });
+            } else {
+                // s2以上用戶：正常功能
+                viewDetailsBtn.addEventListener('click', function() {
+                    showDeptRiskIndexPage();
+                });
+            }
         }
     }, 100);
 }
+
 
 
 
@@ -3221,13 +3474,14 @@ function hideAlertStatusIndicator() {
 }
 
     
-    // 🆕 在使用者資訊區塊顯示權限等級
+    // 🔄 覆蓋原有的 updateUserInfo 函數
     function updateUserInfo() {
         const permission = localStorage.getItem('permission') || 's1';
         const permissionText = {
             's1': 's1級',
             's2': 's2級', 
-            's3': 's3級'
+            's3': 's3級',
+            's4': 's4級(管理)'  // 🆕 新增這行
         };
         
         document.getElementById('user-info').innerHTML = `
@@ -3236,6 +3490,7 @@ function hideAlertStatusIndicator() {
             <span style="color: #666; font-size: 12px;">(${permissionText[permission]})</span>
         `;
     }
+
     
     // 顯示登入頁面
     function showLogin() {
@@ -3347,35 +3602,75 @@ function showEventRegistrationPage() {
             });
     });
 
-    // 部門風險係數按鈕點擊事件
-    deptRiskIndexBtn.addEventListener('click', function() {
-        dashboardSection.style.display = 'none';
-        deptRiskIndexPage.style.display = 'block';
-        
-        // 載入風險係數數據
-        loadRiskIndexData();
-        
-        // 重置計時器
-        resetInactivityTimer();
-    });
+    // 部門風險係數按鈕點擊事件 - 添加s2權限檢查
+deptRiskIndexBtn.addEventListener('click', function() {
+    // 🆕 檢查s2權限
+    if (!checkPermission('s2')) {
+        alert('權限不足，無法訪問部門風險係數功能\n需要權限：s2\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+        return;
+    }
     
-    // 數據分析儀表板按鈕點擊事件
-    dataAnalyticsBtn.addEventListener('click', function() {
-        // 🆕 再次檢查權限（雙重保險）
+    dashboardSection.style.display = 'none';
+    deptRiskIndexPage.style.display = 'block';
+    
+    // 載入風險係數數據
+    loadRiskIndexData();
+    
+    // 重置計時器
+    resetInactivityTimer();
+});
+
+    // 🆕 風險趨勢預判分析按鈕點擊事件 - 添加s3權限檢查
+if (riskPredictionBtn) {
+    riskPredictionBtn.addEventListener('click', function() {
+        // 🆕 檢查s3權限
         if (!checkPermission('s3')) {
-            alert('權限不足，無法訪問數據分析儀表板');
+            alert('權限不足，無法訪問風險趨勢預判分析功能\n需要權限：s3\n您的權限：' + (localStorage.getItem('permission') || 's1'));
             return;
         }
         
-        dashboardSection.style.display = 'none';
-        dataAnalyticsPage.style.display = 'block';
-        
-        // 載入數據分析
-        loadAnalyticsData();
-        
-        // 重置計時器
+        showRiskPredictionPage();
+        loadStandalonePredictionAnalysis();
         resetInactivityTimer();
     });
+}
+// 檢查預警設定按鈕是否存在並添加s4權限檢查
+if (alertSettingsBtn) {
+    alertSettingsBtn.addEventListener('click', function() {
+        // 🆕 檢查s4權限
+        if (!checkPermission('s4')) {
+            alert('權限不足，無法訪問風險預警設定功能\n需要權限：s4\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+            return;
+        }
+        
+        // 移除閃爍效果
+        this.classList.remove('alert-button-warning');
+        showAlertSettingsPage();
+        loadAlertSettings();
+        loadAlertHistory();
+        resetInactivityTimer();
+    });
+}
+
+    
+// 數據分析儀表板按鈕點擊事件 - 需要s3以上權限
+dataAnalyticsBtn.addEventListener('click', function() {
+    // 🆕 檢查s3以上權限
+    if (!checkPermission('s3')) {
+        alert('權限不足，無法訪問數據分析儀表板\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+        return;
+    }
+    
+    dashboardSection.style.display = 'none';
+    dataAnalyticsPage.style.display = 'block';
+    
+    // 載入數據分析
+    loadAnalyticsData();
+    
+    // 重置計時器
+    resetInactivityTimer();
+});
+
     
     // 返回按鈕點擊事件
     backFromRiskBtn.addEventListener('click', function() {
@@ -3574,6 +3869,7 @@ async function loadAnalyticsData() {
         updateRiskCategoryChart(data.categoryData);
         updateRiskLevelChart(data.levelData);
         updateMonthlyComparisonChart(data.monthlyData);
+        updateNewCharts(data);
     }
     
     // 更新風險趨勢圖
@@ -5504,8 +5800,687 @@ async function exportStandalonePredictionReport() {
     }
 }
 
+    // 🆕 新增 s4 專屬功能按鈕
+function addManagementFeatures() {
+    const permission = localStorage.getItem('permission') || 's1';
+    
+    if (permission === 's4') {
+        const buttonGroup = document.querySelector('.button-group');
+        
+        // 檢查是否已經添加過管理按鈕，避免重複添加
+        if (document.getElementById('user-management-btn')) {
+            return;
+        }
+        
+        // 🆕 用戶管理按鈕
+        const userManagementBtn = document.createElement('button');
+        userManagementBtn.id = 'user-management-btn';
+        userManagementBtn.className = 'feature-btn';
+        userManagementBtn.style.background = 'linear-gradient(to right, #6f42c1, #e83e8c)';
+        userManagementBtn.innerHTML = '<i class="fas fa-users-cog"></i> 用戶管理';
+        
+        // 🆕 系統設定按鈕
+        const systemSettingsBtn = document.createElement('button');
+        systemSettingsBtn.id = 'system-settings-btn';
+        systemSettingsBtn.className = 'feature-btn';
+        systemSettingsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+        systemSettingsBtn.innerHTML = '<i class="fas fa-cogs"></i> 系統設定';
+        
+        // 🆕 數據備份按鈕
+        const dataBackupBtn = document.createElement('button');
+        dataBackupBtn.id = 'data-backup-btn';
+        dataBackupBtn.className = 'feature-btn';
+        dataBackupBtn.style.background = 'linear-gradient(to right, #17a2b8, #20c997)';
+        dataBackupBtn.innerHTML = '<i class="fas fa-database"></i> 數據備份';
+        
+        // 插入到按鈕組
+        buttonGroup.appendChild(userManagementBtn);
+        buttonGroup.appendChild(systemSettingsBtn);
+        buttonGroup.appendChild(dataBackupBtn);
+        
+        // 🆕 綁定事件監聽器
+        userManagementBtn.addEventListener('click', function() {
+            showUserManagementPage();
+            resetInactivityTimer();
+        });
+        
+        systemSettingsBtn.addEventListener('click', function() {
+            showSystemSettingsPage();
+            resetInactivityTimer();
+        });
+        
+        dataBackupBtn.addEventListener('click', function() {
+            showDataBackupPage();
+            resetInactivityTimer();
+        });
+    }
+}
+
+// 🆕 顯示用戶管理頁面
+function showUserManagementPage() {
+    if (!checkPermission('s4')) {
+        alert('權限不足，僅限 s4 管理用戶使用');
+        return;
+    }
+    
+    hideAllPages();
+    document.getElementById('user-management-page').style.display = 'block';
+    loadUserList();
+}
+
+// 🆕 顯示系統設定頁面
+function showSystemSettingsPage() {
+    if (!checkPermission('s4')) {
+        alert('權限不足，僅限 s4 管理用戶使用');
+        return;
+    }
+    
+    hideAllPages();
+    document.getElementById('system-settings-page').style.display = 'block';
+    loadSystemSettings();
+}
+
+// 🆕 顯示數據備份頁面
+function showDataBackupPage() {
+    if (!checkPermission('s4')) {
+        alert('權限不足，僅限 s4 管理用戶使用');
+        return;
+    }
+    
+    hideAllPages();
+    document.getElementById('data-backup-page').style.display = 'block';
+    loadBackupHistory();
+}
+
+// 🆕 隱藏所有頁面的輔助函數
+function hideAllPages() {
+    const pages = [
+        'login-section', 'dashboard-section', 'inventory-section',
+        'dept-risk-index-page', 'data-analytics-page', 'event-registration-page',
+        'alert-settings-page', 'risk-prediction-page', 'user-management-page',
+        'system-settings-page', 'data-backup-page'
+    ];
+    
+    pages.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.style.display = 'none';
+            page.classList.add('hidden');
+        }
+    });
+    
+    document.querySelector('.container').classList.add('hidden');
+}
+
+// 🆕 載入用戶列表
+async function loadUserList() {
+    try {
+        const response = await fetch(`${scriptUrl}?action=getUserList`);
+        const result = await response.json();
+        
+        if (result.success) {
+            updateUserListTable(result.users);
+        } else {
+            showNotification('載入用戶列表失敗: ' + result.message, 'error');
+        }
+    } catch (error) {
+        console.error('載入用戶列表時發生錯誤:', error);
+        showNotification('載入用戶列表失敗', 'error');
+    }
+}
+
+// 🆕 更新用戶列表表格
+function updateUserListTable(users) {
+    const tableBody = document.getElementById('userListTableBody');
+    
+    if (users.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暫無用戶資料</td></tr>';
+        return;
+    }
+    
+    const rows = users.map(user => {
+        const permissionBadge = getPermissionBadge(user.permission);
+        const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleString('zh-TW') : '從未登入';
+        
+        return `
+            <tr>
+                <td>${user.department}</td>
+                <td>${user.name}</td>
+                <td>${user.username}</td>
+                <td>${permissionBadge}</td>
+                <td>${lastLogin}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser('${user.username}')">
+                        <i class="fas fa-edit"></i> 編輯
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.username}')">
+                        <i class="fas fa-trash"></i> 刪除
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
+}
+
+// 🆕 獲取權限徽章樣式
+function getPermissionBadge(permission) {
+    const badges = {
+        's1': '<span class="badge bg-secondary">s1-基本</span>',
+        's2': '<span class="badge bg-primary">s2-中級</span>',
+        's3': '<span class="badge bg-success">s3-高級</span>',
+        's4': '<span class="badge bg-danger">s4-管理</span>'
+    };
+    return badges[permission] || '<span class="badge bg-secondary">未知</span>';
+}
+
+// 🆕 載入系統設定
+async function loadSystemSettings() {
+    try {
+        const response = await fetch(`${scriptUrl}?action=getSystemSettings`);
+        const result = await response.json();
+        
+        if (result.success) {
+            // 填入設定值
+            document.getElementById('sessionTimeout').value = result.settings.sessionTimeout || 10;
+            document.getElementById('maxLoginAttempts').value = result.settings.maxLoginAttempts || 3;
+            document.getElementById('dataRetentionDays').value = result.settings.dataRetentionDays || 365;
+            document.getElementById('backupFrequency').value = result.settings.backupFrequency || 'weekly';
+        } else {
+            showNotification('載入系統設定失敗: ' + result.message, 'error');
+        }
+    } catch (error) {
+        console.error('載入系統設定時發生錯誤:', error);
+        showNotification('載入系統設定失敗', 'error');
+    }
+}
+
+// 🆕 載入備份歷史
+async function loadBackupHistory() {
+    try {
+        const response = await fetch(`${scriptUrl}?action=getBackupHistory`);
+        const result = await response.json();
+        
+        if (result.success) {
+            updateBackupHistoryTable(result.backups);
+        } else {
+            showNotification('載入備份歷史失敗: ' + result.message, 'error');
+        }
+    } catch (error) {
+        console.error('載入備份歷史時發生錯誤:', error);
+        showNotification('載入備份歷史失敗', 'error');
+    }
+}
+
+// 🆕 更新備份歷史表格
+function updateBackupHistoryTable(backups) {
+    const tableBody = document.getElementById('backupHistoryTableBody');
+    
+    if (backups.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">暫無備份記錄</td></tr>';
+        return;
+    }
+    
+    const rows = backups.map(backup => {
+        return `
+            <tr>
+                <td>${formatDateTime(backup.timestamp)}</td>
+                <td><span class="badge bg-info">${backup.type}</span></td>
+                <td>${backup.fileSize}</td>
+                <td><span class="badge ${backup.status === '成功' ? 'bg-success' : 'bg-danger'}">${backup.status}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="downloadBackup('${backup.id}')">
+                        <i class="fas fa-download"></i> 下載
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
+}
+
+// 🆕 編輯用戶（佔位函數）
+function editUser(username) {
+    alert(`編輯用戶功能開發中：${username}`);
+}
+
+// 🆕 刪除用戶（佔位函數）
+function deleteUser(username) {
+    if (confirm(`確定要刪除用戶 ${username} 嗎？`)) {
+        alert(`刪除用戶功能開發中：${username}`);
+    }
+}
+
+// 🆕 下載備份（佔位函數）
+function downloadBackup(backupId) {
+    alert(`下載備份功能開發中：${backupId}`);
+}
+
+// 🆕 儀表板圖
+function createGaugeChart(riskValue) {
+    const ctx = document.getElementById('gaugeChart').getContext('2d');
+    
+    // 銷毀現有圖表
+    if (window.gaugeChartInstance) {
+        window.gaugeChartInstance.destroy();
+    }
+    
+    // 根據風險值決定顏色
+    let gaugeColor;
+    let riskLevel;
+    if (riskValue >= 50) {
+        gaugeColor = '#dc3545'; // 紅色 - 高風險
+        riskLevel = '高風險';
+    } else if (riskValue >= 30) {
+        gaugeColor = '#ffc107'; // 黃色 - 中風險
+        riskLevel = '中風險';
+    } else {
+        gaugeColor = '#28a745'; // 綠色 - 低風險
+        riskLevel = '低風險';
+    }
+    
+    window.gaugeChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [riskValue, 100 - riskValue],
+                backgroundColor: [gaugeColor, '#e9ecef'],
+                borderWidth: 0,
+                cutout: '70%'
+            }]
+        },
+        options: {
+            rotation: -90,
+            circumference: 180,
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        }
+    });
+    
+    // 更新數值顯示
+    document.getElementById('gaugeValue').innerHTML = `
+        <div style="text-align: center;">
+            <div style="font-size: 24px; color: ${gaugeColor};">${riskValue.toFixed(1)}</div>
+            <div style="font-size: 12px; color: #666;">${riskLevel}</div>
+        </div>
+    `;
+}
+
+// 🆕 雷達圖
+function createRadarChart(departmentData) {
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    
+    // 銷毀現有圖表
+    if (window.radarChartInstance) {
+        window.radarChartInstance.destroy();
+    }
+    
+    // 準備雷達圖數據
+    const radarData = {
+        labels: [
+            '風險識別',
+            '預防措施',
+            '應變處理',
+            '改善落實',
+            '教育訓練',
+            '設備維護'
+        ],
+        datasets: []
+    };
+    
+    // 顏色配置
+    const colors = [
+        'rgba(255, 99, 132, 0.6)',   // 紅色
+        'rgba(54, 162, 235, 0.6)',   // 藍色
+        'rgba(255, 205, 86, 0.6)',   // 黃色
+        'rgba(75, 192, 192, 0.6)',   // 青色
+        'rgba(153, 102, 255, 0.6)'   // 紫色
+    ];
+    
+    // 為每個部門生成數據
+    Object.keys(departmentData).slice(0, 3).forEach((dept, index) => {
+        const deptRisk = departmentData[dept];
+        // 根據風險值反向計算能力分數（風險越高，能力越低）
+        const abilityScore = Math.max(0, 100 - deptRisk * 2);
+        
+        radarData.datasets.push({
+            label: dept,
+            data: [
+                abilityScore + Math.random() * 10 - 5, // 風險識別
+                abilityScore + Math.random() * 10 - 5, // 預防措施
+                abilityScore + Math.random() * 10 - 5, // 應變處理
+                abilityScore + Math.random() * 10 - 5, // 改善落實
+                abilityScore + Math.random() * 10 - 5, // 教育訓練
+                abilityScore + Math.random() * 10 - 5  // 設備維護
+            ].map(val => Math.max(20, Math.min(100, val))), // 限制在20-100之間
+            backgroundColor: colors[index],
+            borderColor: colors[index].replace('0.6', '1'),
+            borderWidth: 2,
+            pointBackgroundColor: colors[index].replace('0.6', '1')
+        });
+    });
+    
+    window.radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: radarData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        stepSize: 20
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        fontSize: 12,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 🆕 熱力圖
+function createHeatmapChart(riskData) {
+    const ctx = document.getElementById('heatmapChart').getContext('2d');
+    
+    // 銷毀現有圖表
+    if (window.heatmapChartInstance) {
+        window.heatmapChartInstance.destroy();
+    }
+    
+    // 風險類別
+    const riskCategories = ['人員安全', '設備故障', '品質異常', '環境風險', '資訊安全'];
+    const departments = Object.keys(riskData);
+    
+    // 生成熱力圖數據
+    const heatmapData = {
+        labels: departments,
+        datasets: riskCategories.map((category, categoryIndex) => ({
+            label: category,
+            data: departments.map(dept => {
+                const baseRisk = riskData[dept] || 0;
+                // 為每個類別生成不同的風險值
+                return Math.max(0, baseRisk + (Math.random() - 0.5) * 20);
+            }),
+            backgroundColor: departments.map(dept => {
+                const riskValue = riskData[dept] || 0;
+                const intensity = Math.min(1, riskValue / 50);
+                const colors = [
+                    [255, 99, 132],   // 紅色
+                    [54, 162, 235],   // 藍色
+                    [255, 205, 86],   // 黃色
+                    [75, 192, 192],   // 青色
+                    [153, 102, 255]   // 紫色
+                ];
+                const color = colors[categoryIndex % colors.length];
+                return `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.3 + intensity * 0.7})`;
+            })
+        }))
+    };
+    
+    window.heatmapChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: heatmapData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true },
+                y: { 
+                    stacked: true,
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        fontSize: 10,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return `${context[0].label} - ${context[0].dataset.label}`;
+                        },
+                        label: function(context) {
+                            return `風險值: ${context.parsed.y.toFixed(1)}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 🆕 更新所有新圖表的函數
+function updateNewCharts(data) {
+    // 計算整體風險值
+    const overallRisk = Object.values(data.departmentData).reduce((sum, val) => sum + val, 0) / Object.keys(data.departmentData).length;
+    
+    // 更新三個新圖表
+    createGaugeChart(overallRisk);
+    createRadarChart(data.departmentData);
+    createHeatmapChart(data.departmentData);
+}
+    
 </script>
 
+<!-- 🆕 用戶管理頁面 -->
+<div id="user-management-page" class="dashboard-page" style="display: none;">
+    <div class="logo-container">
+        <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+    </div>
+    <h2 class="text-center mb-4">
+        <i class="fas fa-users-cog text-primary"></i> 用戶管理
+    </h2>
+    
+    <!-- 新增用戶區塊 -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-user-plus"></i> 新增用戶</h5>
+        </div>
+        <div class="card-body">
+            <form id="addUserForm">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="newUserDepartment" class="form-label">部門</label>
+                        <input type="text" class="form-control" id="newUserDepartment" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="newUserName" class="form-label">姓名</label>
+                        <input type="text" class="form-control" id="newUserName" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="newUserAccount" class="form-label">帳號</label>
+                        <input type="text" class="form-control" id="newUserAccount" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="newUserPermission" class="form-label">權限等級</label>
+                        <select class="form-select" id="newUserPermission" required>
+                            <option value="s1">s1 - 基本用戶</option>
+                            <option value="s2">s2 - 中級用戶</option>
+                            <option value="s3">s3 - 高級用戶</option>
+                            <option value="s4">s4 - 管理用戶</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="newUserPassword" class="form-label">初始密碼</label>
+                        <input type="password" class="form-control" id="newUserPassword" required>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 新增用戶
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 用戶列表區塊 -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-list"></i> 用戶列表</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="userListTable">
+                    <thead>
+                        <tr>
+                            <th>部門</th>
+                            <th>姓名</th>
+                            <th>帳號</th>
+                            <th>權限等級</th>
+                            <th>最後登入</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userListTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+   <button class="btn btn-secondary mt-3" id="backFromUserManagement">返回</button>
+</div>
+
+<!-- 🆕 系統設定頁面 -->
+<div id="system-settings-page" class="dashboard-page" style="display: none;">
+    <div class="logo-container">
+        <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+    </div>
+    <h2 class="text-center mb-4">
+        <i class="fas fa-cogs text-secondary"></i> 系統設定
+    </h2>
+    
+    <!-- 系統參數設定 -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="fas fa-sliders-h"></i> 系統參數</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="sessionTimeout" class="form-label">登入逾時時間 (分鐘)</label>
+                    <input type="number" class="form-control" id="sessionTimeout" value="10" min="5" max="60">
+                </div>
+                <div class="col-md-6">
+                    <label for="maxLoginAttempts" class="form-label">最大登入嘗試次數</label>
+                    <input type="number" class="form-control" id="maxLoginAttempts" value="3" min="3" max="10">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <label for="dataRetentionDays" class="form-label">數據保留天數</label>
+                    <input type="number" class="form-control" id="dataRetentionDays" value="365" min="30">
+                </div>
+                <div class="col-md-6">
+                    <label for="backupFrequency" class="form-label">自動備份頻率</label>
+                    <select class="form-select" id="backupFrequency">
+                        <option value="daily">每日</option>
+                        <option value="weekly" selected>每週</option>
+                        <option value="monthly">每月</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="button" class="btn btn-primary" onclick="saveSystemSettings()">
+                    <i class="fas fa-save"></i> 儲存設定
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <button class="btn btn-secondary mt-3" id="backFromSystemSettings">返回</button>
+</div>
+
+<!-- 🆕 數據備份頁面 -->
+<div id="data-backup-page" class="dashboard-page" style="display: none;">
+    <div class="logo-container">
+        <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+    </div>
+    <h2 class="text-center mb-4">
+        <i class="fas fa-database text-info"></i> 數據備份管理
+    </h2>
+    
+    <!-- 立即備份區塊 -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-download"></i> 立即備份</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="createBackup('users')">
+                        <i class="fas fa-users"></i> 備份用戶資料
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-outline-success w-100 mb-2" onclick="createBackup('risks')">
+                        <i class="fas fa-exclamation-triangle"></i> 備份風險資料
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-outline-warning w-100 mb-2" onclick="createBackup('all')">
+                        <i class="fas fa-database"></i> 完整備份
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 備份歷史區塊 -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="fas fa-history"></i> 備份歷史</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="backupHistoryTable">
+                    <thead>
+                        <tr>
+                            <th>備份時間</th>
+                            <th>備份類型</th>
+                            <th>檔案大小</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="backupHistoryTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <button class="btn btn-secondary mt-3" id="backFromDataBackup">返回</button>
+</div>
 
 </body>
 </html>
