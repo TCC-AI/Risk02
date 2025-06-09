@@ -1896,6 +1896,522 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 }
 }
 
+        <style>
+/* 🌟 新增：動態粒子背景效果 */
+.particle-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+    50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+/* 🎯 新增：3D卡片效果 */
+.card-3d {
+    transform-style: preserve-3d;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.1),
+        0 15px 12px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.card-3d:hover {
+    transform: translateY(-10px) rotateX(5deg);
+    box-shadow: 
+        0 35px 60px rgba(0,0,0,0.15),
+        0 25px 20px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+/* 🚀 新增：進度條和儀表板樣式 */
+.progress-ring {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    margin: 20px auto;
+}
+
+.progress-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-ring circle {
+    fill: none;
+    stroke-width: 8;
+    r: 52;
+    cx: 60;
+    cy: 60;
+}
+
+.progress-ring .background {
+    stroke: rgba(255,255,255,0.2);
+}
+
+.progress-ring .progress {
+    stroke: url(#gradient);
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.5s ease-in-out;
+}
+
+/* 🎨 新增：漸層定義 */
+.gradient-text {
+    background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 4s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 🔥 新增：數據可視化容器 */
+.data-viz-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.data-viz-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+/* 📊 新增：統計卡片增強版 */
+.stat-card-enhanced {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 
+        0 15px 35px rgba(102, 126, 234, 0.3),
+        0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+    background-size: 400% 100%;
+    animation: gradient-shift 3s ease infinite;
+}
+
+.stat-card-enhanced:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 25px 50px rgba(102, 126, 234, 0.4),
+        0 10px 25px rgba(0,0,0,0.15);
+}
+
+.stat-icon-enhanced {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.stat-value-enhanced {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    counter-reset: stat-counter;
+    animation: count-up 2s ease-out;
+}
+
+@keyframes count-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🎯 新增：風險等級視覺指示器 */
+.risk-indicator-enhanced {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 5px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.risk-low-enhanced {
+    background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+    color: #2d5016;
+    box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);
+}
+
+.risk-medium-enhanced {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #8b4513;
+    box-shadow: 0 4px 15px rgba(247, 151, 30, 0.3);
+}
+
+.risk-high-enhanced {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+    animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-danger {
+    0%, 100% { box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3); }
+    50% { box-shadow: 0 6px 25px rgba(255, 65, 108, 0.5); }
+}
+
+/* 🌈 新增：互動式按鈕增強 */
+.btn-enhanced {
+    position: relative;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 
+        0 8px 25px rgba(102, 126, 234, 0.3),
+        0 3px 10px rgba(0,0,0,0.1);
+}
+
+.btn-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-enhanced:hover::before {
+    left: 100%;
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 15px 35px rgba(102, 126, 234, 0.4),
+        0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* 📈 新增：圖表容器增強 */
+.chart-container-enhanced {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.08),
+        0 8px 16px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-container-enhanced::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+    background-size: 400% 100%;
+    animation: gradient-shift 4s ease infinite;
+}
+
+.chart-title-enhanced {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 1.4rem;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.chart-title-enhanced::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+/* 🎪 新增：載入動畫增強 */
+.loading-enhanced {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.spinner-enhanced {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(102, 126, 234, 0.1);
+    border-left: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin-enhanced 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin-enhanced {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text-enhanced {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 16px;
+    animation: pulse-text 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* 🎨 新增：表格增強樣式 */
+.table-enhanced {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+.table-enhanced thead th {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 20px 15px;
+    font-weight: 600;
+    text-align: center;
+    position: relative;
+}
+
+.table-enhanced thead th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #f093fb, #f5576c);
+}
+
+.table-enhanced tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.table-enhanced tbody tr:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.table-enhanced td {
+    padding: 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 🎯 新增：通知增強樣式 */
+.notification-enhanced {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    min-width: 350px;
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.15),
+        0 8px 16px rgba(0,0,0,0.1);
+    animation: slide-in-right 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notification-success {
+    background: linear-gradient(135deg, rgba(86, 171, 47, 0.9), rgba(168, 230, 207, 0.9));
+    color: #2d5016;
+}
+
+.notification-error {
+    background: linear-gradient(135deg, rgba(255, 65, 108, 0.9), rgba(255, 75, 43, 0.9));
+    color: white;
+}
+
+.notification-warning {
+    background: linear-gradient(135deg, rgba(247, 151, 30, 0.9), rgba(255, 210, 0, 0.9));
+    color: #8b4513;
+}
+
+/* 🎪 新增：模態框增強 */
+.modal-enhanced .modal-content {
+    border: none;
+    border-radius: 25px;
+    box-shadow: 
+        0 25px 50px rgba(0,0,0,0.2),
+        0 10px 20px rgba(0,0,0,0.1);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.95);
+    overflow: hidden;
+}
+
+.modal-enhanced .modal-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 25px 30px;
+    position: relative;
+}
+
+.modal-enhanced .modal-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f093fb, #f5576c);
+}
+
+.modal-enhanced .modal-body {
+    padding: 30px;
+}
+
+.modal-enhanced .modal-footer {
+    border: none;
+    padding: 20px 30px;
+    background: rgba(248, 249, 250, 0.5);
+}
+
+/* 🌟 新增：響應式增強 */
+@media (max-width: 768px) {
+    .card-3d {
+        margin: 10px 5px;
+        padding: 20px;
+    }
+    
+    .stat-card-enhanced {
+        margin: 10px 0;
+    }
+    
+    .chart-container-enhanced {
+        padding: 20px 15px;
+        margin: 15px 0;
+    }
+    
+    .notification-enhanced {
+        min-width: 300px;
+        margin: 10px;
+        right: 10px;
+    }
+}
+
+/* 🎨 新增：深色模式支援 */
+@media (prefers-color-scheme: dark) {
+    .card-3d {
+        background: linear-gradient(145deg, rgba(45,45,45,0.95), rgba(35,35,35,0.85));
+        color: #e0e0e0;
+    }
+    
+    .data-viz-container {
+        background: rgba(45, 45, 45, 0.95);
+        color: #e0e0e0;
+    }
+    
+    .chart-container-enhanced {
+        background: rgba(45, 45, 45, 0.98);
+        color: #e0e0e0;
+    }
+}
+</style>
+
 
     </style>
 </head>
@@ -2653,7 +3169,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbxvymH1zYeGNgEOsO3nzPukkQBjdQBWHZMncqIGS1w2Eg7mdHmC1f4DjlJ0FfXFMecQ/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbyNmaFPJnLHI0-J4TcskSMFzI8MwEoEXWo88IQPwCCyGaHzEgdTR7n_M40QzeCDio1W/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -6572,6 +7088,630 @@ function updateNewCharts(data) {
     createRadarChart(data.departmentData);
     createHeatmapChart(data.departmentData);
 }
+
+// 🎨 新增：粒子背景效果
+function createParticleBackground() {
+    const particleContainer = document.createElement('div');
+    particleContainer.className = 'particle-background';
+    document.body.appendChild(particleContainer);
+    
+    // 創建50個粒子
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // 隨機大小和位置
+        const size = Math.random() * 6 + 2;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+        
+        particleContainer.appendChild(particle);
+    }
+}
+
+// 🚀 新增：進度環形圖
+function createProgressRing(container, percentage, color = '#667eea') {
+    const svg = `
+        <svg class="progress-ring" viewBox="0 0 120 120">
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <circle class="background" cx="60" cy="60" r="52"></circle>
+            <circle class="progress" cx="60" cy="60" r="52" 
+                    stroke-dasharray="${percentage * 3.27} 327" 
+                    stroke-dashoffset="0"></circle>
+            <text x="60" y="65" text-anchor="middle" font-size="18" font-weight="bold" fill="${color}">
+                ${percentage}%
+            </text>
+        </svg>
+    `;
+    container.innerHTML = svg;
+}
+
+// 📊 新增：動態統計卡片
+function createEnhancedStatCard(container, icon, value, label, color) {
+    const card = document.createElement('div');
+    card.className = 'stat-card-enhanced';
+    card.style.background = `linear-gradient(135deg, ${color}dd, ${color}aa)`;
+    
+    card.innerHTML = `
+        <div class="stat-icon-enhanced">${icon}</div>
+        <div class="stat-value-enhanced" data-target="${value}">0</div>
+        <div class="stat-label">${label}</div>
+        <div class="progress-ring" style="width: 80px; height: 80px; margin: 10px auto;">
+            <svg viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="35" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"></circle>
+                <circle cx="40" cy="40" r="35" fill="none" stroke="white" stroke-width="4" 
+                        stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220"
+                        style="animation: progress-fill 2s ease-out 0.5s forwards;"></circle>
+            </svg>
+        </div>
+    `;
+    
+    container.appendChild(card);
+    
+    // 數字動畫效果
+    animateCounter(card.querySelector('.stat-value-enhanced'), value);
+}
+
+// 🎯 新增：數字計數動畫
+function animateCounter(element, target) {
+    let current = 0;
+    const increment = target / 100;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current);
+        }
+    }, 20);
+}
+
+// 🌈 新增：彩虹進度條
+function createRainbowProgress(container, percentage) {
+    const progressBar = document.createElement('div');
+    progressBar.style.cssText = `
+        width: 100%;
+        height: 8px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 10px 0;
+    `;
+    
+    const progress = document.createElement('div');
+    progress.style.cssText = `
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+        border-radius: 4px;
+        transition: width 2s cubic-bezier(0.23, 1, 0.320, 1);
+        background-size: 200% 100%;
+        animation: gradient-shift 3s ease infinite;
+    `;
+    
+    progressBar.appendChild(progress);
+    container.appendChild(progressBar);
+    
+    // 延遲動畫
+    setTimeout(() => {
+        progress.style.width = percentage + '%';
+    }, 500);
+}
+
+// 🎪 新增：3D餅圖效果
+function create3DPieChart(canvas, data) {
+    const ctx = canvas.getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                data: data.values,
+                backgroundColor: [
+                    'linear-gradient(135deg, #667eea, #764ba2)',
+                    'linear-gradient(135deg, #f093fb, #f5576c)',
+                    'linear-gradient(135deg, #4facfe, #00f2fe)',
+                    'linear-gradient(135deg, #43e97b, #38f9d7)',
+                    'linear-gradient(135deg, #fa709a, #fee140)'
+                ],
+                borderWidth: 0,
+                cutout: '60%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#667eea',
+                    borderWidth: 2,
+                    cornerRadius: 10,
+                    displayColors: false
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 2000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+}
+
+// 🌊 新增：波浪圖表效果
+function createWaveChart(canvas, data) {
+    const ctx = canvas.getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: '風險趨勢',
+                data: data.values,
+                borderColor: 'rgba(102, 126, 234, 1)',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: '#764ba2',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#667eea',
+                    borderWidth: 2,
+                    cornerRadius: 10,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(context) {
+                            return '時間: ' + context[0].label;
+                        },
+                        label: function(context) {
+                            return '風險值: ' + context.parsed.y + '%';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#666',
+                        font: {
+                            weight: '600'
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)',
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        color: '#666',
+                        font: {
+                            weight: '600'
+                        },
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart',
+                onProgress: function(animation) {
+                    // 波浪動畫效果
+                    const progress = animation.currentStep / animation.numSteps;
+                    ctx.globalAlpha = progress;
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+}
+
+// 🎭 新增：雷達圖增強效果
+function createEnhancedRadarChart(canvas, data) {
+    const ctx = canvas.getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: '風險分析',
+                data: data.values,
+                backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: '#764ba2'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#667eea',
+                    borderWidth: 2,
+                    cornerRadius: 10
+                }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(102, 126, 234, 0.2)',
+                        lineWidth: 2
+                    },
+                    pointLabels: {
+                        color: '#333',
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        }
+                    },
+                    ticks: {
+                        display: false
+                    }
+                }
+            },
+            animation: {
+                duration: 2500,
+                easing: 'easeOutElastic'
+            }
+        }
+    });
+}
+
+// 🎨 新增：熱力圖效果
+function createHeatmapChart(container, data) {
+    const heatmapContainer = document.createElement('div');
+    heatmapContainer.className = 'heatmap-container';
+    heatmapContainer.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(${data.columns}, 1fr);
+        gap: 2px;
+        padding: 20px;
+        background: rgba(255,255,255,0.9);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    `;
+    
+    data.values.forEach((value, index) => {
+        const cell = document.createElement('div');
+        const intensity = value / Math.max(...data.values);
+        const hue = 240 - (intensity * 120); // 從藍色到紅色
+        
+        cell.style.cssText = `
+            aspect-ratio: 1;
+            background: hsl(${hue}, 70%, ${50 + intensity * 30}%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: ${intensity > 0.5 ? 'white' : '#333'};
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fade-in 0.5s ease ${index * 0.1}s both;
+        `;
+        
+        cell.textContent = value;
+        cell.title = `風險值: ${value}`;
+        
+        cell.addEventListener('mouseenter', () => {
+            cell.style.transform = 'scale(1.1)';
+            cell.style.zIndex = '10';
+            cell.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
+        });
+        
+        cell.addEventListener('mouseleave', () => {
+            cell.style.transform = 'scale(1)';
+            cell.style.zIndex = '1';
+            cell.style.boxShadow = 'none';
+        });
+        
+        heatmapContainer.appendChild(cell);
+    });
+    
+    container.appendChild(heatmapContainer);
+}
+
+// 🎪 新增：儀表板圓形進度
+function createGaugeChart(container, value, maxValue = 100, label = '') {
+    const gaugeContainer = document.createElement('div');
+    gaugeContainer.className = 'gauge-container';
+    gaugeContainer.style.cssText = `
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 20px auto;
+    `;
+    
+    const percentage = (value / maxValue) * 100;
+    const rotation = (percentage / 100) * 180 - 90;
+    
+    gaugeContainer.innerHTML = `
+        <svg width="200" height="200" viewBox="0 0 200 200">
+            <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- 背景圓弧 -->
+            <path d="M 30 100 A 70 70 0 0 1 170 100" 
+                  fill="none" 
+                  stroke="rgba(0,0,0,0.1)" 
+                  stroke-width="20" 
+                  stroke-linecap="round"/>
+            
+            <!-- 進度圓弧 -->
+            <path d="M 30 100 A 70 70 0 0 1 170 100" 
+                  fill="none" 
+                  stroke="url(#gaugeGradient)" 
+                  stroke-width="20" 
+                  stroke-linecap="round"
+                  stroke-dasharray="220"
+                  stroke-dashoffset="${220 - (percentage * 2.2)}"
+                  style="transition: stroke-dashoffset 2s ease-out;"/>
+            
+            <!-- 指針 -->
+            <line x1="100" y1="100" x2="100" y2="40" 
+                  stroke="#333" 
+                  stroke-width="3" 
+                  stroke-linecap="round"
+                  transform="rotate(${rotation} 100 100)"
+                  style="transition: transform 2s ease-out;"/>
+            
+            <!-- 中心點 -->
+            <circle cx="100" cy="100" r="8" fill="#333"/>
+            
+            <!-- 數值文字 -->
+            <text x="100" y="130" text-anchor="middle" font-size="24" font-weight="bold" fill="#333">
+                ${value}
+            </text>
+            <text x="100" y="150" text-anchor="middle" font-size="14" fill="#666">
+                ${label}
+            </text>
+        </svg>
+    `;
+    
+    container.appendChild(gaugeContainer);
+}
+
+// 🌟 新增：動態通知系統
+function showEnhancedNotification(message, type = 'info', duration = 5000) {
+    const notification = document.createElement('div');
+    notification.className = `notification-enhanced notification-${type}`;
+    
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="font-size: 24px;">${icons[type]}</div>
+            <div>
+                <div style="font-weight: 600; margin-bottom: 5px;">
+                    ${type.charAt(0).toUpperCase() + type.slice(1)}
+                </div>
+                <div>${message}</div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" 
+                    style="background: none; border: none; font-size: 20px; cursor: pointer; margin-left: auto;">
+                ×
+            </button>
+        </div>
+        <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-top: 15px; overflow: hidden;">
+            <div style="width: 100%; height: 100%; background: rgba(255,255,255,0.8); border-radius: 2px; 
+                        animation: progress-countdown ${duration}ms linear;"></div>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 自動移除
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.animation = 'slide-out-right 0.5s ease-in';
+            setTimeout(() => notification.remove(), 500);
+        }
+    }, duration);
+}
+
+// 🎯 新增：互動式工具提示
+function createInteractiveTooltip(element, content) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'interactive-tooltip';
+    tooltip.style.cssText = `
+        position: absolute;
+        background: rgba(0,0,0,0.9);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        pointer-events: none;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    `;
+    tooltip.innerHTML = content;
+    
+    element.addEventListener('mouseenter', (e) => {
+        document.body.appendChild(tooltip);
+        const rect = element.getBoundingClientRect();
+        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+        
+        setTimeout(() => {
+            tooltip.style.opacity = '1';
+            tooltip.style.transform = 'translateY(0)';
+        }, 10);
+    });
+    
+    element.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+        tooltip.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            if (tooltip.parentElement) {
+                tooltip.remove();
+            }
+        }, 300);
+    });
+}
+
+// 🎨 新增：CSS動畫關鍵幀
+const additionalCSS = `
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes progress-fill {
+    from {
+        stroke-dashoffset: 220;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes progress-countdown {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+@keyframes slide-out-right {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+`;
+
+// 注入額外的CSS
+const style = document.createElement('style');
+style.textContent = additionalCSS;
+document.head.appendChild(style);
+
+// 🚀 新增：初始化所有視覺效果
+function initializeEnhancedVisuals() {
+    // 創建粒子背景
+    createParticleBackground();
+    
+    // 為所有現有元素添加增強效果
+    document.querySelectorAll('.card').forEach(card => {
+        card.classList.add('card-3d');
+    });
+    
+    // 添加互動提示
+    document.querySelectorAll('[data-tooltip]').forEach(element => {
+        createInteractiveTooltip(element, element.getAttribute('data-tooltip'));
+    });
+    
+    // 顯示歡迎通知
+    setTimeout(() => {
+        showEnhancedNotification('視覺化增強效果已啟用！', 'success');
+    }, 1000);
+}
+
+// 頁面載入完成後初始化
+document.addEventListener('DOMContentLoaded', initializeEnhancedVisuals);
+
     
 </script>
 
