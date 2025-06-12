@@ -1946,6 +1946,8 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     <button id="risk-prediction-btn" class="feature-btn" style="background: linear-gradient(to right, #8e44ad, #3498db);">
        </i> 📈<br>風險趨勢<br>預判分析
     </button>
+                <button class="feature-btn" id="high-risk-btn" style="background: linear-gradient(to right, #ff7e5f, #feb47b);">🔥<br>近期5級<br>以上風險</button>
+
                  <button class="feature-btn" id="dept-risk-index-btn" style="background: linear-gradient(to right, #1a6fc4, #34c3aa);">🎯<br>風險燈號<br>AI評析</button>
     <button id="inventory-btn" class="feature-btn">📝<br>部門<br>週期盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>事件登錄</button>
@@ -2653,7 +2655,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbwxgCkud-0fwcTTzDqzIhmbI7dWGb3fqRGLLKsmEXC6UY2OYWlmo4BOM2g0OQ_m2oli/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbxhAiEY1ISStdN57oc1yWvGSneYISQxei8YIKKSB-K13kEdU8Wl8cDqBpgNbTVdcvnt/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -6572,6 +6574,185 @@ function updateNewCharts(data) {
     createRadarChart(data.departmentData);
     createHeatmapChart(data.departmentData);
 }
+    // --- 在現有變數定義後添加 ---
+const highRiskBtn = document.getElementById('high-risk-btn');
+const highRiskPage = document.getElementById('high-risk-page');
+const backFromHighRiskBtn = document.getElementById('back-from-high-risk');
+const highRiskLoading = document.getElementById('high-risk-loading');
+const highRiskTableContainer = document.getElementById('high-risk-table-container');
+
+// --- 添加事件監聽器 ---
+if (highRiskBtn) {
+    highRiskBtn.addEventListener('click', function() {
+        showHighRiskPage();
+        loadHighRiskData();
+        resetInactivityTimer(); // 重置閒置計時器
+    });
+}
+
+if (backFromHighRiskBtn) {
+    backFromHighRiskBtn.addEventListener('click', function() {
+        highRiskPage.style.display = 'none';
+        showDashboard(); // 返回主儀表板
+        resetInactivityTimer(); // 重置閒置計時器
+    });
+}
+
+// --- 新增函數 ---
+
+// 顯示高風險頁面
+function showHighRiskPage() {
+    // 隱藏所有其他主要頁面區塊
+    loginSection.classList.add('hidden');
+    dashboardSection.classList.add('hidden');
+    inventorySection.classList.add('hidden');
+    deptRiskIndexPage.style.display = 'none';
+    dataAnalyticsPage.style.display = 'none';
+    eventRegistrationPage.style.display = 'none';
+    alertSettingsPage.style.display = 'none';
+    riskPredictionPage.style.display = 'none';
+    // 隱藏 s4 頁面 (如果存在)
+    const userManagementPage = document.getElementById('user-management-page');
+    if (userManagementPage) userManagementPage.style.display = 'none';
+    const systemSettingsPage = document.getElementById('system-settings-page');
+    if (systemSettingsPage) systemSettingsPage.style.display = 'none';
+    const dataBackupPage = document.getElementById('data-backup-page');
+    if (dataBackupPage) dataBackupPage.style.display = 'none';
+
+    document.querySelector('.container').classList.add('hidden'); // 隱藏主容器
+    highRiskPage.style.display = 'block'; // 顯示高風險頁面
+}
+
+// 加載高風險數據
+async function loadHighRiskData() {
+    highRiskLoading.style.display = 'block';
+    highRiskTableContainer.innerHTML = ''; // 清空舊表格
+
+    try {
+        const response = await fetch(`${scriptUrl}?action=getHighRiskEvents`);
+        const result = await response.json();
+
+        if (result.success) {
+            renderHighRiskTable(result.headers, result.data);
+        } else {
+            highRiskTableContainer.innerHTML = `<div class="alert alert-danger">載入失敗: ${result.message || '未知錯誤'}</div>`;
+        }
+    } catch (error) {
+        console.error('載入高風險數據時出錯:', error);
+        highRiskTableContainer.innerHTML = `<div class="alert alert-danger">載入數據時發生錯誤，請稍後再試。</div>`;
+    } finally {
+        highRiskLoading.style.display = 'none';
+    }
+}
+
+// 渲染高風險表格
+function renderHighRiskTable(headers, data) {
+    if (!headers || !data) {
+        highRiskTableContainer.innerHTML = '<div class="alert alert-warning">沒有獲取到有效的數據。</div>';
+        return;
+    }
+
+    if (data.length === 0) {
+        highRiskTableContainer.innerHTML = '<div class="alert alert-info">最近 15 天內沒有 5 級以上的風險事件。</div>';
+        return;
+    }
+
+    let tableHTML = '<table class="table table-striped table-bordered table-hover table-sm">'; // 使用 Bootstrap 表格樣式
+
+    // 表頭
+    tableHTML += '<thead class="table-dark"><tr>'; // 使用深色表頭
+    headers.forEach(header => {
+        tableHTML += `<th>${header}</th>`;
+    });
+    tableHTML += '</tr></thead>';
+
+    // 表格內容
+    tableHTML += '<tbody>';
+    data.forEach(row => {
+        tableHTML += '<tr>';
+        row.forEach((cell, index) => {
+            let cellContent = cell !== null && cell !== undefined ? cell : ''; // 處理 null 或 undefined
+            // 格式化時間戳記 (假設第一欄是時間戳記)
+            if (index === 0) {
+                try {
+                    const date = new Date(cellContent);
+                    // 檢查日期是否有效
+                    if (!isNaN(date.getTime())) {
+                        cellContent = date.toLocaleString('zh-TW', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit' // 添加秒
+                        });
+                    }
+                } catch (e) { /* 保持原始值 */ }
+            }
+            // 高亮風險等級 (假設第八欄是風險等級, index 7)
+            if (index === 7 && parseFloat(cellContent) > 5) {
+                tableHTML += `<td class="text-center align-middle"><span class="badge bg-danger fs-6">${cellContent}</span></td>`; // 增加字體大小
+            } else if (index === 7) { // 其他風險等級也置中
+                 tableHTML += `<td class="text-center align-middle">${cellContent}</td>`;
+            }
+             else {
+                tableHTML += `<td class="align-middle">${cellContent}</td>`; // 垂直居中
+            }
+        });
+        tableHTML += '</tr>';
+    });
+    tableHTML += '</tbody></table>';
+
+    highRiskTableContainer.innerHTML = tableHTML;
+}
+
+// --- 修改現有函數 ---
+
+// 修改 showDashboard 函數，確保隱藏新頁面
+function showDashboard() {
+    // ... (原有的隱藏其他頁面的代碼) ...
+    highRiskPage.style.display = 'none'; // <--- 新增這行
+    // ... (原有的顯示 dashboardSection 和 container 的代碼) ...
+    // 設置按鈕權限
+    setButtonPermissions();
+    // 更新使用者資訊顯示
+    updateUserInfo();
+    // 檢查當前預警狀態
+    checkCurrentAlertStatus();
+    // 為 s4 用戶添加管理功能
+    addManagementFeatures();
+    // 重置計時器
+    resetInactivityTimer();
+}
+
+// (可選) 如果你有 hideAllPages 函數，也需要更新它
+function hideAllPages() {
+    const pages = [
+        'login-section', 'dashboard-section', 'inventory-section',
+        'dept-risk-index-page', 'data-analytics-page', 'event-registration-page',
+        'alert-settings-page', 'risk-prediction-page', 'user-management-page',
+        'system-settings-page', 'data-backup-page',
+        'high-risk-page' // <--- 新增這行
+    ];
+
+    pages.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.style.display = 'none';
+            // 確保移除 'hidden' class (如果有的話) 以便 style.display 生效
+            if (page.classList.contains('hidden')) {
+                 page.classList.remove('hidden');
+            }
+            // 如果是主要頁面區塊，也添加 hidden class
+            if (['login-section', 'dashboard-section', 'inventory-section'].includes(pageId)) {
+                page.classList.add('hidden');
+            }
+        }
+    });
+
+    document.querySelector('.container').classList.add('hidden');
+}
+
     
 </script>
 
@@ -6773,6 +6954,30 @@ function updateNewCharts(data) {
     </div>
     
     <button class="btn btn-secondary mt-3" id="backFromDataBackup">返回</button>
+</div>
+
+    <!-- 近期5級以上風險清冊頁面 -->
+<div id="high-risk-page" class="dashboard-page" style="display: none;">
+    <div class="logo-container">
+        <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+    </div>
+    <h2 class="text-center mb-4">近期5級以上風險清冊</h2>
+
+    <!-- 載入提示 -->
+    <div id="high-risk-loading" class="text-center mt-3" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">載入中...</span>
+        </div>
+        <p class="mt-2">正在載入高風險事件...</p>
+    </div>
+
+    <!-- 表格容器 -->
+    <div id="high-risk-table-container" class="table-responsive">
+        <!-- 表格將由 JavaScript 動態生成 -->
+    </div>
+
+    <!-- 返回按鈕 -->
+    <button class="btn btn-secondary mt-3" id="back-from-high-risk">返回</button>
 </div>
 
 </body>
