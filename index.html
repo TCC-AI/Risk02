@@ -1946,6 +1946,11 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     <button id="risk-prediction-btn" class="feature-btn" style="background: linear-gradient(to right, #8e44ad, #3498db);">
        </i> 📈<br>風險趨勢<br>預判分析
     </button>
+                <!-- 在 .button-group 中新增這個按鈕 -->
+<button id="recent-high-risk-btn" class="feature-btn" style="background: linear-gradient(to right, #e74c3c, #c0392b);">
+    ⚠️<br>近期5級以上風險
+</button>
+
                  <button class="feature-btn" id="dept-risk-index-btn" style="background: linear-gradient(to right, #1a6fc4, #34c3aa);">🎯<br>風險燈號<br>AI評析</button>
     <button id="inventory-btn" class="feature-btn">📝<br>部門<br>週期盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>事件登錄</button>
@@ -2653,7 +2658,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbx2XgfW4SUPBtzt6uQmh-UJH3-fjR-GdwLuD7v7thGcsyCjZguS6WNTBdix8DZYyG1e/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbyS_qSUNew6KOCVr_b7ddMKYWtFLjMYAsioUUKRmE7xroFKYc5Vod5dSnis_u_pIGbW/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -6572,7 +6577,150 @@ function updateNewCharts(data) {
     createRadarChart(data.departmentData);
     createHeatmapChart(data.departmentData);
 }
+
+    // 🆕 近期高風險按鈕事件
+document.getElementById('recent-high-risk-btn').addEventListener('click', function() {
+    showRecentHighRiskSection();
+});
+
+// 🆕 顯示近期高風險頁面
+function showRecentHighRiskSection() {
+    hideAllSections();
+    document.getElementById('recent-high-risk-section').classList.remove('hidden');
+    loadRecentHighRiskData();
+}
+
+// 🆕 載入近期高風險數據
+async function loadRecentHighRiskData() {
+    try {
+        showLoadingMessage('highRiskTableBody', '載入近期高風險數據中...');
+        
+        const response = await fetch(`${API_URL}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displayHighRiskData(result.data);
+            updateHighRiskStats(result.stats);
+            populateDepartmentFilter(result.departments);
+        } else {
+            showErrorMessage('highRiskTableBody', result.message || '載入失敗');
+        }
+    } catch (error) {
+        console.error('載入近期高風險數據錯誤:', error);
+        showErrorMessage('highRiskTableBody', '系統錯誤，請稍後再試');
+    }
+}
+
+// 🆕 顯示高風險數據
+function displayHighRiskData(data) {
+    const tbody = document.getElementById('highRiskTableBody');
     
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" class="text-center text-muted">近期沒有5級以上的風險事件</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = data.map(item => `
+        <tr class="${getRiskRowClass(item.riskLevel)}">
+            <td>${formatDateTime(item.timestamp)}</td>
+            <td>${item.department || '-'}</td>
+            <td>${item.name || '-'}</td>
+            <td>${item.account || '-'}</td>
+            <td><span class="fw-bold">${item.riskItem || '-'}</span></td>
+            <td title="${item.riskDescription || '-'}">${truncateText(item.riskDescription, 30)}</td>
+            <td>${item.riskCategory || '-'}</td>
+            <td>
+                <span class="badge ${getRiskBadgeClass(item.riskLevel)}">
+                    ${item.riskLevel}級
+                </span>
+            </td>
+            <td>${item.relatedDepartments || '-'}</td>
+            <td>
+                <span class="badge ${item.isIncreased === '是' ? 'bg-danger' : 'bg-secondary'}">
+                    ${item.isIncreased || '-'}
+                </span>
+            </td>
+            <td class="text-center">${item.occurrences || 0}</td>
+            <td title="${item.reason || '-'}">${truncateText(item.reason, 40)}</td>
+            <td>${item.reporter || '-'}</td>
+        </tr>
+    `).join('');
+}
+
+// 🆕 更新統計資訊
+function updateHighRiskStats(stats) {
+    document.getElementById('highRiskCount').textContent = stats.totalCount || 0;
+    document.getElementById('affectedDepartments').textContent = stats.departmentCount || 0;
+    document.getElementById('avgRiskLevel').textContent = stats.avgRiskLevel || '0.0';
+}
+
+// 🆕 填充部門篩選器
+function populateDepartmentFilter(departments) {
+    const select = document.getElementById('riskDepartmentFilter');
+    select.innerHTML = '<option value="all">全部部門</option>';
+    
+    if (departments && departments.length > 0) {
+        departments.forEach(dept => {
+            select.innerHTML += `<option value="${dept}">${dept}</option>`;
+        });
+    }
+}
+
+// 🆕 輔助函數
+function getRiskRowClass(riskLevel) {
+    const level = parseInt(riskLevel);
+    if (level >= 9) return 'table-danger';
+    if (level >= 7) return 'table-warning';
+    return '';
+}
+
+function getRiskBadgeClass(riskLevel) {
+    const level = parseInt(riskLevel);
+    if (level >= 9) return 'bg-danger';
+    if (level >= 7) return 'bg-warning text-dark';
+    return 'bg-info';
+}
+
+function formatDateTime(dateTime) {
+    if (!dateTime) return '-';
+    const date = new Date(dateTime);
+    return date.toLocaleString('zh-TW', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function truncateText(text, maxLength) {
+    if (!text) return '-';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
+// 🆕 篩選功能
+document.getElementById('riskDepartmentFilter').addEventListener('change', filterHighRiskData);
+document.getElementById('riskLevelFilter').addEventListener('change', filterHighRiskData);
+
+function filterHighRiskData() {
+    const departmentFilter = document.getElementById('riskDepartmentFilter').value;
+    const riskLevelFilter = parseInt(document.getElementById('riskLevelFilter').value);
+    
+    // 重新載入數據with篩選條件
+    loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
+}
+
+// 🆕 其他按鈕事件
+document.getElementById('refreshHighRiskBtn').addEventListener('click', loadRecentHighRiskData);
+document.getElementById('backFromHighRiskBtn').addEventListener('click', showDashboard);
+document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
+
+// 🆕 匯出功能
+function exportHighRiskReport() {
+    // 實現匯出功能
+    alert('匯出功能開發中...');
+}
+
 </script>
 
 <!-- 🆕 用戶管理頁面 -->
@@ -6773,6 +6921,97 @@ function updateNewCharts(data) {
     </div>
     
     <button class="btn btn-secondary mt-3" id="backFromDataBackup">返回</button>
+</div>
+<!-- 近期高風險頁面 -->
+<div id="recent-high-risk-section" class="dashboard-page hidden">
+    <h1 class="centered-title">近期5級以上風險清冊</h1>
+    
+    <!-- 統計資訊 -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-value" id="highRiskCount">-</div>
+                <div class="stat-label">高風險事件總數</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-value" id="affectedDepartments">-</div>
+                <div class="stat-label">涉及部門數</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="avgRiskLevel">-</div>
+                <div class="stat-label">平均風險等級</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 篩選控制 -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label for="riskDepartmentFilter" class="form-label">部門篩選：</label>
+            <select id="riskDepartmentFilter" class="form-select">
+                <option value="all">全部部門</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="riskLevelFilter" class="form-label">風險等級篩選：</label>
+            <select id="riskLevelFilter" class="form-select">
+                <option value="5">5級以上</option>
+                <option value="6">6級以上</option>
+                <option value="7">7級以上</option>
+                <option value="8">8級以上</option>
+                <option value="9">9級以上</option>
+                <option value="10">僅10級</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 高風險事件表格 -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="highRiskTable">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 12%">時間戳記</th>
+                    <th style="width: 8%">部門</th>
+                    <th style="width: 8%">姓名</th>
+                    <th style="width: 8%">帳號</th>
+                    <th style="width: 12%">風險項目</th>
+                    <th style="width: 15%">風險描述</th>
+                    <th style="width: 8%">風險類別</th>
+                    <th style="width: 6%">風險等級</th>
+                    <th style="width: 10%">相關聯部門</th>
+                    <th style="width: 6%">是否增加</th>
+                    <th style="width: 6%">發生次數</th>
+                    <th style="width: 15%">原因/說明</th>
+                    <th style="width: 8%">提報者</th>
+                </tr>
+            </thead>
+            <tbody id="highRiskTableBody">
+                <tr>
+                    <td colspan="13" class="text-center">載入中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 操作按鈕 -->
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-success me-3" id="exportHighRiskBtn">
+            <i class="fas fa-download"></i> 匯出報告
+        </button>
+        <button type="button" class="btn btn-primary me-3" id="refreshHighRiskBtn">
+            <i class="fas fa-sync-alt"></i> 重新整理
+        </button>
+        <button type="button" class="btn btn-secondary" id="backFromHighRiskBtn">
+            <i class="fas fa-arrow-left"></i> 返回
+        </button>
+    </div>
 </div>
 
 </body>
