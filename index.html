@@ -6598,52 +6598,7 @@ if (backFromHighRiskBtn) {
     });
 }
 
-// --- 新增函數 ---
 
-// 顯示高風險頁面
-function showHighRiskPage() {
-    // 隱藏所有其他主要頁面區塊
-    loginSection.classList.add('hidden');
-    dashboardSection.classList.add('hidden');
-    inventorySection.classList.add('hidden');
-    deptRiskIndexPage.style.display = 'none';
-    dataAnalyticsPage.style.display = 'none';
-    eventRegistrationPage.style.display = 'none';
-    alertSettingsPage.style.display = 'none';
-    riskPredictionPage.style.display = 'none';
-    // 隱藏 s4 頁面 (如果存在)
-    const userManagementPage = document.getElementById('user-management-page');
-    if (userManagementPage) userManagementPage.style.display = 'none';
-    const systemSettingsPage = document.getElementById('system-settings-page');
-    if (systemSettingsPage) systemSettingsPage.style.display = 'none';
-    const dataBackupPage = document.getElementById('data-backup-page');
-    if (dataBackupPage) dataBackupPage.style.display = 'none';
-
-    document.querySelector('.container').classList.add('hidden'); // 隱藏主容器
-    highRiskPage.style.display = 'block'; // 顯示高風險頁面
-}
-
-// 加載高風險數據
-async function loadHighRiskData() {
-    highRiskLoading.style.display = 'block';
-    highRiskTableContainer.innerHTML = ''; // 清空舊表格
-
-    try {
-        const response = await fetch(`${scriptUrl}?action=getHighRiskEvents`);
-        const result = await response.json();
-
-        if (result.success) {
-            renderHighRiskTable(result.headers, result.data);
-        } else {
-            highRiskTableContainer.innerHTML = `<div class="alert alert-danger">載入失敗: ${result.message || '未知錯誤'}</div>`;
-        }
-    } catch (error) {
-        console.error('載入高風險數據時出錯:', error);
-        highRiskTableContainer.innerHTML = `<div class="alert alert-danger">載入數據時發生錯誤，請稍後再試。</div>`;
-    } finally {
-        highRiskLoading.style.display = 'none';
-    }
-}
 
 // 渲染高風險表格
 function renderHighRiskTable(headers, data) {
