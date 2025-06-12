@@ -6595,7 +6595,7 @@ async function loadRecentHighRiskData() {
     try {
         showLoadingMessage('highRiskTableBody', '載入近期高風險數據中...');
         
-        const response = await fetch(`${API_URL}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
+        const response = await fetch(`${scripturl}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
         const result = await response.json();
         
         if (result.success) {
@@ -6805,7 +6805,7 @@ async function loadRecentHighRiskData() {
             showLoadingMessage('highRiskTableBody', '載入近期高風險數據中...');
         }
         
-        const response = await fetch(`${API_URL}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
+        const response = await fetch(`${scripturl}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -6967,7 +6967,7 @@ async function loadRecentHighRiskDataWithFilter(department, minRiskLevel) {
     try {
         showLoadingMessage('highRiskTableBody', '載入篩選數據中...');
         
-        const response = await fetch(`${API_URL}?action=getRecentHighRisk&days=15&minRiskLevel=${minRiskLevel}&department=${department}`);
+        const response = await fetch(`${scripturl}?action=getRecentHighRisk&days=15&minRiskLevel=${minRiskLevel}&department=${department}`);
         const result = await response.json();
         
         if (result.success) {
