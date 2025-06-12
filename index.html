@@ -6720,6 +6720,272 @@ function exportHighRiskReport() {
     // 實現匯出功能
     alert('匯出功能開發中...');
 }
+    // 🔧 修正版本：確保 DOM 元素存在後再綁定事件
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 確保按鈕存在後再綁定事件
+    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
+    if (recentHighRiskBtn) {
+        recentHighRiskBtn.addEventListener('click', function() {
+            showRecentHighRiskSection();
+        });
+    }
+    
+    // 其他按鈕事件綁定
+    const refreshBtn = document.getElementById('refreshHighRiskBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', loadRecentHighRiskData);
+    }
+    
+    const backBtn = document.getElementById('backFromHighRiskBtn');
+    if (backBtn) {
+        backBtn.addEventListener('click', showDashboard);
+    }
+    
+    const exportBtn = document.getElementById('exportHighRiskBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportHighRiskReport);
+    }
+    
+    // 篩選器事件綁定
+    const deptFilter = document.getElementById('riskDepartmentFilter');
+    if (deptFilter) {
+        deptFilter.addEventListener('change', filterHighRiskData);
+    }
+    
+    const levelFilter = document.getElementById('riskLevelFilter');
+    if (levelFilter) {
+        levelFilter.addEventListener('change', filterHighRiskData);
+    }
+});
+
+// 🔧 確保 hideAllSections 函數存在
+function hideAllSections() {
+    // 隱藏所有主要區塊
+    const sections = [
+        'dashboard-section',
+        'inventory-section', 
+        'analysis-section',
+        'prediction-section',
+        'alert-section',
+        'recent-high-risk-section'  // 新增的區塊
+    ];
+    
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.classList.add('hidden');
+        }
+    });
+}
+
+// 🔧 修正顯示近期高風險頁面函數
+function showRecentHighRiskSection() {
+    try {
+        hideAllSections();
+        const section = document.getElementById('recent-high-risk-section');
+        if (section) {
+            section.classList.remove('hidden');
+            loadRecentHighRiskData();
+        } else {
+            console.error('找不到 recent-high-risk-section 元素');
+            alert('頁面載入錯誤，請重新整理頁面');
+        }
+    } catch (error) {
+        console.error('顯示近期高風險頁面時出錯:', error);
+        alert('系統錯誤，請稍後再試');
+    }
+}
+
+// 🔧 修正載入數據函數
+async function loadRecentHighRiskData() {
+    try {
+        const tableBody = document.getElementById('highRiskTableBody');
+        if (tableBody) {
+            showLoadingMessage('highRiskTableBody', '載入近期高風險數據中...');
+        }
+        
+        const response = await fetch(`${API_URL}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            displayHighRiskData(result.data);
+            updateHighRiskStats(result.stats);
+            populateDepartmentFilter(result.departments);
+        } else {
+            showErrorMessage('highRiskTableBody', result.message || '載入失敗');
+        }
+    } catch (error) {
+        console.error('載入近期高風險數據錯誤:', error);
+        showErrorMessage('highRiskTableBody', '系統錯誤，請稍後再試: ' + error.message);
+    }
+}
+
+// 🔧 安全的顯示載入訊息函數
+function showLoadingMessage(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = `<tr><td colspan="13" class="text-center"><i class="fas fa-spinner fa-spin"></i> ${message}</td></tr>`;
+    }
+}
+
+// 🔧 安全的顯示錯誤訊息函數
+function showErrorMessage(elementId, message) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = `<tr><td colspan="13" class="text-center text-danger"><i class="fas fa-exclamation-triangle"></i> ${message}</td></tr>`;
+    }
+}
+
+// 🔧 確保 showDashboard 函數存在
+function showDashboard() {
+    hideAllSections();
+    const dashboard = document.getElementById('dashboard-section');
+    if (dashboard) {
+        dashboard.classList.remove('hidden');
+    }
+}
+
+// 🔧 其餘函數保持不變...
+function displayHighRiskData(data) {
+    const tbody = document.getElementById('highRiskTableBody');
+    
+    if (!tbody) {
+        console.error('找不到 highRiskTableBody 元素');
+        return;
+    }
+    
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" class="text-center text-muted">近期沒有5級以上的風險事件</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = data.map(item => `
+        <tr class="${getRiskRowClass(item.riskLevel)}">
+            <td>${formatDateTime(item.timestamp)}</td>
+            <td>${item.department || '-'}</td>
+            <td>${item.name || '-'}</td>
+            <td>${item.account || '-'}</td>
+            <td><span class="fw-bold">${item.riskItem || '-'}</span></td>
+            <td title="${item.riskDescription || '-'}">${truncateText(item.riskDescription, 30)}</td>
+            <td>${item.riskCategory || '-'}</td>
+            <td>
+                <span class="badge ${getRiskBadgeClass(item.riskLevel)}">
+                    ${item.riskLevel}級
+                </span>
+            </td>
+            <td>${item.relatedDepartments || '-'}</td>
+            <td>
+                <span class="badge ${item.isIncreased === '是' ? 'bg-danger' : 'bg-secondary'}">
+                    ${item.isIncreased || '-'}
+                </span>
+            </td>
+            <td class="text-center">${item.occurrences || 0}</td>
+            <td title="${item.reason || '-'}">${truncateText(item.reason, 40)}</td>
+            <td>${item.reporter || '-'}</td>
+        </tr>
+    `).join('');
+}
+
+function updateHighRiskStats(stats) {
+    const elements = {
+        'highRiskCount': stats.totalCount || 0,
+        'affectedDepartments': stats.departmentCount || 0,
+        'avgRiskLevel': stats.avgRiskLevel || '0.0'
+    };
+    
+    Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    });
+}
+
+function populateDepartmentFilter(departments) {
+    const select = document.getElementById('riskDepartmentFilter');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="all">全部部門</option>';
+    
+    if (departments && departments.length > 0) {
+        departments.forEach(dept => {
+            select.innerHTML += `<option value="${dept}">${dept}</option>`;
+        });
+    }
+}
+
+// 輔助函數
+function getRiskRowClass(riskLevel) {
+    const level = parseInt(riskLevel);
+    if (level >= 9) return 'table-danger';
+    if (level >= 7) return 'table-warning';
+    return '';
+}
+
+function getRiskBadgeClass(riskLevel) {
+    const level = parseInt(riskLevel);
+    if (level >= 9) return 'bg-danger';
+    if (level >= 7) return 'bg-warning text-dark';
+    return 'bg-info';
+}
+
+function formatDateTime(dateTime) {
+    if (!dateTime) return '-';
+    try {
+        const date = new Date(dateTime);
+        return date.toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch (error) {
+        return dateTime.toString();
+    }
+}
+
+function truncateText(text, maxLength) {
+    if (!text) return '-';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
+function filterHighRiskData() {
+    const departmentFilter = document.getElementById('riskDepartmentFilter')?.value || 'all';
+    const riskLevelFilter = parseInt(document.getElementById('riskLevelFilter')?.value) || 5;
+    
+    loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
+}
+
+async function loadRecentHighRiskDataWithFilter(department, minRiskLevel) {
+    try {
+        showLoadingMessage('highRiskTableBody', '載入篩選數據中...');
+        
+        const response = await fetch(`${API_URL}?action=getRecentHighRisk&days=15&minRiskLevel=${minRiskLevel}&department=${department}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displayHighRiskData(result.data);
+            updateHighRiskStats(result.stats);
+        } else {
+            showErrorMessage('highRiskTableBody', result.message || '載入失敗');
+        }
+    } catch (error) {
+        console.error('載入篩選數據錯誤:', error);
+        showErrorMessage('highRiskTableBody', '系統錯誤，請稍後再試');
+    }
+}
+
+function exportHighRiskReport() {
+    alert('匯出功能開發中...');
+}
+
 
 </script>
 
