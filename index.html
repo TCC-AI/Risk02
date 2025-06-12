@@ -2707,6 +2707,99 @@ async function showAIAnalysis(department, riskValue) {
         `;
     }
 }
+/**
+ * 自動檢測頁面中是否存在必要的 HTML 元素 ID 和 class。
+ * 在瀏覽器開發者控制台中輸出檢測結果。
+ */
+function checkHtmlElements() {
+    console.log("--- 開始 HTML 元素結構檢查 ---");
+    const elementsToVerify = [
+        // 主要區塊 (通常用 classList 操作)
+        { type: 'id', selector: 'login-section', required: true },
+        { type: 'id', selector: 'dashboard-section', required: true },
+        { type: 'id', selector: 'inventory-section', required: true },
+
+        // 各功能頁面 (通常用 style.display 操作)
+        { type: 'id', selector: 'dept-risk-index-page', required: true },
+        { type: 'id', selector: 'data-analytics-page', required: true },
+        { type: 'id', selector: 'event-registration-page', required: true },
+        { type: 'id', selector: 'alert-settings-page', required: true },
+        { type: 'id', selector: 'risk-prediction-page', required: true },
+        { type: 'id', selector: 'high-risk-page', required: true }, // 新增的頁面
+
+        // S4 管理頁面 (可能不存在，視權限而定)
+        { type: 'id', selector: 'user-management-page', required: false },
+        { type: 'id', selector: 'system-settings-page', required: false },
+        { type: 'id', selector: 'data-backup-page', required: false },
+
+        // 主要容器 (通常用 classList 操作)
+        { type: 'class', selector: '.container', required: true }
+    ];
+
+    let missingRequiredElements = [];
+    let missingOptionalElements = [];
+    let foundCount = 0;
+
+    elementsToVerify.forEach(item => {
+        let element = null;
+        try {
+            if (item.type === 'id') {
+                element = document.getElementById(item.selector);
+            } else if (item.type === 'class') {
+                // querySelector 只找第一個匹配的，對於檢查是否存在已足夠
+                element = document.querySelector(item.selector);
+            }
+        } catch (e) {
+            console.error(`檢查選擇器 "${item.selector}" 時發生錯誤:`, e);
+        }
+
+
+        if (!element) {
+            const message = `元素未找到: [類型: ${item.type}, 選擇器: ${item.selector}]`;
+            if (item.required) {
+                missingRequiredElements.push(message);
+            } else {
+                missingOptionalElements.push(message);
+            }
+        } else {
+            foundCount++;
+            // 可選：如果找到，可以打印一個成功的日誌
+            // console.log(`元素已找到: [類型: ${item.type}, 選擇器: ${item.selector}]`);
+        }
+    });
+
+    console.log(`--- 檢查完成: ${foundCount} / ${elementsToVerify.length} 個元素被檢查 ---`);
+
+    if (missingRequiredElements.length === 0) {
+        console.log("✅ 所有必需的 HTML 元素都已找到。");
+    } else {
+        console.warn("⚠️ 警告：以下必需的 HTML 元素缺失，可能導致功能異常：");
+        missingRequiredElements.forEach(msg => console.warn(`   - ${msg}`));
+    }
+
+    if (missingOptionalElements.length > 0) {
+        console.info("ℹ️ 提示：以下可選的 HTML 元素缺失（可能是正常的，例如 S4 管理頁面）：");
+        missingOptionalElements.forEach(msg => console.info(`   - ${msg}`));
+    }
+
+    if (missingRequiredElements.length > 0) {
+         console.error("❌ 檢測到必需元素缺失，請務必檢查您的 HTML 文件結構！");
+    }
+
+    console.log("--- HTML 元素結構檢查結束 ---");
+
+    // 返回是否有必需元素缺失，方便後續判斷 (可選)
+    return missingRequiredElements.length === 0;
+}
+
+// --- 如何使用 ---
+// 你可以在腳本加載後自動執行一次檢查：
+// document.addEventListener('DOMContentLoaded', checkHtmlElements);
+
+// 或者，你可以在需要的時候，在瀏覽器的開發者控制台中手動輸入並執行：
+// checkHtmlElements();
+
+    
 
 // 全域函數 - 簡單的Markdown轉HTML
 function convertMarkdownToHTML(markdown) {
