@@ -6624,12 +6624,27 @@ document.getElementById('recent-high-risk-btn').addEventListener('click', functi
     showRecentHighRiskSection();
 });
 
-// 🆕 顯示近期高風險頁面
-function showRecentHighRiskSection() {
-    hideAllSections();
+function showRecentHighRisk() {
+    document.getElementById('dashboard-section').classList.add('hidden');
+    document.querySelector('.container').classList.add('hidden');
     document.getElementById('recent-high-risk-section').classList.remove('hidden');
+    
     loadRecentHighRiskData();
+    
+    // 🔥 加上這段事件綁定
+    setTimeout(() => {
+        document.getElementById('refreshHighRiskBtn').onclick = () => loadRecentHighRiskData();
+        document.getElementById('backFromHighRiskBtn').onclick = () => {
+            document.getElementById('recent-high-risk-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.querySelector('.container').classList.remove('hidden');
+        };
+        document.getElementById('exportHighRiskBtn').onclick = () => {
+            alert('匯出功能開發中...');
+        };
+    }, 100);
 }
+
 
 // 🆕 載入近期高風險數據
 async function loadRecentHighRiskData() {
