@@ -2799,8 +2799,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
+ 
     
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
@@ -2837,7 +2836,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
+ // 確保近期高風險按鈕事件正確綁定
+    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
+    if (recentHighRiskBtn) {
+        recentHighRiskBtn.addEventListener('click', function() {
+            showRecentHighRiskSection();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 其他按鈕事件綁定
+    const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
+    if (refreshHighRiskBtn) {
+        refreshHighRiskBtn.addEventListener('click', function() {
+            loadRecentHighRiskData();
+            resetInactivityTimer();
+        });
+    }
+    
+    const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
+    if (backFromHighRiskBtn) {
+        backFromHighRiskBtn.addEventListener('click', function() {
+            document.getElementById('recent-high-risk-section').classList.add('hidden');
+            showDashboard();
+            resetInactivityTimer();
+        });
+    }
+    
+    const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
+    if (exportHighRiskBtn) {
+        exportHighRiskBtn.addEventListener('click', function() {
+            alert('匯出功能開發中...');
+            resetInactivityTimer();
+        });
+    }
+    
+    // 篩選器事件綁定
+    const deptFilter = document.getElementById('riskDepartmentFilter');
+    if (deptFilter) {
+        deptFilter.addEventListener('change', filterHighRiskData);
+    }
+    
+    const levelFilter = document.getElementById('riskLevelFilter');
+    if (levelFilter) {
+        levelFilter.addEventListener('change', filterHighRiskData);
+    }
     
     // 🆕 新增用戶表單事件監聽器
     const addUserForm = document.getElementById('addUserForm');
@@ -6776,44 +6819,7 @@ function exportHighRiskReport() {
     // 實現匯出功能
     alert('匯出功能開發中...');
 }
-    // 🔧 修正版本：確保 DOM 元素存在後再綁定事件
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // 確保按鈕存在後再綁定事件
-    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
-    if (recentHighRiskBtn) {
-        recentHighRiskBtn.addEventListener('click', function() {
-            showRecentHighRiskSection();
-        });
-    }
-    
-    // 其他按鈕事件綁定
-    const refreshBtn = document.getElementById('refreshHighRiskBtn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', loadRecentHighRiskData);
-    }
-    
-    const backBtn = document.getElementById('backFromHighRiskBtn');
-    if (backBtn) {
-        backBtn.addEventListener('click', showDashboard);
-    }
-    
-    const exportBtn = document.getElementById('exportHighRiskBtn');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', exportHighRiskReport);
-    }
-    
-    // 篩選器事件綁定
-    const deptFilter = document.getElementById('riskDepartmentFilter');
-    if (deptFilter) {
-        deptFilter.addEventListener('change', filterHighRiskData);
-    }
-    
-    const levelFilter = document.getElementById('riskLevelFilter');
-    if (levelFilter) {
-        levelFilter.addEventListener('change', filterHighRiskData);
-    }
-});
+
 
 // 🔧 確保 hideAllSections 函數存在
 function hideAllSections() {
