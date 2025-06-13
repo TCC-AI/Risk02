@@ -1925,6 +1925,183 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 .collapsed-row {
     transition: all 0.3s ease;
 }
+/* 🚨 側滑風險預警容器 */
+.risk-alert-slider {
+    position: fixed;
+    top: 50%;
+    right: -320px; /* 初始隱藏在右側 */
+    transform: translateY(-50%);
+    width: 350px;
+    height: 150px;
+    z-index: 1000;
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 🎯 展開狀態 */
+.risk-alert-slider.expanded {
+    right: 0;
+}
+
+/* 🔔 主要預警內容 */
+.risk-alert-content {
+    width: 320px;
+    height: 100%;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52, #ff8a80);
+    border-radius: 15px 0 0 15px;
+    padding: 20px;
+    color: white;
+    box-shadow: -5px 0 20px rgba(255, 107, 107, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 🌟 背景裝飾 */
+.risk-alert-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse-bg 3s ease-in-out infinite;
+}
+
+@keyframes pulse-bg {
+    0%, 100% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(1.1); opacity: 0.2; }
+}
+
+/* 📢 預警標題 */
+.alert-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.alert-icon {
+    font-size: 18px;
+    margin-right: 8px;
+    animation: ring 2s ease-in-out infinite;
+}
+
+@keyframes ring {
+    0%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(-10deg); }
+    20% { transform: rotate(10deg); }
+}
+
+.alert-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* 📝 預警訊息 */
+.alert-message {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.risk-count {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffeb3b;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* 🔘 查看詳情按鈕 */
+.alert-action-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.alert-action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* 🏷️ 側邊標籤 */
+.risk-alert-tab {
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 80px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: -3px 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.risk-alert-tab:hover {
+    left: -25px;
+    box-shadow: -5px 0 15px rgba(255, 107, 107, 0.4);
+}
+
+.risk-alert-tab i {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 5px;
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.tab-text {
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+/* 📱 響應式設計 */
+@media (max-width: 768px) {
+    .risk-alert-slider {
+        width: 300px;
+        right: -270px;
+    }
+    
+    .risk-alert-content {
+        width: 270px;
+        padding: 15px;
+    }
+    
+    .risk-alert-slider.expanded {
+        right: 0;
+    }
+}
+
+/* 🎯 收合狀態的特殊樣式 */
+.risk-alert-slider.collapsed {
+    right: -320px;
+}
+
+.risk-alert-slider.collapsed .risk-alert-tab {
+    left: -30px;
+}
 
 
     </style>
@@ -7276,6 +7453,149 @@ async function loadRecentHighRiskDataWithFilter(department, minRiskLevel) {
 function exportHighRiskReport() {
     alert('匯出功能開發中...');
 }
+// 🚨 風險預警滑動控制 - 添加到現有 JavaScript 中
+class RiskAlertSlider {
+    constructor() {
+        this.slider = document.getElementById('risk-alert-slider');
+        this.isExpanded = false;
+        this.autoCollapseTimer = null;
+        this.init();
+    }
+
+    init() {
+        // 🎯 頁面載入後自動顯示
+        setTimeout(() => {
+            this.showAlert();
+        }, 2000);
+
+        // 🔄 定期更新風險數據
+        this.updateRiskData();
+        setInterval(() => {
+            this.updateRiskData();
+        }, 30000); // 每30秒更新一次
+    }
+
+    // 🎯 顯示預警 (從右側滑出)
+    showAlert() {
+        if (!this.slider) return;
+        
+        this.slider.classList.add('expanded');
+        this.slider.classList.remove('collapsed');
+        this.isExpanded = true;
+
+        // 🕐 5秒後自動收合
+        this.setAutoCollapse(5000);
+    }
+
+    // 🔄 切換展開/收合狀態
+    toggleAlert() {
+        if (this.isExpanded) {
+            this.hideAlert();
+        } else {
+            this.showAlert();
+        }
+    }
+
+    // 🎯 隱藏預警 (滑回右側，只露出標籤)
+    hideAlert() {
+        if (!this.slider) return;
+        
+        this.slider.classList.remove('expanded');
+        this.slider.classList.add('collapsed');
+        this.isExpanded = false;
+
+        // 清除自動收合計時器
+        if (this.autoCollapseTimer) {
+            clearTimeout(this.autoCollapseTimer);
+            this.autoCollapseTimer = null;
+        }
+    }
+
+    // ⏰ 設定自動收合
+    setAutoCollapse(delay) {
+        if (this.autoCollapseTimer) {
+            clearTimeout(this.autoCollapseTimer);
+        }
+        
+        this.autoCollapseTimer = setTimeout(() => {
+            this.hideAlert();
+        }, delay);
+    }
+
+    // 📊 更新風險數據
+    async updateRiskData() {
+        try {
+            // 🔧 從現有的 API 獲取最新風險統計
+            const response = await fetch(`${scriptUrl}?action=getCurrentAlertStatus`);
+            const data = await response.json();
+            
+            if (data.success && data.hasActiveAlerts) {
+                const riskCount = data.alertCount || 0;
+                const countElement = document.querySelector('.risk-count');
+                
+                if (countElement && riskCount > 0) {
+                    countElement.textContent = riskCount;
+                    
+                    // 🚨 如果風險數量增加，重新顯示預警
+                    if (riskCount > parseInt(countElement.dataset.lastCount || '0')) {
+                        this.showAlert();
+                    }
+                    
+                    countElement.dataset.lastCount = riskCount;
+                }
+            }
+            
+        } catch (error) {
+            console.error('更新風險數據失敗:', error);
+        }
+    }
+}
+
+// 🎯 全域函數
+function toggleRiskAlert() {
+    if (window.riskAlertSlider) {
+        window.riskAlertSlider.toggleAlert();
+    }
+}
+
+function showRiskDetails() {
+    // 🔗 跳轉到風險詳情頁面
+    if (typeof showRecentHighRiskSection === 'function') {
+        showRecentHighRiskSection();
+    } else {
+        // 備用方案：跳轉到部門風險係數頁面
+        showDeptRiskIndexPage();
+    }
+    
+    // 收合預警
+    if (window.riskAlertSlider) {
+        window.riskAlertSlider.hideAlert();
+    }
+}
+
+// 🚀 初始化 - 添加到現有的 DOMContentLoaded 事件中
+document.addEventListener('DOMContentLoaded', function() {
+    // 在現有的初始化代碼後面添加
+    window.riskAlertSlider = new RiskAlertSlider();
+    
+    // 🎯 滑鼠懸停時暫停自動收合
+    const slider = document.getElementById('risk-alert-slider');
+    
+    if (slider) {
+        slider.addEventListener('mouseenter', function() {
+            if (window.riskAlertSlider && window.riskAlertSlider.autoCollapseTimer) {
+                clearTimeout(window.riskAlertSlider.autoCollapseTimer);
+                window.riskAlertSlider.autoCollapseTimer = null;
+            }
+        });
+        
+        slider.addEventListener('mouseleave', function() {
+            if (window.riskAlertSlider && window.riskAlertSlider.isExpanded) {
+                window.riskAlertSlider.setAutoCollapse(3000); // 3秒後收合
+            }
+        });
+    }
+});
 
 
 </script>
@@ -7570,6 +7890,27 @@ function exportHighRiskReport() {
         </button>
     </div>
 </div>
-
+<!-- 🚨 側滑風險預警訊息 - 在 </body> 前添加 -->
+<div id="risk-alert-slider" class="risk-alert-slider">
+    <!-- 🔔 主要預警內容 -->
+    <div class="risk-alert-content">
+        <div class="alert-header">
+            <i class="fas fa-bell alert-icon"></i>
+            <span class="alert-title">緊急預警！</span>
+        </div>
+        <div class="alert-message">
+            目前有 <span class="risk-count">11</span> 個部門處於緊急風險狀態
+        </div>
+        <button class="alert-action-btn" onclick="showRiskDetails()">
+            查看詳情
+        </button>
+    </div>
+    
+    <!-- 🎯 側邊標籤 (點擊展開/收合) -->
+    <div class="risk-alert-tab" onclick="toggleRiskAlert()">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span class="tab-text">風險</span>
+    </div>
+</div>
 </body>
 </html>
