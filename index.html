@@ -2800,9 +2800,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
     document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
+   
     
-    // 🔧 確保近期高風險按鈕事件正確綁定
+     // 🆕 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
     if (recentHighRiskBtn) {
         recentHighRiskBtn.addEventListener('click', function() {
@@ -2811,7 +2811,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 其他按鈕事件綁定
+    // 🆕 底部按鈕事件綁定
     const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
     if (refreshHighRiskBtn) {
         refreshHighRiskBtn.addEventListener('click', function() {
@@ -2832,11 +2832,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
     if (exportHighRiskBtn) {
         exportHighRiskBtn.addEventListener('click', function() {
-            alert('匯出功能開發中...');
+            exportHighRiskReport();
             resetInactivityTimer();
         });
     }
-});
 
     
     // 🆕 新增用戶表單事件監聽器
