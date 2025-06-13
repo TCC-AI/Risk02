@@ -2577,22 +2577,22 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     <div class="logo-container">
         <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
     </div>
-    <h2 class="text-center mb-4">風險事件登錄</h2>
+    <h2 class="text-center mb-4">單一風險事件登錄</h2>
     
     <div class="event-form-container">
         <form id="eventRegistrationForm">
             <!-- 基本資訊區塊 -->
             <div class="row mb-3">
                 <div class="col-md-4">
-                    <label for="eventDepartment" class="form-label">部門</label>
+                    <label for="eventDepartment" class="form-label">登錄者部門</label>
                     <input type="text" class="form-control" id="eventDepartment" readonly>
                 </div>
                 <div class="col-md-4">
-                    <label for="eventName" class="form-label">姓名</label>
+                    <label for="eventName" class="form-label">登錄者姓名</label>
                     <input type="text" class="form-control" id="eventName" readonly>
                 </div>
                 <div class="col-md-4">
-                    <label for="eventUsername" class="form-label">帳號</label>
+                    <label for="eventUsername" class="form-label">登錄者帳號</label>
                     <input type="text" class="form-control" id="eventUsername" readonly>
                 </div>
             </div>
@@ -2600,7 +2600,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
             <!-- 風險資訊區塊 -->
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="riskDepartment" class="form-label">風險所屬部門 <span class="text-danger">*</span></label>
+                    <label for="riskDepartment" class="form-label">風險發生部門 <span class="text-danger">*</span></label>
                     <select class="form-select" id="riskDepartment" required>
                         <option value="">請選擇風險所屬部門</option>
                     </select>
