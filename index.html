@@ -1896,6 +1896,35 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     overflow: visible; /* ✅ 改為 visible 讓脈衝波可以擴散 */
 }
 }
+/* 🆕 展開/收折按鈕樣式 */
+.btn-expand-collapse {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3);
+}
+
+.btn-expand-collapse:hover {
+    background: linear-gradient(135deg, #2980b9, #1f5f8b);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+}
+
+.btn-expand-collapse i {
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+/* 🎯 收折行的過渡效果 */
+.collapsed-row {
+    transition: all 0.3s ease;
+}
 
 
     </style>
@@ -6706,26 +6735,166 @@ function showRecentHighRisk() {
 }
 
 
-// 🆕 載入近期高風險數據
+// 🔧 載入近期高風險資料 (正式版)
 async function loadRecentHighRiskData() {
     try {
-        showLoadingMessage('highRiskTableBody', '載入近期高風險數據中...');
-        
-        const response = await fetch(`${scriptUrl}?action=getRecentHighRisk&days=15&minRiskLevel=5`);
-        const result = await response.json();
-        
-        if (result.success) {
-            displayHighRiskData(result.data);
-            updateHighRiskStats(result.stats);
-            populateDepartmentFilter(result.departments);
-        } else {
-            showErrorMessage('highRiskTableBody', result.message || '載入失敗');
+        const tbody = document.getElementById('highRiskTableBody');
+        if (!tbody) {
+            console.error('找不到高風險表格');
+            return;
         }
+
+        // 顯示載入中狀態
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="13" style="text-align: center; padding: 30px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: #3498db;"></i>
+                    <div style="margin-top: 10px;">載入中...</div>
+                </td>
+            </tr>
+        `;
+
+        // 🆕 從實際資料源載入高風險資料
+        const highRiskData = await fetchHighRiskData();
+        
+        // 使用顯示函數處理資料
+        displayHighRiskData(highRiskData);
+
     } catch (error) {
-        console.error('載入近期高風險數據錯誤:', error);
-        showErrorMessage('highRiskTableBody', '系統錯誤，請稍後再試');
+        console.error('載入近期高風險資料時出錯:', error);
+        
+        // 顯示錯誤狀態
+        const tbody = document.getElementById('highRiskTableBody');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="13" style="text-align: center; padding: 30px; color: #e74c3c;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+                        <div style="margin-top: 10px;">載入資料時發生錯誤，請稍後再試</div>
+                        <button onclick="loadRecentHighRiskData()" style="margin-top: 10px; padding: 5px 15px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <i class="fas fa-redo"></i> 重新載入
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
     }
 }
+
+// 🆕 從實際資料源獲取高風險資料
+async function fetchHighRiskData() {
+    try {
+        // 🔧 從 API 端點獲取資料
+        const response = await fetch('/api/high-risk-events', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        // 確保資料格式正確
+        const data = result.data || result;
+        
+        // 🎯 篩選5級以上風險並按時間排序 (最新在前)
+        return data
+            .filter(item => (item.riskLevel || 0) >= 5)
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    } catch (apiError) {
+        console.warn('API 載入失敗，嘗試從本地資料載入:', apiError);
+        
+        // 🔧 備用方案：從本地儲存載入
+        return await fetchHighRiskDataFromLocalStorage();
+    }
+}
+
+// 🔧 從本地儲存載入高風險資料 (備用方案)
+async function fetchHighRiskDataFromLocalStorage() {
+    try {
+        const storedData = localStorage.getItem('riskEventsData');
+        if (!storedData) {
+            return [];
+        }
+
+        const allRiskEvents = JSON.parse(storedData);
+        
+        // 篩選5級以上風險並按時間排序
+        return allRiskEvents
+            .filter(item => (item.riskLevel || 0) >= 5)
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    } catch (error) {
+        console.error('從本地儲存載入資料失敗:', error);
+        return [];
+    }
+}
+
+    // 🆕 設定展開/收折功能
+function setupToggleRowsEvent() {
+    const toggleBtn = document.getElementById('toggle-rows-btn');
+    if (!toggleBtn) return;
+
+    let isExpanded = false;
+
+    toggleBtn.addEventListener('click', function() {
+        const collapsedRows = document.querySelectorAll('.collapsed-row');
+        
+        if (!isExpanded) {
+            // 展開
+            collapsedRows.forEach(row => {
+                row.style.display = '';
+            });
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> 收折資料';
+            isExpanded = true;
+        } else {
+            // 收折
+            collapsedRows.forEach(row => {
+                row.style.display = 'none';
+            });
+            toggleBtn.innerHTML = `<i class="fas fa-chevron-down"></i> 顯示更多資料 (還有 ${collapsedRows.length} 筆)`;
+            isExpanded = false;
+        }
+    });
+}
+
+// 🔧 更新高風險統計資訊
+function updateHighRiskStats(data) {
+    try {
+        // 高風險事件總數
+        const totalEvents = data.length;
+        const totalElement = document.querySelector('.stat-card:nth-child(1) .stat-number');
+        if (totalElement) {
+            totalElement.textContent = totalEvents;
+        }
+
+        // 涉及部門數
+        const departments = [...new Set(data.map(item => item.department).filter(dept => dept))];
+        const deptElement = document.querySelector('.stat-card:nth-child(2) .stat-number');
+        if (deptElement) {
+            deptElement.textContent = departments.length;
+        }
+
+        // 平均風險等級
+        const avgRisk = totalEvents > 0 
+            ? (data.reduce((sum, item) => sum + (item.riskLevel || 0), 0) / totalEvents).toFixed(1)
+            : '-';
+        const avgElement = document.querySelector('.stat-card:nth-child(3) .stat-number');
+        if (avgElement) {
+            avgElement.textContent = avgRisk;
+        }
+
+    } catch (error) {
+        console.error('更新統計資訊時出錯:', error);
+    }
+}
+
 
 // 🆕 顯示高風險數據
 function displayHighRiskData(data) {
@@ -6930,22 +7099,41 @@ function showDashboard() {
     }
 }
 
-// 🔧 其餘函數保持不變...
+// 🔧 顯示高風險數據 (正式版 - 支援收折功能)
 function displayHighRiskData(data) {
     const tbody = document.getElementById('highRiskTableBody');
     
-    if (!tbody) {
-        console.error('找不到 highRiskTableBody 元素');
-        return;
-    }
-    
     if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="13" class="text-center text-muted">近期沒有5級以上的風險事件</td></tr>';
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="13" style="text-align: center; padding: 30px; color: #7f8c8d;">
+                    <i class="fas fa-info-circle" style="font-size: 24px;"></i>
+                    <div style="margin-top: 10px;">近期沒有5級以上的風險事件</div>
+                </td>
+            </tr>
+        `;
+        updateHighRiskStats([]);
         return;
     }
-    
-    tbody.innerHTML = data.map(item => `
-        <tr class="${getRiskRowClass(item.riskLevel)}">
+
+    // 清空現有內容
+    tbody.innerHTML = '';
+
+    // 🎯 只顯示前5筆，其餘收折
+    const displayCount = 5;
+    const totalCount = data.length;
+
+    data.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = getRiskRowClass(item.riskLevel);
+        
+        // 🆕 第6筆之後的資料先隱藏
+        if (index >= displayCount) {
+            row.classList.add('collapsed-row');
+            row.style.display = 'none';
+        }
+
+        row.innerHTML = `
             <td>${formatDateTime(item.timestamp)}</td>
             <td>${item.department || '-'}</td>
             <td>${item.name || '-'}</td>
@@ -6967,9 +7155,33 @@ function displayHighRiskData(data) {
             <td class="text-center">${item.occurrences || 0}</td>
             <td title="${item.reason || '-'}">${truncateText(item.reason, 40)}</td>
             <td>${item.reporter || '-'}</td>
-        </tr>
-    `).join('');
+        `;
+
+        tbody.appendChild(row);
+    });
+
+    // 🆕 如果資料超過5筆，添加展開/收折按鈕
+    if (totalCount > displayCount) {
+        const expandRow = document.createElement('tr');
+        expandRow.id = 'expand-collapse-row';
+        expandRow.innerHTML = `
+            <td colspan="13" style="text-align: center; padding: 15px; background-color: #f8f9fa; border-top: 2px solid #dee2e6;">
+                <button id="toggle-rows-btn" class="btn-expand-collapse">
+                    <i class="fas fa-chevron-down"></i>
+                    顯示更多資料 (還有 ${totalCount - displayCount} 筆)
+                </button>
+            </td>
+        `;
+        tbody.appendChild(expandRow);
+
+        // 🎯 綁定展開/收折事件
+        setupToggleRowsEvent();
+    }
+
+    // 更新統計資訊
+    updateHighRiskStats(data);
 }
+
 
 function updateHighRiskStats(stats) {
     const elements = {
