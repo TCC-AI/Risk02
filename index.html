@@ -2799,13 +2799,44 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    // 🆕 近期高風險相關按鈕
+    document.addEventListener('DOMContentLoaded', function() {
+    // ... 其他現有代碼 ...
+    
+    // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
+    if (recentHighRiskBtn) {
+        recentHighRiskBtn.addEventListener('click', function() {
+            showRecentHighRiskSection();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 其他按鈕事件綁定
     const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
+    if (refreshHighRiskBtn) {
+        refreshHighRiskBtn.addEventListener('click', function() {
+            loadRecentHighRiskData();
+            resetInactivityTimer();
+        });
+    }
+    
     const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
+    if (backFromHighRiskBtn) {
+        backFromHighRiskBtn.addEventListener('click', function() {
+            document.getElementById('recent-high-risk-section').classList.add('hidden');
+            showDashboard();
+            resetInactivityTimer();
+        });
+    }
+    
     const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
-    const riskDepartmentFilter = document.getElementById('riskDepartmentFilter');
-    const riskLevelFilter = document.getElementById('riskLevelFilter');
+    if (exportHighRiskBtn) {
+        exportHighRiskBtn.addEventListener('click', function() {
+            alert('匯出功能開發中...');
+            resetInactivityTimer();
+        });
+    }
+});
 
     
     // 🆕 新增用戶表單事件監聽器
@@ -2880,54 +2911,7 @@ async function handleAddUserSubmit() {
         submitBtn.disabled = false;
     }
 }
-  // 🔧 近期高風險按鈕事件綁定
-    if (recentHighRiskBtn) {
-        recentHighRiskBtn.addEventListener('click', function() {
-            showRecentHighRiskSection();
-            resetInactivityTimer();
-        });
-    }
     
-    if (refreshHighRiskBtn) {
-        refreshHighRiskBtn.addEventListener('click', function() {
-            loadRecentHighRiskData();
-            resetInactivityTimer();
-        });
-    }
-    
-    if (backFromHighRiskBtn) {
-        backFromHighRiskBtn.addEventListener('click', function() {
-            document.getElementById('recent-high-risk-section').classList.add('hidden');
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    
-    if (exportHighRiskBtn) {
-        exportHighRiskBtn.addEventListener('click', function() {
-            exportHighRiskReport();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 篩選器事件綁定
-    if (riskDepartmentFilter) {
-        riskDepartmentFilter.addEventListener('change', filterHighRiskData);
-    }
-    
-    if (riskLevelFilter) {
-        riskLevelFilter.addEventListener('change', filterHighRiskData);
-    }
-    
-    // 🆕 新增用戶表單事件監聽器
-    const addUserForm = document.getElementById('addUserForm');
-    if (addUserForm) {
-        addUserForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handleAddUserSubmit();
-            resetInactivityTimer();
-        });
-    }   
 // 用戶管理頁面返回按鈕
     if (backFromUserManagement) {
         backFromUserManagement.addEventListener('click', function() {
@@ -6773,8 +6757,48 @@ document.getElementById('backFromHighRiskBtn').addEventListener('click', showDas
 document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
 
 // 🆕 匯出功能
-
-
+function exportHighRiskReport() {
+    // 實現匯出功能
+    alert('匯出功能開發中...');
+}
+    // 🔧 修正版本：確保 DOM 元素存在後再綁定事件
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 確保按鈕存在後再綁定事件
+    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
+    if (recentHighRiskBtn) {
+        recentHighRiskBtn.addEventListener('click', function() {
+            showRecentHighRiskSection();
+        });
+    }
+    
+    // 其他按鈕事件綁定
+    const refreshBtn = document.getElementById('refreshHighRiskBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', loadRecentHighRiskData);
+    }
+    
+    const backBtn = document.getElementById('backFromHighRiskBtn');
+    if (backBtn) {
+        backBtn.addEventListener('click', showDashboard);
+    }
+    
+    const exportBtn = document.getElementById('exportHighRiskBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportHighRiskReport);
+    }
+    
+    // 篩選器事件綁定
+    const deptFilter = document.getElementById('riskDepartmentFilter');
+    if (deptFilter) {
+        deptFilter.addEventListener('change', filterHighRiskData);
+    }
+    
+    const levelFilter = document.getElementById('riskLevelFilter');
+    if (levelFilter) {
+        levelFilter.addEventListener('change', filterHighRiskData);
+    }
+});
 
 // 🔧 確保 hideAllSections 函數存在
 function hideAllSections() {
@@ -6998,125 +7022,10 @@ async function loadRecentHighRiskDataWithFilter(department, minRiskLevel) {
         showErrorMessage('highRiskTableBody', '系統錯誤，請稍後再試');
     }
 }
-// 🔧 完整的匯出高風險報告函數（新增在 </script> 之前）
-async function exportHighRiskReport() {
-    try {
-        // 顯示載入狀態
-        const exportBtn = document.getElementById('exportHighRiskBtn');
-        if (!exportBtn) {
-            throw new Error('找不到匯出按鈕');
-        }
-        
-        const originalText = exportBtn.innerHTML;
-        exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 匯出中...';
-        exportBtn.disabled = true;
-        
-        // 獲取當前顯示的數據
-        const tableBody = document.getElementById('highRiskTableBody');
-        if (!tableBody) {
-            throw new Error('無法找到數據表格');
-        }
-        
-        const rows = tableBody.querySelectorAll('tr');
-        if (rows.length === 0 || (rows.length === 1 && rows[0].textContent.includes('載入中'))) {
-            throw new Error('沒有數據可以匯出');
-        }
-        
-        // 準備CSV標題
-        const headers = [
-            '時間戳記', '部門', '姓名', '帳號', '風險項目', 
-            '風險描述', '風險類別', '風險等級', '相關聯部門', 
-            '是否增加', '發生次數', '原因說明', '提報者'
-        ];
-        
-        // 準備CSV內容
-        let csvContent = '\uFEFF'; // 添加BOM以支援中文
-        csvContent += headers.join(',') + '\n';
-        
-        // 處理每一行數據
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length >= 13) { // 確保是完整的數據行
-                const rowData = [];
-                
-                cells.forEach((cell, index) => {
-                    let cellText = cell.textContent.trim();
-                    
-                    // 清理特殊內容
-                    if (cellText.includes('級')) {
-                        const match = cellText.match(/(\d+)級/);
-                        cellText = match ? match[1] + '級' : cellText;
-                    }
-                    
-                    // 處理徽章內容
-                    if (cellText === '是' || cellText === '否') {
-                        // 保持原樣
-                    } else if (cellText.includes('...')) {
-                        const title = cell.getAttribute('title');
-                        if (title && title !== cellText) {
-                            cellText = title;
-                        }
-                    }
-                    
-                    // CSV格式化
-                    if (cellText.includes(',') || cellText.includes('"') || cellText.includes('\n')) {
-                        cellText = '"' + cellText.replace(/"/g, '""') + '"';
-                    }
-                    
-                    rowData.push(cellText);
-                });
-                
-                csvContent += rowData.join(',') + '\n';
-            }
-        });
-        
-        // 創建並下載文件
-        const blob = new Blob([csvContent], { 
-            type: 'text/csv;charset=utf-8;' 
-        });
-        
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        
-        // 生成文件名
-        const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '');
-        link.setAttribute('download', `近期5級以上風險清冊_${dateStr}_${timeStr}.csv`);
-        
-        // 執行下載
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        // 顯示成功訊息
-        if (typeof showNotification === 'function') {
-            showNotification('報告匯出成功！文件已下載到您的下載資料夾', 'success');
-        } else {
-            alert('報告匯出成功！文件已下載到您的下載資料夾');
-        }
-        
-    } catch (error) {
-        console.error('匯出報告時發生錯誤:', error);
-        if (typeof showNotification === 'function') {
-            showNotification('匯出失敗：' + error.message, 'error');
-        } else {
-            alert('匯出失敗：' + error.message);
-        }
-    } finally {
-        // 恢復按鈕狀態
-        const exportBtn = document.getElementById('exportHighRiskBtn');
-        if (exportBtn) {
-            exportBtn.innerHTML = '<i class="fas fa-download"></i> 匯出報告';
-            exportBtn.disabled = false;
-        }
-    }
+
+function exportHighRiskReport() {
+    alert('匯出功能開發中...');
 }
-
-
 
 
 </script>
