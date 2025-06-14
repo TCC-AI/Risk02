@@ -4264,7 +4264,7 @@ dataAnalyticsBtn.addEventListener('click', function() {
     }
 
 // 🔧 修正：合併後的 loadAnalyticsData 函數
-async function loadAnalyticsData() {
+async function loadAnalyticsData(forceReload = false) {
     try {
         // 顯示載入狀態
         showLoadingState();
@@ -4272,11 +4272,17 @@ async function loadAnalyticsData() {
         const dateRange = document.getElementById('dateRange').value;
         const departmentFilter = document.getElementById('departmentFilter').value;
         
+        // 🆕 添加時間戳參數防止快取
+        const timestamp = forceReload ? `&t=${Date.now()}` : '';
+        
         // 獲取分析數據
-        const response = await fetch(`${scriptUrl}?action=getAnalyticsData&dateRange=${dateRange}&department=${departmentFilter}`);
+        const response = await fetch(`${scriptUrl}?action=getAnalyticsData&dateRange=${dateRange}&department=${departmentFilter}${timestamp}`);
         const result = await response.json();
         
         if (result.success) {
+            console.log('獲取到的數據:', result.data); // 🔧 調試用
+            console.log('事件數據數量:', result.data.events.length); // 🔧 調試用
+            
             // 更新統計卡片
             updateStatCards(result.data.stats);
             
@@ -4286,11 +4292,11 @@ async function loadAnalyticsData() {
             // 更新圖表
             updateCharts(result.data);
             
-            // 更新詳細數據表格
+            // 🔧 重點：更新詳細數據表格
             updateDetailTable(result.data.events);
             
-            // 🆕 載入預測分析和異常檢測
-            //await loadPredictionAnalysis(departmentFilter);
+            // 🆕 保留原本的預測分析載入（如果需要的話）
+            // await loadPredictionAnalysis(departmentFilter);
             
         } else {
             console.error('獲取分析數據失敗:', result.message);
@@ -4301,6 +4307,7 @@ async function loadAnalyticsData() {
         showErrorState('載入數據失敗，請稍後再試');
     }
 }
+
 
     
     // 顯示載入狀態
