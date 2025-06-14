@@ -2888,8 +2888,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
+    
     
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
@@ -2902,6 +2901,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             showRecentHighRiskSection();
+            resetInactivityTimer();
+        });
+    }
+
+    // 🆕 綁定強制重新載入按鈕（如果存在）
+    const forceReloadBtn = document.getElementById('forceReloadBtn');
+    if (forceReloadBtn) {
+        forceReloadBtn.addEventListener('click', function() {
+            console.log('強制重新載入數據...');
+            loadAnalyticsData(true); // 傳入 true 表示強制重新載入
             resetInactivityTimer();
         });
     }
