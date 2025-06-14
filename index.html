@@ -2441,12 +2441,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                 <option value="all">全部部門</option>
             </select>
         </div>
-        <div class="col-md-4 d-flex align-items-end">
-        <button type="button" class="btn btn-primary" id="forceReloadBtn">
-            <i class="fas fa-sync-alt"></i> 強制重新載入
-        </button>
     </div>
-    
         <!-- 統計卡片 -->
         <div class="row mb-4">
             <div class="col-md-3">
@@ -3029,15 +3024,7 @@ async function handleAddUserSubmit() {
             resetInactivityTimer();
         });
     }
-    // 🆕 綁定強制重新載入按鈕（如果存在）
-    const forceReloadBtn = document.getElementById('forceReloadBtn');
-    if (forceReloadBtn) {
-        forceReloadBtn.addEventListener('click', function() {
-            console.log('強制重新載入數據...');
-            loadAnalyticsData(true); // 傳入 true 表示強制重新載入
-            resetInactivityTimer();
-        });
-    }
+    
     // 篩選器事件綁定
     const deptFilter = document.getElementById('riskDepartmentFilter');
     if (deptFilter) {
@@ -4277,7 +4264,7 @@ dataAnalyticsBtn.addEventListener('click', function() {
     }
 
 // 🔧 修正：合併後的 loadAnalyticsData 函數
-async function loadAnalyticsData(forceReload = false) {
+async function loadAnalyticsData() {
     try {
         // 顯示載入狀態
         showLoadingState();
@@ -4285,17 +4272,11 @@ async function loadAnalyticsData(forceReload = false) {
         const dateRange = document.getElementById('dateRange').value;
         const departmentFilter = document.getElementById('departmentFilter').value;
         
-        // 🆕 添加時間戳參數防止快取
-        const timestamp = forceReload ? `&t=${Date.now()}` : '';
-        
         // 獲取分析數據
-        const response = await fetch(`${scriptUrl}?action=getAnalyticsData&dateRange=${dateRange}&department=${departmentFilter}${timestamp}`);
+        const response = await fetch(`${scriptUrl}?action=getAnalyticsData&dateRange=${dateRange}&department=${departmentFilter}`);
         const result = await response.json();
         
         if (result.success) {
-            console.log('獲取到的數據:', result.data); // 🔧 調試用
-            console.log('事件數據數量:', result.data.events.length); // 🔧 調試用
-            
             // 更新統計卡片
             updateStatCards(result.data.stats);
             
@@ -4305,11 +4286,11 @@ async function loadAnalyticsData(forceReload = false) {
             // 更新圖表
             updateCharts(result.data);
             
-            // 🔧 重點：更新詳細數據表格
+            // 更新詳細數據表格
             updateDetailTable(result.data.events);
             
-            // 🆕 保留原本的預測分析載入（如果需要的話）
-            // await loadPredictionAnalysis(departmentFilter);
+            // 🆕 載入預測分析和異常檢測
+            //await loadPredictionAnalysis(departmentFilter);
             
         } else {
             console.error('獲取分析數據失敗:', result.message);
@@ -4320,8 +4301,6 @@ async function loadAnalyticsData(forceReload = false) {
         showErrorState('載入數據失敗，請稍後再試');
     }
 }
-
-
 
     
     // 顯示載入狀態
@@ -4564,75 +4543,38 @@ async function loadAnalyticsData(forceReload = false) {
         });
     }
     
-// 🔧 修正版：updateDetailTable 函數
+// 更新詳細數據表格
 function updateDetailTable(events) {
-    console.log('🔍 開始更新詳細表格，事件數量:', events?.length || 0);
-    
     const tableBody = document.getElementById('detailDataTableBody');
-    if (!tableBody) {
-        console.error('❌ 找不到 detailDataTableBody 元素');
+    
+    if (events.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">無數據</td></tr>';
         return;
     }
     
-    // 清空現有內容
-    tableBody.innerHTML = '';
-    
-    if (!events || events.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">暫無資料</td></tr>';
-        console.log('⚠️ 沒有事件資料可顯示');
-        return;
-    }
-    
-    // 按時間排序（最新在前）並只取前20筆
-    const sortedEvents = events
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .slice(0, 20);
-    
-    console.log('📊 準備顯示的資料:', sortedEvents.slice(0, 3)); // 顯示前3筆作為範例
-    
-    sortedEvents.forEach((event, index) => {
-        try {
-            const row = document.createElement('tr');
-            
-            // 格式化時間
-            const timestamp = new Date(event.timestamp);
-            const formattedTime = timestamp.toLocaleString('zh-TW', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            
-            // 處理資料欄位
-            const department = event.department || event.riskDepartment || '未知';
-            const riskItem = event.riskItem || event.riskName || '未知';
-            const riskLevel = event.riskLevel || 0;
-            const occurrences = event.occurrences || event.frequency || event.occurrenceCount || 0;
-            const riskValue = (riskLevel * occurrences).toFixed(1);
-            
-            row.innerHTML = `
-                <td>${formattedTime}</td>
-                <td>${department}</td>
-                <td>${riskItem}</td>
-                <td><span class="badge bg-danger">${riskLevel}</span></td>
-                <td>${occurrences}</td>
-                <td>${riskValue}</td>
-            `;
-            
-            tableBody.appendChild(row);
-            
-        } catch (error) {
-            console.error(`❌ 處理第 ${index + 1} 筆資料時出錯:`, error, event);
-        }
+    // 🆕 按時間戳記降序排列（最新的在前面）
+    const sortedEvents = events.sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB - dateA; // 降序排列：最新的在前
     });
     
-    console.log(`✅ 詳細表格更新完成！顯示了 ${sortedEvents.length} 筆資料`);
+    const rows = sortedEvents.map(event => {
+        const riskValue = (event.riskLevel * event.occurrences).toFixed(1);
+        return `
+            <tr>
+                <td>${formatDate(event.timestamp)}</td>
+                <td>${event.department}</td>
+                <td>${event.riskName}</td>
+                <td>${event.riskLevel}</td>
+                <td>${event.occurrences}</td>
+                <td>${riskValue}</td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
 }
-
-
-
 
     
     // 格式化日期
