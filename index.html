@@ -2441,7 +2441,12 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                 <option value="all">全部部門</option>
             </select>
         </div>
+        <div class="col-md-4 d-flex align-items-end">
+        <button type="button" class="btn btn-primary" id="forceReloadBtn">
+            <i class="fas fa-sync-alt"></i> 強制重新載入
+        </button>
     </div>
+    
         <!-- 統計卡片 -->
         <div class="row mb-4">
             <div class="col-md-3">
@@ -3024,7 +3029,15 @@ async function handleAddUserSubmit() {
             resetInactivityTimer();
         });
     }
-    
+    // 🆕 綁定強制重新載入按鈕（如果存在）
+    const forceReloadBtn = document.getElementById('forceReloadBtn');
+    if (forceReloadBtn) {
+        forceReloadBtn.addEventListener('click', function() {
+            console.log('強制重新載入數據...');
+            loadAnalyticsData(true); // 傳入 true 表示強制重新載入
+            resetInactivityTimer();
+        });
+    }
     // 篩選器事件綁定
     const deptFilter = document.getElementById('riskDepartmentFilter');
     if (deptFilter) {
@@ -4307,6 +4320,7 @@ async function loadAnalyticsData(forceReload = false) {
         showErrorState('載入數據失敗，請稍後再試');
     }
 }
+
 
 
     
