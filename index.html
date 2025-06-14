@@ -2435,23 +2435,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                 <option value="all">全部時間</option>
             </select>
         </div>
-        <!-- 在詳細數據表格上方添加刷新按鈕 -->
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="chart-container">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="chart-title mb-0">詳細風險數據</h5>
-                <button id="refreshDataBtn" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-sync-alt"></i> 刷新數據
-                </button>
-            </div>
-            <div class="table-responsive">
-                <!-- 原有表格內容 -->
-            </div>
-        </div>
-    </div>
-</div>
-
         <div class="col-md-6">
             <label for="departmentFilter" class="form-label">部門篩選：</label>
             <select id="departmentFilter" class="form-select">
@@ -2907,11 +2890,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
-    // 添加到您的DOMContentLoaded事件處理函數中
-document.getElementById('refreshDataBtn').addEventListener('click', function() {
-    loadAnalyticsData(true); // 強制重新載入
-    resetInactivityTimer();
-});
+    
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
     if (recentHighRiskBtn) {
@@ -4573,7 +4552,7 @@ function updateDetailTable(events) {
         return;
     }
     
-    // 🔧 修正：按時間戳記降序排列（最新的在前面）
+    // 🆕 按時間戳記降序排列（最新的在前面）
     const sortedEvents = events.sort((a, b) => {
         const dateA = new Date(a.timestamp);
         const dateB = new Date(b.timestamp);
@@ -4595,8 +4574,6 @@ function updateDetailTable(events) {
     }).join('');
     
     tableBody.innerHTML = rows;
-}
-bleBody.innerHTML = rows;
 }
 
     
@@ -5758,8 +5735,6 @@ async function loadAnalyticsData() {
         const departmentFilter = document.getElementById('departmentFilter').value;
         
         // 獲取分析數據
-        // 獲取分析數據，添加時間戳參數強制刷新
-        const timestamp = forceReload ? new Date().getTime() : '';
         const response = await fetch(`${scriptUrl}?action=getAnalyticsData&dateRange=${dateRange}&department=${departmentFilter}`);
         const result = await response.json();
         
