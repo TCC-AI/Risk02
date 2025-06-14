@@ -2905,15 +2905,7 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
-    // 🆕 綁定強制重新載入按鈕（如果存在）
-    const forceReloadBtn = document.getElementById('forceReloadBtn');
-    if (forceReloadBtn) {
-        forceReloadBtn.addEventListener('click', function() {
-            console.log('強制重新載入數據...');
-            loadAnalyticsData(true); // 傳入 true 表示強制重新載入
-            resetInactivityTimer();
-        });
-    }
+    
     // 其他按鈕事件綁定
     const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
     if (refreshHighRiskBtn) {
@@ -7758,29 +7750,6 @@ function showRiskNotificationModal() {
                 </button>
             </div>
         </div>
-    </div>
-</div>
-<div class="row mb-4">
-    <div class="col-md-4">
-        <label for="dateRange" class="form-label">選擇時間範圍：</label>
-        <select id="dateRange" class="form-select">
-            <option value="7">最近7天</option>
-            <option value="30" selected>最近30天</option>
-            <option value="90">最近90天</option>
-            <option value="365">最近一年</option>
-            <option value="all">全部時間</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label for="departmentFilter" class="form-label">部門篩選：</label>
-        <select id="departmentFilter" class="form-select">
-            <option value="all">全部部門</option>
-        </select>
-    </div>
-    <div class="col-md-4 d-flex align-items-end">
-        <button type="button" class="btn btn-primary" id="forceReloadBtn">
-            <i class="fas fa-sync-alt"></i> 強制重新載入
-        </button>
     </div>
 </div>
 
