@@ -4564,38 +4564,60 @@ async function loadAnalyticsData(forceReload = false) {
         });
     }
     
-// 更新詳細數據表格
+// 🔧 修正後的 updateDetailTable 函數
 function updateDetailTable(events) {
-    const tableBody = document.getElementById('detailDataTableBody');
+    console.log('更新詳細表格，事件數量:', events.length); // 🔍 調試用
+    console.log('前5筆事件資料:', events.slice(0, 5)); // 🔍 調試用
     
-    if (events.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">無數據</td></tr>';
+    const tableBody = document.getElementById('detailDataTableBody'); // 🔧 修正：使用正確的 ID
+    if (!tableBody) {
+        console.error('找不到詳細表格的 tbody 元素');
         return;
     }
     
-    // 🆕 按時間戳記降序排列（最新的在前面）
-    const sortedEvents = events.sort((a, b) => {
-        const dateA = new Date(a.timestamp);
-        const dateB = new Date(b.timestamp);
-        return dateB - dateA; // 降序排列：最新的在前
+    // 🔧 重點：清空現有內容
+    tableBody.innerHTML = '';
+    
+    if (!events || events.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暫無資料</td></tr>';
+        return;
+    }
+    
+    // 🔧 重點：按時間排序（最新的在前）
+    const sortedEvents = events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    // 🔧 重點：只顯示前20筆最新資料
+    const displayEvents = sortedEvents.slice(0, 20);
+    
+    displayEvents.forEach(event => {
+        const row = document.createElement('tr');
+        
+        // 格式化時間
+        const date = new Date(event.timestamp);
+        const formattedDate = date.toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        
+        row.innerHTML = `
+            <td>${formattedDate}</td>
+            <td>${event.department || '未知'}</td>
+            <td>${event.riskItem || event.riskName || '未知'}</td>
+            <td><span class="badge bg-danger">${event.riskLevel || 0}</span></td>
+            <td>${event.occurrences || event.frequency || 0}</td>
+            <td>${((event.riskLevel || 0) * (event.occurrences || 1)).toFixed(1)}</td>
+        `;
+        
+        tableBody.appendChild(row);
     });
     
-    const rows = sortedEvents.map(event => {
-        const riskValue = (event.riskLevel * event.occurrences).toFixed(1);
-        return `
-            <tr>
-                <td>${formatDate(event.timestamp)}</td>
-                <td>${event.department}</td>
-                <td>${event.riskName}</td>
-                <td>${event.riskLevel}</td>
-                <td>${event.occurrences}</td>
-                <td>${riskValue}</td>
-            </tr>
-        `;
-    }).join('');
-    
-    tableBody.innerHTML = rows;
+    console.log(`✅ 詳細表格更新完成，顯示 ${displayEvents.length} 筆資料`);
 }
+
 
     
     // 格式化日期
