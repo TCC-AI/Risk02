@@ -7108,10 +7108,38 @@ function filterHighRiskData() {
     loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
 }
 
-// 🆕 其他按鈕事件
-document.getElementById('refreshHighRiskBtn').addEventListener('click', loadRecentHighRiskData);
-document.getElementById('backFromHighRiskBtn').addEventListener('click', showDashboard);
-document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
+// ✅ 修正後的代碼 - 一次性解決所有按鈕問題
+function safeAddEventListener(elementId, eventType, handler) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.addEventListener(eventType, handler);
+    }
+}
+
+// 高風險頁面按鈕
+safeAddEventListener('refreshHighRiskBtn', 'click', loadRecentHighRiskData);
+safeAddEventListener('backFromHighRiskBtn', 'click', showDashboard);
+safeAddEventListener('exportHighRiskBtn', 'click', exportHighRiskReport);
+
+// 🔧 追蹤事項按鈕 - 新增這4行
+safeAddEventListener('tracking-btn', 'click', function() {
+    showTrackingPage();
+    loadTrackingData();
+    resetInactivityTimer();
+});
+safeAddEventListener('backFromTrackingBtn', 'click', function() {
+    document.getElementById('tracking-page').style.display = 'none';
+    showDashboard();
+    resetInactivityTimer();
+});
+safeAddEventListener('refreshTrackingBtn', 'click', function() {
+    loadTrackingData();
+    resetInactivityTimer();
+});
+safeAddEventListener('exportTrackingBtn', 'click', function() {
+    exportTrackingReport();
+    resetInactivityTimer();
+});
 
 // 🆕 匯出功能
 function exportHighRiskReport() {
