@@ -2751,7 +2751,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbyADa_WVr8Bq0HPPFn30NAl51Rdoox7mAXNkMFAVt_sMdxUW3ULC4PlMo06Qhb3fh4u/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -7444,91 +7444,100 @@ function showTrackingPage() {
 }
 
 /**
- * 載入追蹤事項數據
+ * 載入追蹤事項數據 - 修改版
  */
 async function loadTrackingData() {
     try {
         // 顯示載入狀態
-        document.getElementById('trackingLoadingMsg').style.display = 'block';
-        document.getElementById('trackingStatsContainer').style.display = 'none';
-        document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
-            '<tr><td colspan="6" class="text-center">分析中...</td></tr>';
+        document.getElementById('riskTrackingLoadingMsg').style.display = 'block';
+        document.getElementById('incompleteInventoryLoadingMsg').style.display = 'block';
         
-        // 發送請求到後端
-        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryDepartments`);
-        const result = await response.json();
+        // 載入風險追蹤資料
+        await loadRiskTrackingData();
         
-        if (result.success) {
-            // 更新統計資訊
-            updateTrackingStats(result.stats);
-            
-            // 更新表格
-            updateIncompleteDeptsTable(result.data);
-            
-            // 顯示統計容器
-            document.getElementById('trackingStatsContainer').style.display = 'block';
-        } else {
-            document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
-                `<tr><td colspan="6" class="text-center text-danger">載入失敗：${result.message}</td></tr>`;
-        }
+        // 載入上月未盤點部門資料
+        await loadIncompleteInventoryData();
         
     } catch (error) {
         console.error('載入追蹤事項數據時發生錯誤:', error);
-        document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
-            '<tr><td colspan="6" class="text-center text-danger">載入失敗，請稍後再試</td></tr>';
+        showNotification('載入失敗，請稍後再試', 'error');
     } finally {
-        document.getElementById('trackingLoadingMsg').style.display = 'none';
+        document.getElementById('riskTrackingLoadingMsg').style.display = 'none';
+        document.getElementById('incompleteInventoryLoadingMsg').style.display = 'none';
     }
 }
 
 /**
- * 更新追蹤統計資訊
+ * 載入風險追蹤資料
  */
-function updateTrackingStats(stats) {
-    document.getElementById('totalDepartments').textContent = stats.totalDepartments || 0;
-    document.getElementById('incompleteDepartments').textContent = stats.incompleteDepartments || 0;
-    document.getElementById('completionRate').textContent = `${stats.completionRate || 0}%`;
+async function loadRiskTrackingData() {
+    try {
+        const response = await fetch(`${scriptUrl}?action=getRiskTrackingData`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displayRiskTrackingData(result.data);
+        } else {
+            document.getElementById('riskTrackingTableBody').innerHTML = 
+                `<tr><td colspan="13" class="text-center text-danger">載入失敗：${result.message}</td></tr>`;
+        }
+    } catch (error) {
+        console.error('載入風險追蹤資料時發生錯誤:', error);
+        document.getElementById('riskTrackingTableBody').innerHTML = 
+            '<tr><td colspan="13" class="text-center text-danger">載入失敗，請稍後再試</td></tr>';
+    }
 }
 
 /**
- * 更新未完成部門表格
+ * 顯示風險追蹤資料
  */
-function updateIncompleteDeptsTable(data) {
-    const tableBody = document.getElementById('incompleteDepartmentsTableBody');
+function displayRiskTrackingData(data) {
+    const tableBody = document.getElementById('riskTrackingTableBody');
     
-    if (data.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center text-success">
-                    <i class="fas fa-check-circle"></i> 所有部門都已完成上月風險盤點！
-                </td>
-            </tr>
-        `;
+    if (!data || data.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="13" class="text-center text-muted">暫無風險追蹤資料</td></tr>';
         return;
     }
     
-    const rows = data.map((dept, index) => {
-        const missingCount = 25 - dept.reportCount;
-        const statusClass = dept.reportCount < 10 ? 'bg-danger' : 
-                           dept.reportCount < 20 ? 'bg-warning' : 'bg-info';
-        const statusText = dept.reportCount < 10 ? '嚴重不足' : 
-                          dept.reportCount < 20 ? '不足' : '接近達標';
-        
+    const rows = data.map((item, index) => {
+        const rowId = `risk-tracking-row-${index}`;
         return `
-            <tr>
-                <td class="text-center">${index + 1}</td>
-                <td><strong>${dept.department}</strong></td>
-                <td class="text-center">
-                    <span class="badge ${statusClass}">${dept.reportCount} 筆</span>
+            <tr id="${rowId}">
+                <td>${item.columnA || '-'}</td>
+                <td>${item.columnB || '-'}</td>
+                <td>${item.columnE || '-'}</td>
+                <td>${item.columnF || '-'}</td>
+                <td>${item.columnG || '-'}</td>
+                <td>${item.columnH || '-'}</td>
+                <td>${item.columnK || '-'}</td>
+                <td>${item.columnL || '-'}</td>
+                <td>${item.columnM || '-'}</td>
+                <td>
+                    <input type="text" 
+                           class="form-control form-control-sm" 
+                           id="trackingContent_${index}" 
+                           value="${item.columnN || ''}"
+                           placeholder="請輸入追蹤內容">
                 </td>
-                <td class="text-center">
-                    <span class="text-danger"><strong>${missingCount} 筆</strong></span>
+                <td>
+                    <input type="date" 
+                           class="form-control form-control-sm" 
+                           id="expectedDate_${index}" 
+                           value="${formatDateForInput(item.columnO)}">
                 </td>
-                <td class="text-center">
-                    ${dept.lastReportTime ? formatDateTime(dept.lastReportTime) : '無記錄'}
+                <td>
+                    <select class="form-select form-select-sm" id="isCompleted_${index}">
+                        <option value="">請選擇</option>
+                        <option value="是" ${item.columnP === '是' ? 'selected' : ''}>是</option>
+                        <option value="否" ${item.columnP === '否' ? 'selected' : ''}>否</option>
+                    </select>
                 </td>
-                <td class="text-center">
-                    <span class="badge ${statusClass}">${statusText}</span>
+                <td>
+                    <button type="button" 
+                            class="btn btn-primary btn-sm" 
+                            onclick="submitRiskTrackingRow(${index}, ${item.rowNumber})">
+                        <i class="fas fa-paper-plane"></i> 送出
+                    </button>
                 </td>
             </tr>
         `;
@@ -7538,85 +7547,124 @@ function updateIncompleteDeptsTable(data) {
 }
 
 /**
- * 匯出追蹤報告
+ * 送出風險追蹤資料
  */
-async function exportTrackingReport() {
+async function submitRiskTrackingRow(index, rowNumber) {
     try {
-        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryDepartments`);
+        const trackingContent = document.getElementById(`trackingContent_${index}`).value;
+        const expectedDate = document.getElementById(`expectedDate_${index}`).value;
+        const isCompleted = document.getElementById(`isCompleted_${index}`).value;
+        
+        // 顯示載入狀態
+        const submitBtn = event.target;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 送出中...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch(`${scriptUrl}?action=updateRiskTrackingData`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                rowNumber: rowNumber,
+                trackingContent: trackingContent,
+                expectedDate: expectedDate,
+                isCompleted: isCompleted
+            })
+        });
+        
         const result = await response.json();
         
         if (result.success) {
-            const reportContent = generateTrackingReport(result);
-            
-            // 創建並下載文件
-            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `追蹤事項報告_${new Date().toISOString().split('T')[0]}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            
-            showNotification('追蹤報告已成功匯出！', 'success');
+            showNotification('資料已成功更新！', 'success');
         } else {
-            showNotification('匯出報告失敗：' + result.message, 'error');
+            showNotification('更新失敗：' + result.message, 'error');
         }
+        
     } catch (error) {
-        console.error('匯出追蹤報告時發生錯誤:', error);
-        showNotification('匯出報告失敗，請稍後再試', 'error');
+        console.error('送出風險追蹤資料時發生錯誤:', error);
+        showNotification('送出失敗，請稍後再試', 'error');
+    } finally {
+        // 恢復按鈕狀態
+        const submitBtn = event.target;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 送出';
+        submitBtn.disabled = false;
     }
 }
 
 /**
- * 生成追蹤報告內容
+ * 載入上月未盤點部門資料
  */
-function generateTrackingReport(data) {
-    const now = new Date();
-    const reportDate = now.toLocaleString('zh-TW');
-    
-    let report = `昶青實業 - 追蹤事項報告
-========================================
-
-生成時間：${reportDate}
-報告類型：尚未完成上個月風險盤點部門
-
-統計摘要：
-- 總部門數：${data.stats.totalDepartments}
-- 未完成部門數：${data.stats.incompleteDepartments}
-- 完成率：${data.stats.completionRate}%
-
-`;
-
-    if (data.data.length === 0) {
-        report += `✅ 所有部門都已完成上月風險盤點！
-
-`;
-    } else {
-        report += `⚠️ 以下部門尚未完成上月風險盤點：
-
-`;
-        data.data.forEach((dept, index) => {
-            const missingCount = 25 - dept.reportCount;
-            report += `${index + 1}. ${dept.department}
-   - 上月提報筆數：${dept.reportCount} 筆
-   - 缺少筆數：${missingCount} 筆
-   - 最後提報時間：${dept.lastReportTime ? formatDateTime(dept.lastReportTime) : '無記錄'}
-
-`;
-        });
+async function loadIncompleteInventoryData() {
+    try {
+        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryData`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displayIncompleteInventoryData(result.data);
+        } else {
+            document.getElementById('incompleteInventoryTableBody').innerHTML = 
+                `<tr><td colspan="2" class="text-center text-danger">載入失敗：${result.message}</td></tr>`;
+        }
+    } catch (error) {
+        console.error('載入上月未盤點部門資料時發生錯誤:', error);
+        document.getElementById('incompleteInventoryTableBody').innerHTML = 
+            '<tr><td colspan="2" class="text-center text-danger">載入失敗，請稍後再試</td></tr>';
     }
-
-    report += `========================================
-報告結束
-
-此報告由昶青實業風險管理系統自動生成
-T.C.C.管理本部
-`;
-
-    return report;
 }
+
+/**
+ * 顯示上月未盤點部門資料
+ */
+function displayIncompleteInventoryData(data) {
+    const tableBody = document.getElementById('incompleteInventoryTableBody');
+    
+    if (!data || data.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="2" class="text-center text-success"><i class="fas fa-check-circle"></i> 所有部門都已完成上月盤點！</td></tr>';
+        return;
+    }
+    
+    const rows = data.map(item => {
+        return `
+            <tr>
+                <td>${item.columnA || '-'}</td>
+                <td>${item.columnB || '-'}</td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
+}
+
+/**
+ * 格式化日期為輸入框格式
+ */
+function formatDateForInput(dateValue) {
+    if (!dateValue) return '';
+    
+    try {
+        const date = new Date(dateValue);
+        if (isNaN(date.getTime())) return '';
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+    } catch (error) {
+        return '';
+    }
+}
+
+// 修改原有的 refreshTrackingBtn 事件監聽器
+if (refreshTrackingBtn) {
+    refreshTrackingBtn.addEventListener('click', function() {
+        loadTrackingData(); // 載入所有追蹤資料
+        resetInactivityTimer();
+    });
+}
+
 
 </script>
 
@@ -7981,7 +8029,7 @@ T.C.C.管理本部
         </div>
     </div>
 </div>
-<!-- 追蹤事項頁面 -->
+<!-- 追蹤事項頁面 - 修改版 -->
 <div id="tracking-page" class="dashboard-page" style="display: none;">
     <div class="logo-container">
         <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
@@ -7989,6 +8037,52 @@ T.C.C.管理本部
     <h2 class="text-center mb-4">
         <i class="fas fa-clipboard-list text-warning"></i> 追蹤事項
     </h2>
+    
+    <!-- 風險追蹤區塊 -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-search"></i> 風險追蹤
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- 載入提示 -->
+            <div id="riskTrackingLoadingMsg" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">載入中...</span>
+                </div>
+                <p class="mt-2">正在載入風險追蹤資料...</p>
+            </div>
+            
+            <!-- 風險追蹤表格 -->
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="riskTrackingTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>A欄</th>
+                            <th>B欄</th>
+                            <th>E欄</th>
+                            <th>F欄</th>
+                            <th>G欄</th>
+                            <th>H欄</th>
+                            <th>K欄</th>
+                            <th>L欄</th>
+                            <th>M欄</th>
+                            <th>追蹤內容(N)</th>
+                            <th>預計完成日(O)</th>
+                            <th>是否完成(P)</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riskTrackingTableBody">
+                        <tr>
+                            <td colspan="13" class="text-center">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     
     <!-- 尚未完成上個月風險盤點部門 -->
     <div class="card mb-4">
@@ -7998,59 +8092,26 @@ T.C.C.管理本部
             </h5>
         </div>
         <div class="card-body">
-            <div class="alert alert-info mb-3">
-                <strong>篩選條件：</strong> 上個月提報資料少於25筆的部門
-            </div>
-            
             <!-- 載入提示 -->
-            <div id="trackingLoadingMsg" class="text-center" style="display: none;">
+            <div id="incompleteInventoryLoadingMsg" class="text-center" style="display: none;">
                 <div class="spinner-border text-warning" role="status">
                     <span class="visually-hidden">載入中...</span>
                 </div>
-                <p class="mt-2">正在分析部門盤點狀況...</p>
-            </div>
-            
-            <!-- 統計資訊 -->
-            <div id="trackingStatsContainer" class="row mb-3" style="display: none;">
-                <div class="col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-value" id="totalDepartments">-</div>
-                        <div class="stat-label">總部門數</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
-                        <div class="stat-icon">⚠️</div>
-                        <div class="stat-value" id="incompleteDepartments">-</div>
-                        <div class="stat-label">未完成部門</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
-                        <div class="stat-icon">✅</div>
-                        <div class="stat-value" id="completionRate">-</div>
-                        <div class="stat-label">完成率</div>
-                    </div>
-                </div>
+                <p class="mt-2">正在分析上月盤點狀況...</p>
             </div>
             
             <!-- 部門清單表格 -->
             <div class="table-responsive">
-                <table class="table table-striped table-bordered" id="incompleteDepartmentsTable">
+                <table class="table table-striped table-bordered" id="incompleteInventoryTable">
                     <thead class="table-dark">
                         <tr>
-                            <th style="width: 5%">#</th>
-                            <th style="width: 25%">部門名稱</th>
-                            <th style="width: 15%">上月提報筆數</th>
-                            <th style="width: 15%">缺少筆數</th>
-                            <th style="width: 20%">最後提報時間</th>
-                            <th style="width: 20%">狀態</th>
+                            <th style="width: 50%">時間 (A欄)</th>
+                            <th style="width: 50%">部門 (B欄)</th>
                         </tr>
                     </thead>
-                    <tbody id="incompleteDepartmentsTableBody">
+                    <tbody id="incompleteInventoryTableBody">
                         <tr>
-                            <td colspan="6" class="text-center">載入中...</td>
+                            <td colspan="2" class="text-center">載入中...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -8063,14 +8124,12 @@ T.C.C.管理本部
         <button type="button" class="btn btn-primary me-3" id="refreshTrackingBtn">
             <i class="fas fa-sync-alt"></i> 重新整理
         </button>
-        <button type="button" class="btn btn-outline-success me-3" id="exportTrackingBtn">
-            <i class="fas fa-download"></i> 匯出報告
-        </button>
         <button type="button" class="btn btn-secondary" id="backFromTrackingBtn">
             <i class="fas fa-arrow-left"></i> 返回
         </button>
     </div>
 </div>
+
 
 </body>
 </html>
