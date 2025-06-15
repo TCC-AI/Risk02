@@ -7108,17 +7108,28 @@ function filterHighRiskData() {
     loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
 }
 
-複製
-// ✅ 簡潔版修正
-function safeAddEventListener(elementId, eventType, handler) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.addEventListener(eventType, handler);
-        console.log(`✅ 成功綁定 ${elementId}`);
-    } else {
-        console.warn(`⚠️ 找不到元素: ${elementId}`);
-    }
+// ✅ 修正後的代碼 - 添加 null 檢查
+const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
+if (refreshHighRiskBtn) {
+    refreshHighRiskBtn.addEventListener('click', loadRecentHighRiskData);
+} else {
+    console.warn('⚠️ 找不到 refreshHighRiskBtn 按鈕');
 }
+
+const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
+if (backFromHighRiskBtn) {
+    backFromHighRiskBtn.addEventListener('click', showDashboard);
+} else {
+    console.warn('⚠️ 找不到 backFromHighRiskBtn 按鈕');
+}
+
+const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
+if (exportHighRiskBtn) {
+    exportHighRiskBtn.addEventListener('click', exportHighRiskReport);
+} else {
+    console.warn('⚠️ 找不到 exportHighRiskBtn 按鈕');
+}
+
 
 // 🆕 匯出功能
 function exportHighRiskReport() {
