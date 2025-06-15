@@ -2897,7 +2897,52 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportTrackingBtn = document.getElementById('exportTrackingBtn');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
-    // 追蹤事項按鈕點擊事件
+     // 🔧 修正：安全地綁定追蹤事項按鈕事件
+    const trackingBtn = document.getElementById('tracking-btn');
+    if (trackingBtn) {
+        trackingBtn.addEventListener('click', function() {
+            console.log('追蹤事項按鈕被點擊'); // 這個已經在工作了
+            showTrackingPage();
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    } else {
+        console.error('找不到 tracking-btn 元素');
+    }
+    // 🔧 修正：安全地綁定其他按鈕
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    if (backFromTrackingBtn) {
+        backFromTrackingBtn.addEventListener('click', function() {
+            document.getElementById('tracking-page').style.display = 'none';
+            showDashboard();
+            resetInactivityTimer();
+        });
+    }
+    
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    if (refreshTrackingBtn) {
+        refreshTrackingBtn.addEventListener('click', function() {
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
+    
+    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+    if (exportTrackingBtn) {
+        exportTrackingBtn.addEventListener('click', function() {
+            exportTrackingReport();
+            resetInactivityTimer();
+        });
+    }
+    // 🔧 修正：安全地綁定其他按鈕
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    if (backFromTrackingBtn) {
+        backFromTrackingBtn.addEventListener('click', function() {
+            document.getElementById('tracking-page').style.display = 'none';
+            showDashboard();
+            resetInactivityTimer();
+        });
+        // 追蹤事項按鈕點擊事件
     if (trackingBtn) {
         trackingBtn.addEventListener('click', function() {
             showTrackingPage();
@@ -7491,6 +7536,110 @@ function showTrackingPage() {
     
     // 顯示追蹤事項頁面
     document.getElementById('tracking-page').style.display = 'block';
+}
+// 🔧 添加：顯示追蹤事項頁面函數
+function showTrackingPage() {
+    console.log('顯示追蹤事項頁面');
+    hideAllPages();
+    
+    const trackingPage = document.getElementById('tracking-page');
+    if (trackingPage) {
+        trackingPage.style.display = 'block';
+        trackingPage.classList.remove('hidden');
+    } else {
+        console.error('找不到 tracking-page 元素');
+        // 如果頁面不存在，顯示臨時訊息
+        alert('追蹤事項功能正在開發中...');
+    }
+}
+
+// 🔧 添加：載入追蹤數據函數
+function loadTrackingData() {
+    console.log('載入追蹤數據');
+    
+    // 顯示載入提示
+    const loadingMsg = document.getElementById('trackingLoadingMsg');
+    if (loadingMsg) {
+        loadingMsg.style.display = 'block';
+    }
+    
+    // 呼叫後端 API
+    google.script.run
+        .withSuccessHandler(function(result) {
+            console.log('追蹤數據載入成功:', result);
+            displayTrackingData(result);
+            
+            // 隱藏載入提示
+            if (loadingMsg) {
+                loadingMsg.style.display = 'none';
+            }
+        })
+        .withFailureHandler(function(error) {
+            console.error('載入追蹤數據失敗:', error);
+            alert('載入數據失敗：' + error.toString());
+            
+            // 隱藏載入提示
+            if (loadingMsg) {
+                loadingMsg.style.display = 'none';
+            }
+        })
+        .getIncompleteRiskInventoryDepartments();
+}
+
+// 🔧 添加：顯示追蹤數據函數
+function displayTrackingData(data) {
+    console.log('顯示追蹤數據:', data);
+    
+    // 更新統計資訊
+    const totalDepartments = document.getElementById('totalDepartments');
+    const incompleteDepartments = document.getElementById('incompleteDepartments');
+    const completionRate = document.getElementById('completionRate');
+    
+    if (totalDepartments) totalDepartments.textContent = data.totalDepartments || 0;
+    if (incompleteDepartments) incompleteDepartments.textContent = data.incompleteDepartments?.length || 0;
+    if (completionRate) {
+        const rate = data.totalDepartments > 0 ? 
+            Math.round(((data.totalDepartments - (data.incompleteDepartments?.length || 0)) / data.totalDepartments) * 100) : 0;
+        completionRate.textContent = rate + '%';
+    }
+    
+    // 顯示統計容器
+    const statsContainer = document.getElementById('trackingStatsContainer');
+    if (statsContainer) {
+        statsContainer.style.display = 'block';
+    }
+    
+    // 更新表格
+    const tableBody = document.getElementById('incompleteDepartmentsTableBody');
+    if (tableBody && data.incompleteDepartments) {
+        tableBody.innerHTML = '';
+        
+        if (data.incompleteDepartments.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-success">🎉 所有部門都已完成風險盤點！</td></tr>';
+        } else {
+            data.incompleteDepartments.forEach((dept, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${dept.department || '-'}</td>
+                        <td class="text-center">${dept.reportCount || 0}</td>
+                        <td class="text-center text-danger">${25 - (dept.reportCount || 0)}</td>
+                        <td class="text-center">${dept.lastReportDate || '無記錄'}</td>
+                        <td class="text-center">
+                            <span class="badge bg-danger">未完成</span>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+    }
+}
+
+// 🔧 添加：匯出報告函數
+function exportTrackingReport() {
+    console.log('匯出追蹤報告');
+    alert('匯出功能開發中...');
 }
 
 /**
