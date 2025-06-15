@@ -2047,10 +2047,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                  <button class="feature-btn" id="dept-risk-index-btn" style="background: linear-gradient(to right, #1a6fc4, #34c3aa);">🚥<br>風險燈號<br>⚛︎AI⚛︎評析</button>
     <button id="inventory-btn" class="feature-btn">📝<br>部門定期全面盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>單一突發事件登錄</button>
-<button id="tracking-btn" class="feature-btn" style="background: linear-gradient(to right, #f39c12, #e67e22);">
-    📋<br>追蹤事項
-</button>
-  
+               
                  
             </div>
           
@@ -2751,7 +2748,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbyADa_WVr8Bq0HPPFn30NAl51Rdoox7mAXNkMFAVt_sMdxUW3ULC4PlMo06Qhb3fh4u/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbwUUkoDfToR6MwpkpPMibPsQ5jiVrRNNeAqU8PoOrd_E6VL2cwPhbGdRheq9Ks5biAQ/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -2891,90 +2888,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    const trackingBtn = document.getElementById('tracking-btn');
-    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
-     // 🔧 修正：安全地綁定追蹤事項按鈕事件
-    const trackingBtn = document.getElementById('tracking-btn');
-    if (trackingBtn) {
-        trackingBtn.addEventListener('click', function() {
-            console.log('追蹤事項按鈕被點擊'); // 這個已經在工作了
-            showTrackingPage();
-            loadTrackingData();
-            resetInactivityTimer();
-        });
-    } else {
-        console.error('找不到 tracking-btn 元素');
-    }
-    // 🔧 修正：安全地綁定其他按鈕
-    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-    if (backFromTrackingBtn) {
-        backFromTrackingBtn.addEventListener('click', function() {
-            document.getElementById('tracking-page').style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
     
-    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-    if (refreshTrackingBtn) {
-        refreshTrackingBtn.addEventListener('click', function() {
-            loadTrackingData();
-            resetInactivityTimer();
-        });
-    }
-    
-    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
-    if (exportTrackingBtn) {
-        exportTrackingBtn.addEventListener('click', function() {
-            exportTrackingReport();
-            resetInactivityTimer();
-        });
-    }
-    // 🔧 修正：安全地綁定其他按鈕
-    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-    if (backFromTrackingBtn) {
-        backFromTrackingBtn.addEventListener('click', function() {
-            document.getElementById('tracking-page').style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-        // 追蹤事項按鈕點擊事件
-    if (trackingBtn) {
-        trackingBtn.addEventListener('click', function() {
-            showTrackingPage();
-            loadTrackingData();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 返回按鈕
-    if (backFromTrackingBtn) {
-        backFromTrackingBtn.addEventListener('click', function() {
-            document.getElementById('tracking-page').style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 重新整理按鈕
-    if (refreshTrackingBtn) {
-        refreshTrackingBtn.addEventListener('click', function() {
-            loadTrackingData();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 匯出報告按鈕
-    if (exportTrackingBtn) {
-        exportTrackingBtn.addEventListener('click', function() {
-            exportTrackingReport();
-            resetInactivityTimer();
-        });
-    }
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
     if (recentHighRiskBtn) {
@@ -3007,39 +2923,6 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
-    // 追蹤事項按鈕點擊事件
-if (trackingBtn) {
-    trackingBtn.addEventListener('click', function() {
-        showTrackingPage();
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
-
-// 返回按鈕
-if (backFromTrackingBtn) {
-    backFromTrackingBtn.addEventListener('click', function() {
-        document.getElementById('tracking-page').style.display = 'none';
-        showDashboard();
-        resetInactivityTimer();
-    });
-}
-
-// 重新整理按鈕
-if (refreshTrackingBtn) {
-    refreshTrackingBtn.addEventListener('click', function() {
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
-
-// 匯出報告按鈕
-if (exportTrackingBtn) {
-    exportTrackingBtn.addEventListener('click', function() {
-        exportTrackingReport();
-        resetInactivityTimer();
-    });
-}
     
     const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
     if (exportHighRiskBtn) {
@@ -3955,7 +3838,6 @@ function showDashboard() {
     document.querySelector('.container').classList.remove('hidden');
     dashboardSection.classList.remove('hidden');
     document.querySelector('.container').style.maxWidth = '500px';
-    document.getElementById('tracking-page').style.display = 'none'; 
         // 🆕 隱藏 s4 專屬頁面 (新增這段)
     const s4Pages = ['user-management-page', 'system-settings-page', 'data-backup-page'];
     s4Pages.forEach(pageId => {
@@ -6516,7 +6398,7 @@ function hideAllPages() {
         'login-section', 'dashboard-section', 'inventory-section',
         'dept-risk-index-page', 'data-analytics-page', 'event-registration-page',
         'alert-settings-page', 'risk-prediction-page', 'user-management-page',
-        'system-settings-page', 'data-backup-page', 'tracking-page' 
+        'system-settings-page', 'data-backup-page'
     ];
     
     pages.forEach(pageId => {
@@ -7185,38 +7067,10 @@ function filterHighRiskData() {
     loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
 }
 
-// ✅ 修正後的代碼 - 一次性解決所有按鈕問題
-function safeAddEventListener(elementId, eventType, handler) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.addEventListener(eventType, handler);
-    }
-}
-
-// 高風險頁面按鈕
-safeAddEventListener('refreshHighRiskBtn', 'click', loadRecentHighRiskData);
-safeAddEventListener('backFromHighRiskBtn', 'click', showDashboard);
-safeAddEventListener('exportHighRiskBtn', 'click', exportHighRiskReport);
-
-// 🔧 追蹤事項按鈕 - 新增這4行
-safeAddEventListener('tracking-btn', 'click', function() {
-    showTrackingPage();
-    loadTrackingData();
-    resetInactivityTimer();
-});
-safeAddEventListener('backFromTrackingBtn', 'click', function() {
-    document.getElementById('tracking-page').style.display = 'none';
-    showDashboard();
-    resetInactivityTimer();
-});
-safeAddEventListener('refreshTrackingBtn', 'click', function() {
-    loadTrackingData();
-    resetInactivityTimer();
-});
-safeAddEventListener('exportTrackingBtn', 'click', function() {
-    exportTrackingReport();
-    resetInactivityTimer();
-});
+// 🆕 其他按鈕事件
+document.getElementById('refreshHighRiskBtn').addEventListener('click', loadRecentHighRiskData);
+document.getElementById('backFromHighRiskBtn').addEventListener('click', showDashboard);
+document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
 
 // 🆕 匯出功能
 function exportHighRiskReport() {
@@ -7526,295 +7380,6 @@ function showRiskNotificationModal() {
         // 如果彈出視窗顯示失敗，至少顯示一個簡單的提醒
         alert('請注意風險通報機制：\n- A級(8-10)：1小時內通報\n- B級(5-7)：6小時內通報\n- C級(1-4)：12小時內通報');
     }
-}
-/**
- * 顯示追蹤事項頁面
- */
-function showTrackingPage() {
-    // 隱藏所有其他頁面
-    hideAllPages();
-    
-    // 顯示追蹤事項頁面
-    document.getElementById('tracking-page').style.display = 'block';
-}
-// 🔧 添加：顯示追蹤事項頁面函數
-function showTrackingPage() {
-    console.log('顯示追蹤事項頁面');
-    hideAllPages();
-    
-    const trackingPage = document.getElementById('tracking-page');
-    if (trackingPage) {
-        trackingPage.style.display = 'block';
-        trackingPage.classList.remove('hidden');
-    } else {
-        console.error('找不到 tracking-page 元素');
-        // 如果頁面不存在，顯示臨時訊息
-        alert('追蹤事項功能正在開發中...');
-    }
-}
-
-// 🔧 添加：載入追蹤數據函數
-function loadTrackingData() {
-    console.log('載入追蹤數據');
-    
-    // 顯示載入提示
-    const loadingMsg = document.getElementById('trackingLoadingMsg');
-    if (loadingMsg) {
-        loadingMsg.style.display = 'block';
-    }
-    
-    // 呼叫後端 API
-    google.script.run
-        .withSuccessHandler(function(result) {
-            console.log('追蹤數據載入成功:', result);
-            displayTrackingData(result);
-            
-            // 隱藏載入提示
-            if (loadingMsg) {
-                loadingMsg.style.display = 'none';
-            }
-        })
-        .withFailureHandler(function(error) {
-            console.error('載入追蹤數據失敗:', error);
-            alert('載入數據失敗：' + error.toString());
-            
-            // 隱藏載入提示
-            if (loadingMsg) {
-                loadingMsg.style.display = 'none';
-            }
-        })
-        .getIncompleteRiskInventoryDepartments();
-}
-
-// 🔧 添加：顯示追蹤數據函數
-function displayTrackingData(data) {
-    console.log('顯示追蹤數據:', data);
-    
-    // 更新統計資訊
-    const totalDepartments = document.getElementById('totalDepartments');
-    const incompleteDepartments = document.getElementById('incompleteDepartments');
-    const completionRate = document.getElementById('completionRate');
-    
-    if (totalDepartments) totalDepartments.textContent = data.totalDepartments || 0;
-    if (incompleteDepartments) incompleteDepartments.textContent = data.incompleteDepartments?.length || 0;
-    if (completionRate) {
-        const rate = data.totalDepartments > 0 ? 
-            Math.round(((data.totalDepartments - (data.incompleteDepartments?.length || 0)) / data.totalDepartments) * 100) : 0;
-        completionRate.textContent = rate + '%';
-    }
-    
-    // 顯示統計容器
-    const statsContainer = document.getElementById('trackingStatsContainer');
-    if (statsContainer) {
-        statsContainer.style.display = 'block';
-    }
-    
-    // 更新表格
-    const tableBody = document.getElementById('incompleteDepartmentsTableBody');
-    if (tableBody && data.incompleteDepartments) {
-        tableBody.innerHTML = '';
-        
-        if (data.incompleteDepartments.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-success">🎉 所有部門都已完成風險盤點！</td></tr>';
-        } else {
-            data.incompleteDepartments.forEach((dept, index) => {
-                const row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${dept.department || '-'}</td>
-                        <td class="text-center">${dept.reportCount || 0}</td>
-                        <td class="text-center text-danger">${25 - (dept.reportCount || 0)}</td>
-                        <td class="text-center">${dept.lastReportDate || '無記錄'}</td>
-                        <td class="text-center">
-                            <span class="badge bg-danger">未完成</span>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        }
-    }
-}
-
-// 🔧 添加：匯出報告函數
-function exportTrackingReport() {
-    console.log('匯出追蹤報告');
-    alert('匯出功能開發中...');
-}
-
-/**
- * 載入追蹤事項數據
- */
-async function loadTrackingData() {
-    try {
-        // 顯示載入狀態
-        document.getElementById('trackingLoadingMsg').style.display = 'block';
-        document.getElementById('trackingStatsContainer').style.display = 'none';
-        document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
-            '<tr><td colspan="6" class="text-center">分析中...</td></tr>';
-        
-        // 發送請求到後端
-        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryDepartments`);
-        const result = await response.json();
-        
-        if (result.success) {
-            // 更新統計資訊
-            updateTrackingStats(result.stats);
-            
-            // 更新表格
-            updateIncompleteDeptsTable(result.data);
-            
-            // 顯示統計容器
-            document.getElementById('trackingStatsContainer').style.display = 'block';
-        } else {
-            document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
-                `<tr><td colspan="6" class="text-center text-danger">載入失敗：${result.message}</td></tr>`;
-        }
-        
-    } catch (error) {
-        console.error('載入追蹤事項數據時發生錯誤:', error);
-        document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
-            '<tr><td colspan="6" class="text-center text-danger">載入失敗，請稍後再試</td></tr>';
-    } finally {
-        document.getElementById('trackingLoadingMsg').style.display = 'none';
-    }
-}
-
-/**
- * 更新追蹤統計資訊
- */
-function updateTrackingStats(stats) {
-    document.getElementById('totalDepartments').textContent = stats.totalDepartments || 0;
-    document.getElementById('incompleteDepartments').textContent = stats.incompleteDepartments || 0;
-    document.getElementById('completionRate').textContent = `${stats.completionRate || 0}%`;
-}
-
-/**
- * 更新未完成部門表格
- */
-function updateIncompleteDeptsTable(data) {
-    const tableBody = document.getElementById('incompleteDepartmentsTableBody');
-    
-    if (data.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center text-success">
-                    <i class="fas fa-check-circle"></i> 所有部門都已完成上月風險盤點！
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    const rows = data.map((dept, index) => {
-        const missingCount = 25 - dept.reportCount;
-        const statusClass = dept.reportCount < 10 ? 'bg-danger' : 
-                           dept.reportCount < 20 ? 'bg-warning' : 'bg-info';
-        const statusText = dept.reportCount < 10 ? '嚴重不足' : 
-                          dept.reportCount < 20 ? '不足' : '接近達標';
-        
-        return `
-            <tr>
-                <td class="text-center">${index + 1}</td>
-                <td><strong>${dept.department}</strong></td>
-                <td class="text-center">
-                    <span class="badge ${statusClass}">${dept.reportCount} 筆</span>
-                </td>
-                <td class="text-center">
-                    <span class="text-danger"><strong>${missingCount} 筆</strong></span>
-                </td>
-                <td class="text-center">
-                    ${dept.lastReportTime ? formatDateTime(dept.lastReportTime) : '無記錄'}
-                </td>
-                <td class="text-center">
-                    <span class="badge ${statusClass}">${statusText}</span>
-                </td>
-            </tr>
-        `;
-    }).join('');
-    
-    tableBody.innerHTML = rows;
-}
-
-/**
- * 匯出追蹤報告
- */
-async function exportTrackingReport() {
-    try {
-        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryDepartments`);
-        const result = await response.json();
-        
-        if (result.success) {
-            const reportContent = generateTrackingReport(result);
-            
-            // 創建並下載文件
-            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `追蹤事項報告_${new Date().toISOString().split('T')[0]}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            
-            showNotification('追蹤報告已成功匯出！', 'success');
-        } else {
-            showNotification('匯出報告失敗：' + result.message, 'error');
-        }
-    } catch (error) {
-        console.error('匯出追蹤報告時發生錯誤:', error);
-        showNotification('匯出報告失敗，請稍後再試', 'error');
-    }
-}
-
-/**
- * 生成追蹤報告內容
- */
-function generateTrackingReport(data) {
-    const now = new Date();
-    const reportDate = now.toLocaleString('zh-TW');
-    
-    let report = `昶青實業 - 追蹤事項報告
-========================================
-
-生成時間：${reportDate}
-報告類型：尚未完成上個月風險盤點部門
-
-統計摘要：
-- 總部門數：${data.stats.totalDepartments}
-- 未完成部門數：${data.stats.incompleteDepartments}
-- 完成率：${data.stats.completionRate}%
-
-`;
-
-    if (data.data.length === 0) {
-        report += `✅ 所有部門都已完成上月風險盤點！
-
-`;
-    } else {
-        report += `⚠️ 以下部門尚未完成上月風險盤點：
-
-`;
-        data.data.forEach((dept, index) => {
-            const missingCount = 25 - dept.reportCount;
-            report += `${index + 1}. ${dept.department}
-   - 上月提報筆數：${dept.reportCount} 筆
-   - 缺少筆數：${missingCount} 筆
-   - 最後提報時間：${dept.lastReportTime ? formatDateTime(dept.lastReportTime) : '無記錄'}
-
-`;
-        });
-    }
-
-    report += `========================================
-報告結束
-
-此報告由昶青實業風險管理系統自動生成
-T.C.C.管理本部
-`;
-
-    return report;
 }
 
 </script>
@@ -8178,96 +7743,6 @@ T.C.C.管理本部
                 </button>
             </div>
         </div>
-    </div>
-</div>
-<!-- 追蹤事項頁面 -->
-<div id="tracking-page" class="dashboard-page" style="display: none;">
-    <div class="logo-container">
-        <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
-    </div>
-    <h2 class="text-center mb-4">
-        <i class="fas fa-clipboard-list text-warning"></i> 追蹤事項
-    </h2>
-    
-    <!-- 尚未完成上個月風險盤點部門 -->
-    <div class="card mb-4">
-        <div class="card-header bg-warning text-dark">
-            <h5 class="mb-0">
-                <i class="fas fa-exclamation-triangle"></i> 尚未完成上個月風險盤點部門
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="alert alert-info mb-3">
-                <strong>篩選條件：</strong> 上個月提報資料少於25筆的部門
-            </div>
-            
-            <!-- 載入提示 -->
-            <div id="trackingLoadingMsg" class="text-center" style="display: none;">
-                <div class="spinner-border text-warning" role="status">
-                    <span class="visually-hidden">載入中...</span>
-                </div>
-                <p class="mt-2">正在分析部門盤點狀況...</p>
-            </div>
-            
-            <!-- 統計資訊 -->
-            <div id="trackingStatsContainer" class="row mb-3" style="display: none;">
-                <div class="col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-value" id="totalDepartments">-</div>
-                        <div class="stat-label">總部門數</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
-                        <div class="stat-icon">⚠️</div>
-                        <div class="stat-value" id="incompleteDepartments">-</div>
-                        <div class="stat-label">未完成部門</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
-                        <div class="stat-icon">✅</div>
-                        <div class="stat-value" id="completionRate">-</div>
-                        <div class="stat-label">完成率</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 部門清單表格 -->
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered" id="incompleteDepartmentsTable">
-                    <thead class="table-dark">
-                        <tr>
-                            <th style="width: 5%">#</th>
-                            <th style="width: 25%">部門名稱</th>
-                            <th style="width: 15%">上月提報筆數</th>
-                            <th style="width: 15%">缺少筆數</th>
-                            <th style="width: 20%">最後提報時間</th>
-                            <th style="width: 20%">狀態</th>
-                        </tr>
-                    </thead>
-                    <tbody id="incompleteDepartmentsTableBody">
-                        <tr>
-                            <td colspan="6" class="text-center">載入中...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 操作按鈕 -->
-    <div class="text-center">
-        <button type="button" class="btn btn-primary me-3" id="refreshTrackingBtn">
-            <i class="fas fa-sync-alt"></i> 重新整理
-        </button>
-        <button type="button" class="btn btn-outline-success me-3" id="exportTrackingBtn">
-            <i class="fas fa-download"></i> 匯出報告
-        </button>
-        <button type="button" class="btn btn-secondary" id="backFromTrackingBtn">
-            <i class="fas fa-arrow-left"></i> 返回
-        </button>
     </div>
 </div>
 
