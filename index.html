@@ -3874,42 +3874,178 @@ function setButtonPermissions() {
 
 
     
-    // 顯示主頁面
-// 修改 showDashboard 函數
+// 🔧 修正 showDashboard 函數
 function showDashboard() {
-    loginSection.classList.add('hidden');
-    inventorySection.classList.add('hidden');
-    deptRiskIndexPage.style.display = 'none';
-    dataAnalyticsPage.style.display = 'none';
-    eventRegistrationPage.style.display = 'none';
-    alertSettingsPage.style.display = 'none'; // 🆕 添加這行
-    riskPredictionPage.style.display = 'none'; // 🆕 使用全域變數
-    document.getElementById('risk-prediction-page').style.display = 'none';
-    document.querySelector('.container').classList.remove('hidden');
-    dashboardSection.classList.remove('hidden');
-    document.querySelector('.container').style.maxWidth = '500px';
-    document.getElementById('tracking-page').style.display = 'none'; 
-        // 🆕 隱藏 s4 專屬頁面 (新增這段)
-    const s4Pages = ['user-management-page', 'system-settings-page', 'data-backup-page'];
-    s4Pages.forEach(pageId => {
+    // 隱藏所有頁面
+    const pagesToHide = [
+        'login-section',
+        'inventory-section', 
+        'dept-risk-index-page',
+        'data-analytics-page',
+        'event-registration-page',
+        'alert-settings-page',
+        'risk-prediction-page',
+        'user-management-page',
+        'system-settings-page',
+        'data-backup-page',
+        'tracking-page',
+        'recent-high-risk-section'
+    ];
+    
+    pagesToHide.forEach(pageId => {
         const page = document.getElementById(pageId);
-        if (page) page.style.display = 'none';
+        if (page) {
+            page.style.display = 'none';
+            page.classList.add('hidden');
+        }
     });
+    
+    // 顯示主容器和主頁面
+    const container = document.querySelector('.container');
+    const dashboardSection = document.getElementById('dashboard-section');
+    
+    if (container) {
+        container.classList.remove('hidden');
+        container.style.maxWidth = '540px'; // 恢復原始寬度
+    }
+    
+    if (dashboardSection) {
+        dashboardSection.classList.remove('hidden');
+        dashboardSection.style.display = 'block'; // 確保顯示
+    }
+    
     // 設置按鈕權限
     setButtonPermissions();
     
     // 更新使用者資訊顯示
     updateUserInfo();
     
-    // 🆕 檢查當前預警狀態
+    // 檢查當前預警狀態
     checkCurrentAlertStatus();
 
-    // 🆕 為 s4 用戶添加管理功能 (新增這行)
+    // 為 s4 用戶添加管理功能
     addManagementFeatures();
     
     // 重置計時器
     resetInactivityTimer();
 }
+
+// 🔧 修正追蹤事項返回按鈕事件
+document.addEventListener('DOMContentLoaded', function() {
+    // ... 其他現有代碼 ...
+    
+    // 🔧 修正追蹤事項按鈕事件
+    const trackingBtn = document.getElementById('tracking-btn');
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    
+    if (trackingBtn) {
+        trackingBtn.addEventListener('click', function() {
+            showTrackingPage();
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 🔧 修正返回按鈕 - 這是關鍵修正
+    if (backFromTrackingBtn) {
+        backFromTrackingBtn.addEventListener('click', function() {
+            console.log('返回按鈕被點擊'); // 調試用
+            
+            // 隱藏追蹤事項頁面
+            const trackingPage = document.getElementById('tracking-page');
+            if (trackingPage) {
+                trackingPage.style.display = 'none';
+            }
+            
+            // 顯示主頁面
+            showDashboard();
+            
+            resetInactivityTimer();
+        });
+    }
+    
+    // 重新整理按鈕
+    if (refreshTrackingBtn) {
+        refreshTrackingBtn.addEventListener('click', function() {
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
+});
+
+// 🔧 修正 showTrackingPage 函數
+function showTrackingPage() {
+    // 隱藏所有其他頁面
+    const pagesToHide = [
+        'login-section',
+        'dashboard-section',
+        'inventory-section',
+        'dept-risk-index-page',
+        'data-analytics-page',
+        'event-registration-page',
+        'alert-settings-page',
+        'risk-prediction-page',
+        'user-management-page',
+        'system-settings-page',
+        'data-backup-page',
+        'recent-high-risk-section'
+    ];
+    
+    pagesToHide.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.style.display = 'none';
+            page.classList.add('hidden');
+        }
+    });
+    
+    // 隱藏主容器
+    const container = document.querySelector('.container');
+    if (container) {
+        container.classList.add('hidden');
+    }
+    
+    // 顯示追蹤事項頁面
+    const trackingPage = document.getElementById('tracking-page');
+    if (trackingPage) {
+        trackingPage.style.display = 'block';
+        trackingPage.classList.remove('hidden');
+    }
+}
+
+// 🔧 修正 hideAllPages 函數（如果您有使用的話）
+function hideAllPages() {
+    const pages = [
+        'login-section', 
+        'dashboard-section', 
+        'inventory-section',
+        'dept-risk-index-page', 
+        'data-analytics-page', 
+        'event-registration-page',
+        'alert-settings-page', 
+        'risk-prediction-page', 
+        'user-management-page',
+        'system-settings-page', 
+        'data-backup-page', 
+        'tracking-page',
+        'recent-high-risk-section'
+    ];
+    
+    pages.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.style.display = 'none';
+            page.classList.add('hidden');
+        }
+    });
+    
+    const container = document.querySelector('.container');
+    if (container) {
+        container.classList.add('hidden');
+    }
+}
+
 
 // 🆕 檢查當前預警狀態 (修正版)
 async function checkCurrentAlertStatus() {
