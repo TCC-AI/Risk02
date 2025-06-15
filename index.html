@@ -2902,6 +2902,30 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
+        // 返回按鈕
+    if (backFromTrackingBtn) {
+        backFromTrackingBtn.addEventListener('click', function() {
+            document.getElementById('tracking-page').style.display = 'none';
+            showDashboard();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 重新整理按鈕
+    if (refreshTrackingBtn) {
+        refreshTrackingBtn.addEventListener('click', function() {
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 匯出報告按鈕
+    if (exportTrackingBtn) {
+        exportTrackingBtn.addEventListener('click', function() {
+            exportTrackingReport();
+            resetInactivityTimer();
+        });
+    }
     document.addEventListener('DOMContentLoaded', function() {
        
     
@@ -2940,30 +2964,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
    
 
-// 返回按鈕
-if (backFromTrackingBtn) {
-    backFromTrackingBtn.addEventListener('click', function() {
-        document.getElementById('tracking-page').style.display = 'none';
-        showDashboard();
-        resetInactivityTimer();
-    });
-}
 
-// 重新整理按鈕
-if (refreshTrackingBtn) {
-    refreshTrackingBtn.addEventListener('click', function() {
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
-
-// 匯出報告按鈕
-if (exportTrackingBtn) {
-    exportTrackingBtn.addEventListener('click', function() {
-        exportTrackingReport();
-        resetInactivityTimer();
-    });
-}
     
     const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
     if (exportHighRiskBtn) {
