@@ -2589,11 +2589,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     </div>
 </div>
 
-
-     
-    
-
-        
         <button class="btn btn-secondary mt-3" id="back-to-dashboard-from-analytics">返回</button>
     </div>
     
@@ -2846,6 +2841,7 @@ function checkPermission(requiredLevel) {
 
 
 // 🆕 全域變數定義
+    document.addEventListener('DOMContentLoaded', function() {
 const loginSection = document.getElementById('login-section');
 const dashboardSection = document.getElementById('dashboard-section');
 const inventorySection = document.getElementById('inventory-section');
@@ -2854,7 +2850,7 @@ const dataAnalyticsPage = document.getElementById('data-analytics-page');
 const eventRegistrationPage = document.getElementById('event-registration-page');
 const alertSettingsPage = document.getElementById('alert-settings-page');
 const riskPredictionPage = document.getElementById('risk-prediction-page');
-document.addEventListener('DOMContentLoaded', function() {
+
     
     const loginBtn = document.getElementById('login-btn');
     const usernameInput = document.getElementById('username');
