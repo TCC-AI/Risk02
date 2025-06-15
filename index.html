@@ -7108,10 +7108,17 @@ function filterHighRiskData() {
     loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
 }
 
-// 🆕 其他按鈕事件
-document.getElementById('refreshHighRiskBtn').addEventListener('click', loadRecentHighRiskData);
-document.getElementById('backFromHighRiskBtn').addEventListener('click', showDashboard);
-document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
+複製
+// ✅ 簡潔版修正
+function safeAddEventListener(elementId, eventType, handler) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.addEventListener(eventType, handler);
+        console.log(`✅ 成功綁定 ${elementId}`);
+    } else {
+        console.warn(`⚠️ 找不到元素: ${elementId}`);
+    }
+}
 
 // 🆕 匯出功能
 function exportHighRiskReport() {
