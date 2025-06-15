@@ -3725,6 +3725,45 @@ function formatDateTime(dateTime) {
     
 // 🆕 設置按鈕權限狀態 (修正版)
 function setButtonPermissions() {
+    // 🔄 近期5級以上風險按鈕 - s1不行，s2、s3、s4可以 (需要s2以上)
+    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
+    if (recentHighRiskBtn) {
+        if (!checkPermission('s2')) {
+            recentHighRiskBtn.disabled = true;
+            recentHighRiskBtn.style.opacity = '0.5';
+            recentHighRiskBtn.style.cursor = 'not-allowed';
+            recentHighRiskBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+            recentHighRiskBtn.title = '此功能需要 s2 以上權限';
+            
+            // 🔧 修正：不使用 replaceWith，而是移除原有事件並添加權限提示
+            recentHighRiskBtn.onclick = function(e) {
+                e.preventDefault();
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s2 以上\n您的權限：' + userPermission);
+            };
+        } else {
+            recentHighRiskBtn.disabled = false;
+            recentHighRiskBtn.style.opacity = '1';
+            recentHighRiskBtn.style.cursor = 'pointer';
+            recentHighRiskBtn.style.background = 'linear-gradient(to right, #e74c3c, #c0392b)';
+            recentHighRiskBtn.title = '';
+            
+            // 🔧 重新綁定正確的事件
+            recentHighRiskBtn.onclick = function() {
+                showRecentHighRiskSection();
+                resetInactivityTimer();
+            };
+        }
+    }
+    // 🔄 部門定期全面盤點按鈕 - 所有權限都可以使用
+    const inventoryBtn = document.getElementById('inventory-btn');
+    if (inventoryBtn) {
+        // 這個按鈕所有權限都可以使用，確保事件正確綁定
+        inventoryBtn.onclick = function() {
+            showInventorySection();
+            loadInventoryData();
+            resetInactivityTimer();
+        };
+    }
     // 🔄 部門風險係數按鈕 - s1不行，其餘皆可 (需要s2以上)
     if (!checkPermission('s2')) {
         deptRiskIndexBtn.disabled = true;
