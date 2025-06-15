@@ -2855,7 +2855,6 @@ const eventRegistrationPage = document.getElementById('event-registration-page')
 const alertSettingsPage = document.getElementById('alert-settings-page');
 const riskPredictionPage = document.getElementById('risk-prediction-page');
 document.addEventListener('DOMContentLoaded', function() {
-    
     const loginBtn = document.getElementById('login-btn');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -2886,15 +2885,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromAlertBtn = document.getElementById('backFromAlertBtn');
     const saveAlertSettingsBtn = document.getElementById('saveAlertSettingsBtn');
     const riskPredictionBtn = document.getElementById('risk-prediction-btn');
-   // 🆕 添加管理頁面的返回按鈕事件監聽器
     const backFromUserManagement = document.getElementById('backFromUserManagement');
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
     const trackingBtn = document.getElementById('tracking-btn');
-const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
     
@@ -3759,6 +3757,17 @@ function setButtonPermissions() {
         dataAnalyticsBtn.style.cursor = 'pointer';
         dataAnalyticsBtn.style.background = 'linear-gradient(to right, #9c27b0, #e91e63)';
         dataAnalyticsBtn.title = '';
+    }
+    const trackingBtn = document.getElementById('tracking-btn');
+    if (trackingBtn) {
+        if (!checkPermission('s2')) { // 假设需要s2权限
+            trackingBtn.disabled = true;
+            trackingBtn.style.opacity = '0.5';
+            trackingBtn.title = '需要s2以上权限';
+        } else {
+            trackingBtn.disabled = false;
+            trackingBtn.style.opacity = '1';
+        }
     }
 
     // 🔄 風險趨勢預判分析按鈕 - s1、s2不行，其餘皆可 (需要s3以上)
@@ -7435,7 +7444,6 @@ function showRiskNotificationModal() {
 function showTrackingPage() {
     // 隱藏所有其他頁面
     hideAllPages();
-    
     // 顯示追蹤事項頁面
     document.getElementById('tracking-page').style.display = 'block';
 }
