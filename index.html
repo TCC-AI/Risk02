@@ -2522,9 +2522,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
             <div class="col-12">
                 <div class="chart-container">
                     <h5 class="chart-title">詳細風險數據</h5>
-                    <button id="refreshDataBtn" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-sync-alt"></i> 刷新數據
-                </button>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered" id="detailDataTable">
                             <thead>
@@ -2751,7 +2748,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbxgIqKXILFs_2RIku0q9hT6uhYFoiW9zu1jAOU9OfZ3tr9OfgTvUVdKhl2c0A4n78D5/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbwUUkoDfToR6MwpkpPMibPsQ5jiVrRNNeAqU8PoOrd_E6VL2cwPhbGdRheq9Ks5biAQ/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -2894,7 +2891,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
     
-    
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
     if (recentHighRiskBtn) {
@@ -2918,13 +2914,6 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
-        // 在這個函數的末尾，其他事件綁定之後，添加以下代碼：
-    const refreshDataBtn = document.getElementById('refreshDataBtn');
-    if (refreshDataBtn) {
-        refreshDataBtn.addEventListener('click', function() {
-            loadAnalyticsData(true); // 強制重新載入
-            resetInactivityTimer();
-        });
     
     const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
     if (backFromHighRiskBtn) {
@@ -4563,7 +4552,7 @@ function updateDetailTable(events) {
         return;
     }
     
-    // 🔧 修正：按時間戳記降序排列（最新的在前面）
+    // 🆕 按時間戳記降序排列（最新的在前面）
     const sortedEvents = events.sort((a, b) => {
         const dateA = new Date(a.timestamp);
         const dateB = new Date(b.timestamp);
@@ -4586,7 +4575,6 @@ function updateDetailTable(events) {
     
     tableBody.innerHTML = rows;
 }
-
 
     
     // 格式化日期
@@ -5747,8 +5735,6 @@ async function loadAnalyticsData() {
         const departmentFilter = document.getElementById('departmentFilter').value;
         
         // 獲取分析數據
-        // 獲取分析數據，添加時間戳參數強制刷新
-        const timestamp = forceReload ? new Date().getTime() : '';
         const response = await fetch(`${scriptUrl}?action=getAnalyticsData&dateRange=${dateRange}&department=${departmentFilter}`);
         const result = await response.json();
         
