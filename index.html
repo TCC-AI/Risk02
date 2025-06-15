@@ -2845,148 +2845,152 @@ function checkPermission(requiredLevel) {
 }
 
 
-// 🆕 全域變數定義
-const loginSection = document.getElementById('login-section');
-const dashboardSection = document.getElementById('dashboard-section');
-const inventorySection = document.getElementById('inventory-section');
-const deptRiskIndexPage = document.getElementById('dept-risk-index-page');
-const dataAnalyticsPage = document.getElementById('data-analytics-page');
-const eventRegistrationPage = document.getElementById('event-registration-page');
-const alertSettingsPage = document.getElementById('alert-settings-page');
-const riskPredictionPage = document.getElementById('risk-prediction-page');
-document.addEventListener('DOMContentLoaded', function() {
-    
-    const loginBtn = document.getElementById('login-btn');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const errorMessage = document.getElementById('error-message');
-    const loadingMsg = document.getElementById('loading');
-    const inventoryBtn = document.getElementById('inventory-btn');
-    const eventBtn = document.getElementById('event-btn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const changePasswordBtn = document.getElementById('changePasswordBtn');
-    const submitChangePasswordBtn = document.getElementById('submitChangePassword');
-    const userDepartment = document.getElementById('user-department');
-    const userName = document.getElementById('user-name');
-    const backBtn = document.getElementById('back-btn');
-    const submitInventoryBtn = document.getElementById('submit-inventory-btn');
-    const resetInventoryBtn = document.getElementById('reset-inventory-btn');
-    const inventoryTableBody = document.getElementById('inventory-table-body');
-    const inventoryLoading = document.getElementById('inventory-loading');
-    const inventoryContent = document.getElementById('inventory-content');
-    const deptRiskIndexBtn = document.getElementById('dept-risk-index-btn');
-    const backFromRiskBtn = document.getElementById('back-to-dashboard-from-risk');
-    const dataAnalyticsBtn = document.getElementById('data-analytics-btn');
-    const backFromAnalyticsBtn = document.getElementById('back-to-dashboard-from-analytics');
-    const backFromEventBtn = document.getElementById('backFromEventBtn');
-    const resetEventBtn = document.getElementById('resetEventBtn');
-    const eventForm = document.getElementById('eventRegistrationForm');
-    const alertSettingsBtn = document.getElementById('alert-settings-btn');
-    
-    const backFromAlertBtn = document.getElementById('backFromAlertBtn');
-    const saveAlertSettingsBtn = document.getElementById('saveAlertSettingsBtn');
-    const riskPredictionBtn = document.getElementById('risk-prediction-btn');
-   // 🆕 添加管理頁面的返回按鈕事件監聽器
-    const backFromUserManagement = document.getElementById('backFromUserManagement');
-    const backFromSystemSettings = document.getElementById('backFromSystemSettings');
-    const backFromDataBackup = document.getElementById('backFromDataBackup');
-    const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    const trackingBtn = document.getElementById('tracking-btn');
-const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-const exportTrackingBtn = document.getElementById('exportTrackingBtn');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
-    
-    // 🔧 確保近期高風險按鈕事件正確綁定
-    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
-    if (recentHighRiskBtn) {
-        recentHighRiskBtn.addEventListener('click', function() {
-            // 🆕 檢查s2以上權限
-            if (!checkPermission('s2')) {
-                alert('權限不足，無法訪問近期5級以上風險功能\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-                return;
-            }
-            
-            showRecentHighRiskSection();
+// 🆕 全域變數封裝
+const AppElements = {
+    sections: {
+        login: document.getElementById('login-section'),
+        dashboard: document.getElementById('dashboard-section'),
+        inventory: document.getElementById('inventory-section'),
+        deptRiskIndex: document.getElementById('dept-risk-index-page'),
+        dataAnalytics: document.getElementById('data-analytics-page'),
+        eventRegistration: document.getElementById('event-registration-page'),
+        alertSettings: document.getElementById('alert-settings-page'),
+        riskPrediction: document.getElementById('risk-prediction-page'),
+        tracking: document.getElementById('tracking-page'),
+        userManagement: document.getElementById('user-management-page'),
+        systemSettings: document.getElementById('system-settings-page'),
+        dataBackup: document.getElementById('data-backup-page'),
+        recentHighRisk: document.getElementById('recent-high-risk-section')
+    },
+    buttons: {
+        login: document.getElementById('login-btn'),
+        logout: document.getElementById('logoutBtn'),
+        inventory: document.getElementById('inventory-btn'),
+        event: document.getElementById('event-btn'),
+        changePassword: document.getElementById('changePasswordBtn'),
+        submitChangePassword: document.getElementById('submitChangePassword'),
+        submitInventory: document.getElementById('submit-inventory-btn'),
+        resetInventory: document.getElementById('reset-inventory-btn'),
+        deptRiskIndex: document.getElementById('dept-risk-index-btn'),
+        dataAnalytics: document.getElementById('data-analytics-btn'),
+        alertSettings: document.getElementById('alert-settings-btn'),
+        riskPrediction: document.getElementById('risk-prediction-btn'),
+        tracking: document.getElementById('tracking-btn'),
+        backButtons: {
+            fromRisk: document.getElementById('back-to-dashboard-from-risk'),
+            fromAnalytics: document.getElementById('back-to-dashboard-from-analytics'),
+            fromEvent: document.getElementById('backFromEventBtn'),
+            fromAlert: document.getElementById('backFromAlertBtn'),
+            fromPrediction: document.getElementById('back-to-dashboard-from-prediction'),
+            fromTracking: document.getElementById('backFromTrackingBtn'),
+            fromUserManagement: document.getElementById('backFromUserManagement'),
+            fromSystemSettings: document.getElementById('backFromSystemSettings'),
+            fromDataBackup: document.getElementById('backFromDataBackup'),
+            fromHighRisk: document.getElementById('backFromHighRiskBtn')
+        }
+    },
+    forms: {
+        addUser: document.getElementById('addUserForm'),
+        eventRegistration: document.getElementById('eventRegistrationForm')
+    }
+};
+
+// 🆕 通用函數
+function showElement(element) {
+    if (element) {
+        element.classList.remove('hidden');
+    }
+}
+
+function hideElement(element) {
+    if (element) {
+        element.classList.add('hidden');
+    }
+}
+
+function bindBackButton(button, targetSection) {
+    if (button) {
+        button.addEventListener('click', function () {
+            hideElement(targetSection);
+            showElement(AppElements.sections.dashboard);
             resetInactivityTimer();
         });
     }
-    
-    // 其他按鈕事件綁定
-    const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
-    if (refreshHighRiskBtn) {
-        refreshHighRiskBtn.addEventListener('click', function() {
-            loadRecentHighRiskData();
-            resetInactivityTimer();
+}
+
+function handlePermissionRequired(action, requiredPermission) {
+    const userPermission = localStorage.getItem('permission') || 's1';
+    if (!checkPermission(requiredPermission)) {
+        alert(`權限不足，無法執行此操作。\n需要權限：${requiredPermission}。\n您的權限：${userPermission}`);
+        return false;
+    }
+    action();
+    resetInactivityTimer();
+    return true;
+}
+
+// 🆕 初始化函數
+function initializeButtons() {
+    // 綁定返回按鈕
+    const backButtons = AppElements.buttons.backButtons;
+    bindBackButton(backButtons.fromRisk, AppElements.sections.deptRiskIndex);
+    bindBackButton(backButtons.fromAnalytics, AppElements.sections.dataAnalytics);
+    bindBackButton(backButtons.fromEvent, AppElements.sections.eventRegistration);
+    bindBackButton(backButtons.fromAlert, AppElements.sections.alertSettings);
+    bindBackButton(backButtons.fromPrediction, AppElements.sections.riskPrediction);
+    bindBackButton(backButtons.fromTracking, AppElements.sections.tracking);
+    bindBackButton(backButtons.fromUserManagement, AppElements.sections.userManagement);
+    bindBackButton(backButtons.fromSystemSettings, AppElements.sections.systemSettings);
+    bindBackButton(backButtons.fromDataBackup, AppElements.sections.dataBackup);
+    bindBackButton(backButtons.fromHighRisk, AppElements.sections.recentHighRisk);
+
+    // 風險預測按鈕
+    const riskPredictionBtn = AppElements.buttons.riskPrediction;
+    if (riskPredictionBtn) {
+        riskPredictionBtn.addEventListener('click', function () {
+            handlePermissionRequired(() => {
+                showElement(AppElements.sections.riskPrediction);
+                loadStandalonePredictionAnalysis();
+            }, 's3');
         });
     }
-    
-    const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
-    if (backFromHighRiskBtn) {
-        backFromHighRiskBtn.addEventListener('click', function() {
-            document.getElementById('recent-high-risk-section').classList.add('hidden');
-            showDashboard();
-            resetInactivityTimer();
+
+    // 預警設定按鈕
+    const alertSettingsBtn = AppElements.buttons.alertSettings;
+    if (alertSettingsBtn) {
+        alertSettingsBtn.addEventListener('click', function () {
+            handlePermissionRequired(() => {
+                showElement(AppElements.sections.alertSettings);
+                loadAlertSettings();
+                loadAlertHistory();
+            }, 's4');
         });
     }
-    // 追蹤事項按鈕點擊事件
-if (trackingBtn) {
-    trackingBtn.addEventListener('click', function() {
-        showTrackingPage();
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
 
-// 返回按鈕
-if (backFromTrackingBtn) {
-    backFromTrackingBtn.addEventListener('click', function() {
-        document.getElementById('tracking-page').style.display = 'none';
-        showDashboard();
-        resetInactivityTimer();
-    });
-}
-
-// 重新整理按鈕
-if (refreshTrackingBtn) {
-    refreshTrackingBtn.addEventListener('click', function() {
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
-
-// 匯出報告按鈕
-if (exportTrackingBtn) {
-    exportTrackingBtn.addEventListener('click', function() {
-        exportTrackingReport();
-        resetInactivityTimer();
-    });
-}
-    
+    // 匯出高風險報告按鈕
     const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
     if (exportHighRiskBtn) {
-        exportHighRiskBtn.addEventListener('click', function() {
+        exportHighRiskBtn.addEventListener('click', function () {
             alert('匯出功能開發中...');
             resetInactivityTimer();
         });
     }
-});
+}
 
-    
-    // 🆕 新增用戶表單事件監聽器
-    const addUserForm = document.getElementById('addUserForm');
+function initializeForms() {
+    // 新增用戶表單
+    const addUserForm = AppElements.forms.addUser;
     if (addUserForm) {
-        addUserForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // 防止表單默認提交
-            handleAddUserSubmit();
-            resetInactivityTimer();
+        addUserForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            await handleAddUserSubmit();
         });
     }
-// 🆕 新增處理用戶提交的函數
+}
+
+// 🆕 用戶新增處理函數
 async function handleAddUserSubmit() {
     try {
-        // 獲取表單數據
         const formData = {
             department: document.getElementById('newUserDepartment').value.trim(),
             name: document.getElementById('newUserName').value.trim(),
@@ -2994,26 +2998,22 @@ async function handleAddUserSubmit() {
             permission: document.getElementById('newUserPermission').value,
             password: document.getElementById('newUserPassword').value
         };
-        
-        // 驗證必填欄位
+
         if (!formData.department || !formData.name || !formData.username || !formData.password) {
             alert('請填寫所有必填欄位');
             return;
         }
-        
-        // 驗證帳號格式（可選）
+
         if (formData.username.length < 3) {
             alert('帳號長度至少需要3個字元');
             return;
         }
-        
-        // 顯示載入狀態
+
         const submitBtn = document.querySelector('#addUserForm button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 新增中...';
         submitBtn.disabled = true;
-        
-        // 發送請求到後端
+
         const response = await fetch(`${scriptUrl}?action=addUser`, {
             method: 'POST',
             headers: {
@@ -3021,230 +3021,43 @@ async function handleAddUserSubmit() {
             },
             body: JSON.stringify(formData)
         });
-        
+
+        if (!response.ok) {
+            throw new Error(`HTTP錯誤：${response.status}`);
+        }
+
         const result = await response.json();
-        
+
         if (result.success) {
             alert('用戶新增成功！');
-            
-            // 清空表單
-            document.getElementById('addUserForm').reset();
-            
-            // 重新載入用戶列表
+            addUserForm.reset();
             loadUserList();
         } else {
             alert('新增失敗：' + result.message);
         }
-        
     } catch (error) {
         console.error('新增用戶時發生錯誤:', error);
         alert('新增失敗，請稍後再試');
     } finally {
-        // 恢復按鈕狀態
         const submitBtn = document.querySelector('#addUserForm button[type="submit"]');
         submitBtn.innerHTML = '<i class="fas fa-plus"></i> 新增用戶';
         submitBtn.disabled = false;
     }
 }
-    
-    
-    const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
-    if (backFromHighRiskBtn) {
-        backFromHighRiskBtn.addEventListener('click', function() {
-            document.getElementById('recent-high-risk-section').classList.add('hidden');
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    
-    const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
-    if (exportHighRiskBtn) {
-        exportHighRiskBtn.addEventListener('click', function() {
-            alert('匯出功能開發中...');
-            resetInactivityTimer();
-        });
-    }
-    
-    // 篩選器事件綁定
-    const deptFilter = document.getElementById('riskDepartmentFilter');
-    if (deptFilter) {
-        deptFilter.addEventListener('change', filterHighRiskData);
-    }
-    
-    const levelFilter = document.getElementById('riskLevelFilter');
-    if (levelFilter) {
-        levelFilter.addEventListener('change', filterHighRiskData);
-    }
-    
-// 用戶管理頁面返回按鈕
-    if (backFromUserManagement) {
-        backFromUserManagement.addEventListener('click', function() {
-            document.getElementById('user-management-page').style.display = 'dashboard-section';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    // 系統設定頁面返回按鈕
-    if (backFromSystemSettings) {
-        backFromSystemSettings.addEventListener('click', function() {
-            document.getElementById('system-settings-page').style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 數據備份頁面返回按鈕
-    if (backFromDataBackup) {
-        backFromDataBackup.addEventListener('click', function() {
-            document.getElementById('data-backup-page').style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    // 🆕 風險趨勢預判分析按鈕點擊事件 - 需要s3以上權限
-if (riskPredictionBtn) {
-    riskPredictionBtn.addEventListener('click', function() {
-        // 🆕 檢查s3以上權限
-        if (!checkPermission('s3')) {
-            alert('權限不足，無法訪問風險趨勢預判分析功能\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            return;
-        }
-        
-        showRiskPredictionPage();
-        loadStandalonePredictionAnalysis();
-        resetInactivityTimer();
-    });
-}
 
-    
-    // 🆕 返回按鈕
-    if (backFromPredictionBtn) {
-        backFromPredictionBtn.addEventListener('click', function() {
-            riskPredictionPage.style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 🆕 獨立頁面的控制按鈕事件
-    const refreshPredictionBtn = document.getElementById('refreshPredictionBtn');
-    const exportPredictionBtn = document.getElementById('exportPredictionBtn');
-    const predictionDaysStandalone = document.getElementById('predictionDaysStandalone');
-    const analysisTypeStandalone = document.getElementById('analysisTypeStandalone');
-    const predictionDepartmentFilter = document.getElementById('predictionDepartmentFilter');
-
-    if (refreshPredictionBtn) {
-        refreshPredictionBtn.addEventListener('click', function() {
-            loadStandalonePredictionAnalysis();
-            resetInactivityTimer();
-        });
-    }
-
-    if (exportPredictionBtn) {
-        exportPredictionBtn.addEventListener('click', function() {
-            exportStandalonePredictionReport();
-            resetInactivityTimer();
-        });
-    }
-
-    if (predictionDaysStandalone) {
-        predictionDaysStandalone.addEventListener('change', function() {
-            loadStandalonePredictionAnalysis();
-            resetInactivityTimer();
-        });
-    }
-
-    if (analysisTypeStandalone) {
-        analysisTypeStandalone.addEventListener('change', function() {
-            loadStandalonePredictionAnalysis();
-            resetInactivityTimer();
-        });
-    }
-
-    if (predictionDepartmentFilter) {
-        predictionDepartmentFilter.addEventListener('change', function() {
-            loadStandalonePredictionAnalysis();
-            resetInactivityTimer();
-        });
-    }
-
-    
-// 檢查預警設定按鈕是否存在並添加s4權限檢查
-if (alertSettingsBtn) {
-    alertSettingsBtn.addEventListener('click', function() {
-        // 🆕 檢查s4權限
-        if (!checkPermission('s4')) {
-            alert('權限不足，無法訪問風險預警設定功能\n需要權限：s4 管理權限\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            return;
-        }
-        
-        // 移除閃爍效果
-        this.classList.remove('alert-button-warning');
-        showAlertSettingsPage();
-        loadAlertSettings();
-        loadAlertHistory();
-        resetInactivityTimer();
-    });
-}
-
-    
-    if (backFromAlertBtn) {
-        backFromAlertBtn.addEventListener('click', function() {
-            alertSettingsPage.style.display = 'none';
-            showDashboard();
-            resetInactivityTimer();
-        });
-    }
-    
-    if (saveAlertSettingsBtn) {
-        saveAlertSettingsBtn.addEventListener('click', function() {
-            saveAlertSettings();
-            resetInactivityTimer();
-        });
-    }
-
-    // 🆕 請求瀏覽器通知權限
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                console.log('通知權限已獲得');
-            }
-        });
-    }
-    
-    // 測試按鈕事件
-    const testEmailBtn = document.getElementById('testEmailBtn');
-    const testLineBtn = document.getElementById('testLineBtn');
-    const testSystemBtn = document.getElementById('testSystemBtn');
-    
-    if (testEmailBtn) {
-        testEmailBtn.addEventListener('click', function() {
-            testNotification('email');
-        });
-    }
-    
-    if (testLineBtn) {
-        testLineBtn.addEventListener('click', function() {
-            testNotification('line');
-        });
-    }
-    
-    if (testSystemBtn) {
-        testSystemBtn.addEventListener('click', function() {
-            testNotification('system');
-        });
-    }
-    
-    // 🆕 頁面載入時檢查是否有新的預警通知
+// 🆕 初始化應用
+document.addEventListener('DOMContentLoaded', function () {
+    initializeButtons();
+    initializeForms();
     checkForNewAlerts();
-    
-    // 🆕 每5分鐘檢查一次新預警（如果用戶已登入）
-    setInterval(function() {
+
+    // 每5分鐘檢查一次新預警
+    setInterval(function () {
         if (localStorage.getItem('isLoggedIn') === 'true') {
             checkForNewAlerts();
         }
-    }, 5 * 60 * 1000); // 5分鐘
-        
+    }, 5 * 60 * 1000);
+});
 
 // 🆕 檢查新預警通知
 async function checkForNewAlerts() {
