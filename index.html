@@ -2891,12 +2891,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        const trackingBtn = document.getElementById('tracking-btn');
+    const trackingBtn = document.getElementById('tracking-btn');
     const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
     const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
     const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+    if (trackingBtn) {
+        trackingBtn.addEventListener('click', function() {
+            showTrackingPage();
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+       
     
     
     // 🔧 確保近期高風險按鈕事件正確綁定
