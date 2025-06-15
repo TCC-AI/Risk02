@@ -2892,12 +2892,44 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
     const trackingBtn = document.getElementById('tracking-btn');
-const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
+    // 追蹤事項按鈕點擊事件
+    if (trackingBtn) {
+        trackingBtn.addEventListener('click', function() {
+            showTrackingPage();
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
     
+    // 返回按鈕
+    if (backFromTrackingBtn) {
+        backFromTrackingBtn.addEventListener('click', function() {
+            document.getElementById('tracking-page').style.display = 'none';
+            showDashboard();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 重新整理按鈕
+    if (refreshTrackingBtn) {
+        refreshTrackingBtn.addEventListener('click', function() {
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    }
+    
+    // 匯出報告按鈕
+    if (exportTrackingBtn) {
+        exportTrackingBtn.addEventListener('click', function() {
+            exportTrackingReport();
+            resetInactivityTimer();
+        });
+    }
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
     if (recentHighRiskBtn) {
