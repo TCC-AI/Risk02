@@ -1983,63 +1983,173 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 #riskNotificationModal.show .modal-dialog {
     transform: none;
 }
-/* 追蹤事項相關樣式 */
-.follow-up-items {
-  padding: 20px;
+/* 🆕 追蹤事項頁面樣式 */
+.tracking-section {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+                0 4px 8px rgba(31, 38, 135, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 100%;
+    max-width: 1200px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+    transition: all 0.3s ease;
 }
 
-.section-title {
-  margin-bottom: 20px;
-  color: #2c3e50;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 10px;
+.tracking-section:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
+                0 6px 12px rgba(31, 38, 135, 0.25),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
-#follow-up-items-table th {
-  background-color: #f8f9fa;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.tracking-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
 }
 
-#follow-up-items-table tbody tr:hover {
-  background-color: #f1f9ff;
+/* 追蹤事項按鈕樣式 */
+#tracking-btn {
+    background: linear-gradient(to right, #9b59b6, #8e44ad);
 }
 
-/* 優先級顏色 */
-.text-danger {
-  font-weight: bold;
+#tracking-btn:hover {
+    background: linear-gradient(to right, #8e44ad, #7d3c98);
 }
 
 /* 狀態標籤樣式 */
-.badge {
-  font-size: 0.8rem;
-  padding: 5px 8px;
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
 }
 
-/* 按鈕間距 */
-.btn-sm + .btn-sm {
-  margin-left: 5px;
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
 }
 
-/* 表單樣式 */
-#follow-up-form label {
-  font-weight: 500;
+.status-in-progress {
+    background-color: #cce5ff;
+    color: #004085;
+    border: 1px solid #74b9ff;
 }
 
-.form-label .text-danger {
-  font-weight: bold;
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #00b894;
 }
 
-/* 模態框樣式 */
-.modal-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
+.status-overdue {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #e17055;
+    animation: pulse 2s infinite;
 }
 
-.modal-footer {
-  background-color: #f8f9fa;
-  border-top: 1px solid #dee2e6;
+/* 優先級標籤樣式 */
+.priority-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.priority-high {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef5350;
+}
+
+.priority-medium {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border: 1px solid #ffb74d;
+}
+
+.priority-low {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #66bb6a;
+}
+
+/* 操作按鈕樣式 */
+.action-btn {
+    padding: 4px 8px;
+    margin: 0 2px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-edit {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-complete {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-complete:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .tracking-section {
+        padding: 20px;
+        margin-top: 10px;
+    }
+    
+    .tracking-header h1 {
+        font-size: 24px;
+    }
+    
+    .stat-card {
+        margin-bottom: 15px;
+    }
+    
+    .table-responsive {
+        font-size: 14px;
+    }
+    
+    .action-btn {
+        padding: 2px 4px;
+        font-size: 10px;
+    }
 }
 
 
@@ -2105,7 +2215,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                  <button class="feature-btn" id="dept-risk-index-btn" style="background: linear-gradient(to right, #1a6fc4, #34c3aa);">🚥<br>風險燈號<br>⚛︎AI⚛︎評析</button>
     <button id="inventory-btn" class="feature-btn">📝<br>部門定期全面盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>單一突發事件登錄</button>
-                <button class="feature-btn" id="follow-up-items-btn" style="background: linear-gradient(to right, #9b59b6, #8e44ad);">📋<br>追蹤事項<br>管理</button>
+                 <button id="tracking-btn" class="feature-btn">📋<br>追蹤事項</button>
                
                  
             </div>
@@ -2807,7 +2917,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycby1MzVvcoDc6LVLjBX61crzHGgkHWWnmKT6L0zP9TnlM7D9WpYjiwbFb-AxeyfAfus7/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbxc8BNDYxRK0LKU1Gxnl7qMsfZzAZMRLfxwR4wlMcql6etPLrAFU3lZmUkBrIV_TtaA/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -7440,418 +7550,371 @@ function showRiskNotificationModal() {
         alert('請注意風險通報機制：\n- A級(8-10)：1小時內通報\n- B級(5-7)：6小時內通報\n- C級(1-4)：12小時內通報');
     }
 }
-<!-- 追蹤事項頁面 -->
-<div id="follow-up-items-section" class="follow-up-items hidden">
-    <h2 class="section-title">追蹤事項管理</h2>
-    
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="input-group">
-                <input type="text" class="form-control" id="follow-up-search" placeholder="搜尋追蹤事項...">
-                <button class="btn btn-outline-secondary" type="button" id="follow-up-search-btn">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-6 text-end">
-            <button class="btn btn-primary" id="add-follow-up-btn">
-                <i class="fas fa-plus"></i> 新增追蹤事項
-            </button>
-            <div class="btn-group ms-2">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter"></i> 篩選
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#" data-filter="all">全部</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="pending">待處理</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="in-progress">處理中</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="completed">已完成</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" data-filter="high">高優先級</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="medium">中優先級</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="low">低優先級</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    <div class="table-responsive">
-        <table class="table table-striped table-hover" id="follow-up-items-table">
-            <thead>
-                <tr>
-                    <th scope="col" style="width: 5%">#</th>
-                    <th scope="col" style="width: 15%">追蹤項目</th>
-                    <th scope="col" style="width: 20%">描述</th>
-                    <th scope="col" style="width: 10%">負責人</th>
-                    <th scope="col" style="width: 10%">部門</th>
-                    <th scope="col" style="width: 10%">截止日期</th>
-                    <th scope="col" style="width: 10%">優先級</th>
-                    <th scope="col" style="width: 10%">狀態</th>
-                    <th scope="col" style="width: 10%">操作</th>
-                </tr>
-            </thead>
-            <tbody id="follow-up-items-body">
-                <tr>
-                    <td colspan="9" class="text-center">載入中...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-    <button class="btn btn-secondary mt-3" id="back-from-follow-up-btn">返回</button>
-</div>
+// 🆕 追蹤事項相關變數
+let trackingData = [];
+let currentTrackingFilter = {
+    department: 'all',
+    status: 'all',
+    priority: 'all'
+};
 
-<!-- 新增/編輯追蹤事項的彈出視窗 -->
-<div class="modal fade" id="follow-up-modal" tabindex="-1" aria-labelledby="follow-up-modal-label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="follow-up-modal-label">新增追蹤事項</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="follow-up-form">
-                    <input type="hidden" id="follow-up-id">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="follow-up-title" class="form-label">追蹤項目 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="follow-up-title" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="follow-up-department" class="form-label">部門 <span class="text-danger">*</span></label>
-                            <select class="form-select" id="follow-up-department" required>
-                                <option value="">請選擇部門</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="follow-up-description" class="form-label">描述</label>
-                        <textarea class="form-control" id="follow-up-description" rows="3"></textarea>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="follow-up-assignee" class="form-label">負責人 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="follow-up-assignee" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="follow-up-deadline" class="form-label">截止日期</label>
-                            <input type="date" class="form-control" id="follow-up-deadline">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="follow-up-priority" class="form-label">優先級</label>
-                            <select class="form-select" id="follow-up-priority">
-                                <option value="high">高</option>
-                                <option value="medium" selected>中</option>
-                                <option value="low">低</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="follow-up-status" class="form-label">狀態</label>
-                            <select class="form-select" id="follow-up-status">
-                                <option value="pending" selected>待處理</option>
-                                <option value="in-progress">處理中</option>
-                                <option value="completed">已完成</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="follow-up-notes" class="form-label">備註</label>
-                        <textarea class="form-control" id="follow-up-notes" rows="2"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="save-follow-up-btn">儲存</button>
-            </div>
-        </div>
-    </div>
-</div>
-// 追蹤事項按鈕點擊事件
-document.getElementById('follow-up-items-btn').addEventListener('click', function() {
-    // 隱藏儀表板
-    document.getElementById('dashboard-section').classList.add('hidden');
+// 🆕 追蹤事項按鈕事件監聽器
+document.getElementById('tracking-btn').addEventListener('click', function() {
+    showTrackingPage();
+});
+
+// 🆕 顯示追蹤事項頁面
+function showTrackingPage() {
+    // 隱藏所有其他頁面
+    hideAllSections();
+    
     // 顯示追蹤事項頁面
-    document.getElementById('follow-up-items-section').classList.remove('hidden');
-    // 加載追蹤事項數據
-    loadFollowUpItems();
-});
-
-// 返回按鈕點擊事件
-document.getElementById('back-from-follow-up-btn').addEventListener('click', function() {
-    // 隱藏追蹤事項頁面
-    document.getElementById('follow-up-items-section').classList.add('hidden');
-    // 顯示儀表板
-    document.getElementById('dashboard-section').classList.remove('hidden');
-});
-
-// 新增追蹤事項按鈕點擊事件
-document.getElementById('add-follow-up-btn').addEventListener('click', function() {
-    // 清空表單
-    document.getElementById('follow-up-form').reset();
-    document.getElementById('follow-up-id').value = '';
-    document.getElementById('follow-up-modal-label').textContent = '新增追蹤事項';
+    document.getElementById('tracking-section').classList.remove('hidden');
     
-    // 加載部門下拉選單
-    loadDepartmentsForDropdown('follow-up-department');
+    // 載入追蹤事項數據
+    loadTrackingData();
     
-    // 顯示彈出視窗
-    const modal = new bootstrap.Modal(document.getElementById('follow-up-modal'));
-    modal.show();
-});
-
-// 儲存追蹤事項按鈕點擊事件
-document.getElementById('save-follow-up-btn').addEventListener('click', function() {
-    // 驗證表單
-    const form = document.getElementById('follow-up-form');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-    
-    // 收集表單數據
-    const followUpData = {
-        id: document.getElementById('follow-up-id').value || null,
-        title: document.getElementById('follow-up-title').value,
-        description: document.getElementById('follow-up-description').value,
-        department: document.getElementById('follow-up-department').value,
-        assignee: document.getElementById('follow-up-assignee').value,
-        deadline: document.getElementById('follow-up-deadline').value,
-        priority: document.getElementById('follow-up-priority').value,
-        status: document.getElementById('follow-up-status').value,
-        notes: document.getElementById('follow-up-notes').value
-    };
-    
-    // 保存數據
-    saveFollowUpItem(followUpData);
-    
-    // 關閉彈出視窗
-    const modal = bootstrap.Modal.getInstance(document.getElementById('follow-up-modal'));
-    modal.hide();
-});
-
-// 加載追蹤事項數據
-function loadFollowUpItems() {
-    // 顯示載入中
-    document.getElementById('follow-up-items-body').innerHTML = '<tr><td colspan="9" class="text-center">載入中...</td></tr>';
-    
-    // 發送 API 請求
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                displayFollowUpItems(result.items);
-            } else {
-                document.getElementById('follow-up-items-body').innerHTML = 
-                    '<tr><td colspan="9" class="text-center text-danger">載入失敗：' + result.message + '</td></tr>';
-            }
-        })
-        .withFailureHandler(function(error) {
-            document.getElementById('follow-up-items-body').innerHTML = 
-                '<tr><td colspan="9" class="text-center text-danger">系統錯誤：' + error + '</td></tr>';
-        })
-        .getFollowUpItems();
+    // 載入部門列表
+    loadDepartmentsForTracking();
 }
 
-// 顯示追蹤事項數據
-function displayFollowUpItems(items) {
-    const tbody = document.getElementById('follow-up-items-body');
+// 🆕 載入追蹤事項數據
+async function loadTrackingData() {
+    try {
+        showLoadingMessage('trackingTableBody', '載入追蹤事項中...');
+        
+        const response = await fetch(`${API_BASE_URL}?action=getTrackingItems&department=${currentTrackingFilter.department}&status=${currentTrackingFilter.status}&priority=${currentTrackingFilter.priority}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            trackingData = result.data || [];
+            displayTrackingData(trackingData);
+            updateTrackingStats(result.stats || {});
+        } else {
+            showError('載入追蹤事項失敗: ' + result.message);
+            document.getElementById('trackingTableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">載入失敗</td></tr>';
+        }
+    } catch (error) {
+        console.error('載入追蹤事項時出錯:', error);
+        showError('載入追蹤事項時發生錯誤');
+        document.getElementById('trackingTableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">載入錯誤</td></tr>';
+    }
+}
+
+// 🆕 顯示追蹤事項數據
+function displayTrackingData(data) {
+    const tbody = document.getElementById('trackingTableBody');
     
-    if (!items || items.length === 0) {
+    if (!data || data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" class="text-center">暫無追蹤事項</td></tr>';
         return;
     }
     
-    let html = '';
-    items.forEach((item, index) => {
-        // 設定優先級和狀態的樣式
-        let priorityClass = '';
-        switch(item.priority) {
-            case 'high': priorityClass = 'text-danger'; break;
-            case 'medium': priorityClass = 'text-warning'; break;
-            case 'low': priorityClass = 'text-success'; break;
-        }
-        
-        let statusClass = '';
-        switch(item.status) {
-            case 'pending': statusClass = 'badge bg-secondary'; break;
-            case 'in-progress': statusClass = 'badge bg-primary'; break;
-            case 'completed': statusClass = 'badge bg-success'; break;
-        }
-        
-        // 生成表格行
-        html += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${item.title}</td>
-                <td>${item.description || '-'}</td>
-                <td>${item.assignee}</td>
-                <td>${item.department}</td>
-                <td>${item.deadline || '-'}</td>
-                <td class="${priorityClass}">${getPriorityText(item.priority)}</td>
-                <td><span class="${statusClass}">${getStatusText(item.status)}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary edit-follow-up" data-id="${item.id}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-follow-up" data-id="${item.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
-    
-    tbody.innerHTML = html;
-    
-    // 添加編輯和刪除按鈕的事件處理
-    document.querySelectorAll('.edit-follow-up').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            editFollowUpItem(id);
-        });
-    });
-    
-    document.querySelectorAll('.delete-follow-up').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            deleteFollowUpItem(id);
-        });
-    });
+    tbody.innerHTML = data.map(item => `
+        <tr class="${isOverdue(item.dueDate, item.status) ? 'table-warning' : ''}">
+            <td>${item.id}</td>
+            <td>${formatDate(item.createDate)}</td>
+            <td>${item.department}</td>
+            <td>
+                <strong>${item.title}</strong>
+                ${item.description ? `<br><small class="text-muted">${item.description}</small>` : ''}
+            </td>
+            <td><span class="priority-badge priority-${item.priority}">${getPriorityText(item.priority)}</span></td>
+            <td>${item.assignee}</td>
+            <td>${formatDate(item.dueDate)}</td>
+            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+            <td>
+                <button class="action-btn btn-edit" onclick="editTrackingItem('${item.id}')" title="編輯">
+                    <i class="fas fa-edit"></i>
+                </button>
+                ${item.status !== 'completed' ? `
+                <button class="action-btn btn-complete" onclick="completeTrackingItem('${item.id}')" title="標記完成">
+                    <i class="fas fa-check"></i>
+                </button>
+                ` : ''}
+                <button class="action-btn btn-delete" onclick="deleteTrackingItem('${item.id}')" title="刪除">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
 }
 
-// 獲取優先級文字
+// 🆕 更新統計資訊
+function updateTrackingStats(stats) {
+    document.getElementById('totalTrackingItems').textContent = stats.total || 0;
+    document.getElementById('overdueItems').textContent = stats.overdue || 0;
+    document.getElementById('inProgressItems').textContent = stats.inProgress || 0;
+    document.getElementById('completedItems').textContent = stats.completed || 0;
+}
+
+// 🆕 載入部門列表（用於追蹤事項）
+async function loadDepartmentsForTracking() {
+    try {
+        const response = await fetch(`${API_BASE_URL}?action=getDepartmentList`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const departmentFilter = document.getElementById('trackingDepartmentFilter');
+            const departmentSelect = document.getElementById('trackingDepartment');
+            
+            // 更新篩選器
+            departmentFilter.innerHTML = '<option value="all">全部部門</option>' + 
+                result.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('');
+            
+            // 更新新增表單
+            departmentSelect.innerHTML = '<option value="">請選擇部門</option>' + 
+                result.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('');
+        }
+    } catch (error) {
+        console.error('載入部門列表時出錯:', error);
+    }
+}
+
+// 🆕 輔助函數
 function getPriorityText(priority) {
-    switch(priority) {
-        case 'high': return '高';
-        case 'medium': return '中';
-        case 'low': return '低';
-        default: return '未知';
-    }
+    const priorityMap = {
+        'high': '高',
+        'medium': '中',
+        'low': '低'
+    };
+    return priorityMap[priority] || priority;
 }
 
-// 獲取狀態文字
 function getStatusText(status) {
-    switch(status) {
-        case 'pending': return '待處理';
-        case 'in-progress': return '處理中';
-        case 'completed': return '已完成';
-        default: return '未知';
+    const statusMap = {
+        'pending': '待處理',
+        'in-progress': '處理中',
+        'completed': '已完成',
+        'overdue': '逾期'
+    };
+    return statusMap[status] || status;
+}
+
+function isOverdue(dueDate, status) {
+    if (status === 'completed') return false;
+    const due = new Date(dueDate);
+    const now = new Date();
+    return due < now;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-TW');
+}
+
+// 🆕 事件監聽器
+document.addEventListener('DOMContentLoaded', function() {
+    // 返回按鈕
+    document.getElementById('backFromTrackingBtn').addEventListener('click', function() {
+        document.getElementById('tracking-section').classList.add('hidden');
+        document.getElementById('dashboard-section').classList.remove('hidden');
+    });
+    
+    // 篩選器變更事件
+    document.getElementById('trackingDepartmentFilter').addEventListener('change', function() {
+        currentTrackingFilter.department = this.value;
+        loadTrackingData();
+    });
+    
+    document.getElementById('trackingStatusFilter').addEventListener('change', function() {
+        currentTrackingFilter.status = this.value;
+        loadTrackingData();
+    });
+    
+    document.getElementById('trackingPriorityFilter').addEventListener('change', function() {
+        currentTrackingFilter.priority = this.value;
+        loadTrackingData();
+    });
+    
+    // 重新整理按鈕
+    document.getElementById('refreshTrackingBtn').addEventListener('click', function() {
+        loadTrackingData();
+    });
+    
+    // 新增事項按鈕
+    document.getElementById('addTrackingBtn').addEventListener('click', function() {
+        showTrackingModal();
+    });
+    
+    // 儲存按鈕
+    document.getElementById('saveTrackingBtn').addEventListener('click', function() {
+        saveTrackingItem();
+    });
+});
+
+// 🆕 顯示新增/編輯彈出視窗
+function showTrackingModal(item = null) {
+    const modal = new bootstrap.Modal(document.getElementById('trackingModal'));
+    const form = document.getElementById('trackingForm');
+    
+    // 重置表單
+    form.reset();
+    
+    if (item) {
+        // 編輯模式
+        document.getElementById('trackingModalLabel').textContent = '編輯追蹤事項';
+        document.getElementById('trackingId').value = item.id;
+        document.getElementById('trackingDepartment').value = item.department;
+        document.getElementById('trackingPriority').value = item.priority;
+        document.getElementById('trackingTitle').value = item.title;
+        document.getElementById('trackingDescription').value = item.description || '';
+        document.getElementById('trackingAssignee').value = item.assignee;
+        document.getElementById('trackingDueDate').value = item.dueDate;
+        document.getElementById('trackingStatus').value = item.status;
+        document.getElementById('trackingProgress').value = item.progress || 0;
+    } else {
+        // 新增模式
+        document.getElementById('trackingModalLabel').textContent = '新增追蹤事項';
+        document.getElementById('trackingId').value = '';
+        // 設定預設到期日（一週後）
+        const nextWeek = new Date();
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        document.getElementById('trackingDueDate').value = nextWeek.toISOString().split('T')[0];
+    }
+    
+    modal.show();
+}
+
+// 🆕 儲存追蹤事項
+async function saveTrackingItem() {
+    try {
+        const form = document.getElementById('trackingForm');
+        const formData = new FormData(form);
+        
+        // 驗證必填欄位
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const trackingData = {
+            id: document.getElementById('trackingId').value,
+            department: document.getElementById('trackingDepartment').value,
+            priority: document.getElementById('trackingPriority').value,
+            title: document.getElementById('trackingTitle').value,
+            description: document.getElementById('trackingDescription').value,
+            assignee: document.getElementById('trackingAssignee').value,
+            dueDate: document.getElementById('trackingDueDate').value,
+            status: document.getElementById('trackingStatus').value,
+            progress: document.getElementById('trackingProgress').value,
+            userInfo: {
+                department: currentUser.department,
+                name: currentUser.name,
+                username: currentUser.username
+            }
+        };
+        
+        const action = trackingData.id ? 'updateTrackingItem' : 'addTrackingItem';
+        
+        const response = await fetch(API_BASE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(trackingData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess(trackingData.id ? '追蹤事項更新成功' : '追蹤事項新增成功');
+            
+            // 關閉彈出視窗
+            const modal = bootstrap.Modal.getInstance(document.getElementById('trackingModal'));
+            modal.hide();
+            
+            // 重新載入數據
+            loadTrackingData();
+        } else {
+            showError('儲存失敗: ' + result.message);
+        }
+    } catch (error) {
+        console.error('儲存追蹤事項時出錯:', error);
+        showError('儲存時發生錯誤');
     }
 }
 
-// 保存追蹤事項
-function saveFollowUpItem(data) {
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                // 重新載入數據
-                loadFollowUpItems();
-                // 顯示成功訊息
-                showToast('成功', '追蹤事項已儲存', 'success');
-            } else {
-                showToast('錯誤', result.message, 'error');
-            }
-        })
-        .withFailureHandler(function(error) {
-            showToast('系統錯誤', error, 'error');
-        })
-        .saveFollowUpItem(data);
-}
-
-// 編輯追蹤事項
-function editFollowUpItem(id) {
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                const item = result.item;
-                
-                // 填充表單
-                document.getElementById('follow-up-id').value = item.id;
-                document.getElementById('follow-up-title').value = item.title;
-                document.getElementById('follow-up-description').value = item.description || '';
-                document.getElementById('follow-up-assignee').value = item.assignee;
-                document.getElementById('follow-up-deadline').value = item.deadline || '';
-                document.getElementById('follow-up-priority').value = item.priority;
-                document.getElementById('follow-up-status').value = item.status;
-                document.getElementById('follow-up-notes').value = item.notes || '';
-                
-                // 加載部門下拉選單並設置選中值
-                loadDepartmentsForDropdown('follow-up-department', item.department);
-                
-                // 更新標題
-                document.getElementById('follow-up-modal-label').textContent = '編輯追蹤事項';
-                
-                // 顯示彈出視窗
-                const modal = new bootstrap.Modal(document.getElementById('follow-up-modal'));
-                modal.show();
-            } else {
-                showToast('錯誤', result.message, 'error');
-            }
-        })
-        .withFailureHandler(function(error) {
-            showToast('系統錯誤', error, 'error');
-        })
-        .getFollowUpItemById(id);
-}
-
-// 刪除追蹤事項
-function deleteFollowUpItem(id) {
-    if (confirm('確定要刪除此追蹤事項嗎？')) {
-        google.script.run
-            .withSuccessHandler(function(result) {
-                if (result.success) {
-                    // 重新載入數據
-                    loadFollowUpItems();
-                    // 顯示成功訊息
-                    showToast('成功', '追蹤事項已刪除', 'success');
-                } else {
-                    showToast('錯誤', result.message, 'error');
-                }
-            })
-            .withFailureHandler(function(error) {
-                showToast('系統錯誤', error, 'error');
-            })
-            .deleteFollowUpItem(id);
+// 🆕 編輯追蹤事項
+function editTrackingItem(id) {
+    const item = trackingData.find(item => item.id === id);
+    if (item) {
+        showTrackingModal(item);
     }
 }
 
-// 加載部門下拉選單
-function loadDepartmentsForDropdown(selectId, selectedValue) {
-    google.script.run
-        .withSuccessHandler(function(result) {
+// 🆕 標記完成
+async function completeTrackingItem(id) {
+    if (confirm('確定要標記此事項為已完成嗎？')) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=completeTrackingItem&id=${id}`, {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
             if (result.success) {
-                const select = document.getElementById(selectId);
-                // 保留第一個選項
-                select.innerHTML = '<option value="">請選擇部門</option>';
-                
-                // 添加部門選項
-                result.departments.forEach(dept => {
-                    const option = document.createElement('option');
-                    option.value = dept;
-                    option.textContent = dept;
-                    if (selectedValue && dept === selectedValue) {
-                        option.selected = true;
-                    }
-                    select.appendChild(option);
-                });
+                showSuccess('事項已標記為完成');
+                loadTrackingData();
             } else {
-                console.error('加載部門失敗：', result.message);
+                showError('操作失敗: ' + result.message);
             }
-        })
-        .withFailureHandler(function(error) {
-            console.error('系統錯誤：', error);
-        })
-        .getDepartmentList();
+        } catch (error) {
+            console.error('標記完成時出錯:', error);
+            showError('操作時發生錯誤');
+        }
+    }
 }
 
-// 顯示通知訊息
-function showToast(title, message, type) {
-    // 假設您已經有一個顯示通知的函數
-    // 如果沒有，您可以使用 Bootstrap Toast 或其他通知庫
-    console.log(`${title}: ${message} (${type})`);
+// 🆕 刪除追蹤事項（續）
+async function deleteTrackingItem(id) {
+    if (confirm('確定要刪除此追蹤事項嗎？此操作無法復原。')) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=deleteTrackingItem&id=${id}`, {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess('追蹤事項已刪除');
+                loadTrackingData();
+            } else {
+                showError('刪除失敗: ' + result.message);
+            }
+        } catch (error) {
+            console.error('刪除追蹤事項時出錯:', error);
+            showError('刪除時發生錯誤');
+        }
+    }
 }
+
+// 🆕 修改現有的 hideAllSections 函數，加入追蹤事項頁面
+function hideAllSections() {
+    const sections = [
+        'dashboard-section',
+        'inventory-section', 
+        'event-section',
+        'tracking-section', // 🆕 新增
+        'data-analytics-section',
+        'dept-risk-index-section',
+        'alert-settings-section',
+        'prediction-analysis-section',
+        'user-management-section',
+        'system-settings-section',
+        'data-backup-section',
+        'recent-high-risk-section'
+    ];
+    
+    sections.forEach(sectionId => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.classList.add('hidden');
+        }
+    });
+}
+
 
 </script>
 
@@ -8216,131 +8279,190 @@ function showToast(title, message, type) {
         </div>
     </div>
 </div>
-<!-- 追蹤事項頁面 -->
-<div id="follow-up-items-section" class="follow-up-items hidden">
-    <h2 class="section-title">追蹤事項管理</h2>
+<!-- 🆕 追蹤事項頁面 -->
+<div id="tracking-section" class="tracking-section hidden">
+    <div class="tracking-header">
+        <div class="logo-container">
+            <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+        </div>
+        <h1 class="centered-title">追蹤事項</h1>
+    </div>
     
+    <!-- 篩選控制區 -->
     <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="input-group">
-                <input type="text" class="form-control" id="follow-up-search" placeholder="搜尋追蹤事項...">
-                <button class="btn btn-outline-secondary" type="button" id="follow-up-search-btn">
-                    <i class="fas fa-search"></i>
-                </button>
+        <div class="col-md-3">
+            <label for="trackingDepartmentFilter" class="form-label">部門篩選：</label>
+            <select id="trackingDepartmentFilter" class="form-select">
+                <option value="all">全部部門</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="trackingStatusFilter" class="form-label">狀態篩選：</label>
+            <select id="trackingStatusFilter" class="form-select">
+                <option value="all">全部狀態</option>
+                <option value="pending">待處理</option>
+                <option value="in-progress">處理中</option>
+                <option value="completed">已完成</option>
+                <option value="overdue">逾期</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="trackingPriorityFilter" class="form-label">優先級篩選：</label>
+            <select id="trackingPriorityFilter" class="form-select">
+                <option value="all">全部優先級</option>
+                <option value="high">高</option>
+                <option value="medium">中</option>
+                <option value="low">低</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="button" class="btn btn-primary me-2" id="refreshTrackingBtn">
+                <i class="fas fa-sync-alt"></i> 重新整理
+            </button>
+            <button type="button" class="btn btn-success" id="addTrackingBtn">
+                <i class="fas fa-plus"></i> 新增事項
+            </button>
+        </div>
+    </div>
+
+    <!-- 統計卡片 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+                <div class="stat-icon">📋</div>
+                <div class="stat-value" id="totalTrackingItems">-</div>
+                <div class="stat-label">總追蹤事項</div>
             </div>
         </div>
-        <div class="col-md-6 text-end">
-            <button class="btn btn-primary" id="add-follow-up-btn">
-                <i class="fas fa-plus"></i> 新增追蹤事項
-            </button>
-            <div class="btn-group ms-2">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter"></i> 篩選
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#" data-filter="all">全部</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="pending">待處理</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="in-progress">處理中</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="completed">已完成</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" data-filter="high">高優先級</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="medium">中優先級</a></li>
-                    <li><a class="dropdown-item" href="#" data-filter="low">低優先級</a></li>
-                </ul>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-value" id="overdueItems">-</div>
+                <div class="stat-label">逾期事項</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-value" id="inProgressItems">-</div>
+                <div class="stat-label">處理中</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="completedItems">-</div>
+                <div class="stat-label">已完成</div>
             </div>
         </div>
     </div>
-    
+
+    <!-- 追蹤事項表格 -->
     <div class="table-responsive">
-        <table class="table table-striped table-hover" id="follow-up-items-table">
-            <thead>
+        <table class="table table-striped table-bordered" id="trackingTable">
+            <thead class="table-dark">
                 <tr>
-                    <th scope="col" style="width: 5%">#</th>
-                    <th scope="col" style="width: 15%">追蹤項目</th>
-                    <th scope="col" style="width: 20%">描述</th>
-                    <th scope="col" style="width: 10%">負責人</th>
-                    <th scope="col" style="width: 10%">部門</th>
-                    <th scope="col" style="width: 10%">截止日期</th>
-                    <th scope="col" style="width: 10%">優先級</th>
-                    <th scope="col" style="width: 10%">狀態</th>
-                    <th scope="col" style="width: 10%">操作</th>
+                    <th style="width: 8%">編號</th>
+                    <th style="width: 12%">建立日期</th>
+                    <th style="width: 10%">部門</th>
+                    <th style="width: 20%">追蹤事項</th>
+                    <th style="width: 8%">優先級</th>
+                    <th style="width: 10%">負責人</th>
+                    <th style="width: 12%">預計完成日</th>
+                    <th style="width: 8%">狀態</th>
+                    <th style="width: 12%">操作</th>
                 </tr>
             </thead>
-            <tbody id="follow-up-items-body">
+            <tbody id="trackingTableBody">
                 <tr>
                     <td colspan="9" class="text-center">載入中...</td>
                 </tr>
             </tbody>
         </table>
     </div>
-    
-    <button class="btn btn-secondary mt-3" id="back-from-follow-up-btn">返回</button>
+
+    <!-- 返回按鈕 -->
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-secondary" id="backFromTrackingBtn">
+            <i class="fas fa-arrow-left"></i> 返回
+        </button>
+    </div>
 </div>
 
-<!-- 新增/編輯追蹤事項的彈出視窗 -->
-<div class="modal fade" id="follow-up-modal" tabindex="-1" aria-labelledby="follow-up-modal-label" aria-hidden="true">
+<!-- 🆕 新增/編輯追蹤事項的彈出視窗 -->
+<div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="follow-up-modal-label">新增追蹤事項</h5>
+                <h5 class="modal-title" id="trackingModalLabel">新增追蹤事項</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="follow-up-form">
-                    <input type="hidden" id="follow-up-id">
+                <form id="trackingForm">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="follow-up-title" class="form-label">追蹤項目 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="follow-up-title" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="follow-up-department" class="form-label">部門 <span class="text-danger">*</span></label>
-                            <select class="form-select" id="follow-up-department" required>
+                            <label for="trackingDepartment" class="form-label">部門 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="trackingDepartment" required>
                                 <option value="">請選擇部門</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="follow-up-description" class="form-label">描述</label>
-                        <textarea class="form-control" id="follow-up-description" rows="3"></textarea>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="follow-up-assignee" class="form-label">負責人 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="follow-up-assignee" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="follow-up-deadline" class="form-label">截止日期</label>
-                            <input type="date" class="form-control" id="follow-up-deadline">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="follow-up-priority" class="form-label">優先級</label>
-                            <select class="form-select" id="follow-up-priority">
+                            <label for="trackingPriority" class="form-label">優先級 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="trackingPriority" required>
+                                <option value="">請選擇優先級</option>
                                 <option value="high">高</option>
-                                <option value="medium" selected>中</option>
+                                <option value="medium">中</option>
                                 <option value="low">低</option>
                             </select>
                         </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="trackingTitle" class="form-label">追蹤事項標題 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="trackingTitle" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="trackingDescription" class="form-label">詳細描述</label>
+                            <textarea class="form-control" id="trackingDescription" rows="3"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="follow-up-status" class="form-label">狀態</label>
-                            <select class="form-select" id="follow-up-status">
-                                <option value="pending" selected>待處理</option>
+                            <label for="trackingAssignee" class="form-label">負責人 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="trackingAssignee" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="trackingDueDate" class="form-label">預計完成日期 <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="trackingDueDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="trackingStatus" class="form-label">狀態</label>
+                            <select class="form-select" id="trackingStatus">
+                                <option value="pending">待處理</option>
                                 <option value="in-progress">處理中</option>
                                 <option value="completed">已完成</option>
                             </select>
                         </div>
+                        <div class="col-md-6">
+                            <label for="trackingProgress" class="form-label">完成進度 (%)</label>
+                            <input type="number" class="form-control" id="trackingProgress" min="0" max="100" value="0">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="follow-up-notes" class="form-label">備註</label>
-                        <textarea class="form-control" id="follow-up-notes" rows="2"></textarea>
-                    </div>
+                    
+                    <input type="hidden" id="trackingId" value="">
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="save-follow-up-btn">儲存</button>
+                <button type="button" class="btn btn-primary" id="saveTrackingBtn">儲存</button>
             </div>
         </div>
     </div>
