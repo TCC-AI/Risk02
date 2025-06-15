@@ -2803,6 +2803,21 @@ async function showAIAnalysis(department, riskValue) {
         `;
     }
 }
+// 在全局作用域中添加這段代碼
+window.addEventListener('load', function() {
+    const trackingBtn = document.getElementById('tracking-btn');
+    if (trackingBtn) {
+        console.log('在window.load中綁定追蹤事項按鈕事件');
+        trackingBtn.addEventListener('click', function() {
+            console.log('從window.load綁定的事件中點擊追蹤事項按鈕');
+            showTrackingPage();
+            loadTrackingData();
+            resetInactivityTimer();
+        });
+    } else {
+        console.error('window.load中找不到追蹤事項按鈕元素');
+    }
+});
 
 // 全域函數 - 簡單的Markdown轉HTML
 function convertMarkdownToHTML(markdown) {
@@ -2895,8 +2910,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
 const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
 const exportTrackingBtn = document.getElementById('exportTrackingBtn');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
+    
     
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
@@ -7422,16 +7436,22 @@ function showRiskNotificationModal() {
         alert('請注意風險通報機制：\n- A級(8-10)：1小時內通報\n- B級(5-7)：6小時內通報\n- C級(1-4)：12小時內通報');
     }
 }
-/**
- * 顯示追蹤事項頁面
- */
 function showTrackingPage() {
+    console.log('顯示追蹤事項頁面'); // 添加調試輸出
+    
     // 隱藏所有其他頁面
     hideAllPages();
     
     // 顯示追蹤事項頁面
-    document.getElementById('tracking-page').style.display = 'block';
+    const trackingPage = document.getElementById('tracking-page');
+    if (trackingPage) {
+        trackingPage.style.display = 'block';
+        console.log('追蹤事項頁面已顯示'); // 添加調試輸出
+    } else {
+        console.error('找不到追蹤事項頁面元素'); // 添加錯誤輸出
+    }
 }
+
 
 /**
  * 載入追蹤事項數據
