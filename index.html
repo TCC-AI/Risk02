@@ -2846,16 +2846,15 @@ function checkPermission(requiredLevel) {
 
 
 // 🆕 全域變數定義
-const loginSection = document.getElementById('login-section');
-const dashboardSection = document.getElementById('dashboard-section');
-const inventorySection = document.getElementById('inventory-section');
-const deptRiskIndexPage = document.getElementById('dept-risk-index-page');
-const dataAnalyticsPage = document.getElementById('data-analytics-page');
-const eventRegistrationPage = document.getElementById('event-registration-page');
-const alertSettingsPage = document.getElementById('alert-settings-page');
-const riskPredictionPage = document.getElementById('risk-prediction-page');
-document.addEventListener('DOMContentLoaded', function() {
-    
+    document.addEventListener('DOMContentLoaded', function() {
+    const loginSection = document.getElementById('login-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const inventorySection = document.getElementById('inventory-section');
+    const deptRiskIndexPage = document.getElementById('dept-risk-index-page');
+    const dataAnalyticsPage = document.getElementById('data-analytics-page');
+    const eventRegistrationPage = document.getElementById('event-registration-page');
+    const alertSettingsPage = document.getElementById('alert-settings-page');
+    const riskPredictionPage = document.getElementById('risk-prediction-page');
     const loginBtn = document.getElementById('login-btn');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -2892,11 +2891,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
     const trackingBtn = document.getElementById('tracking-btn');
-const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-const exportTrackingBtn = document.getElementById('exportTrackingBtn');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+
     
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
@@ -2971,7 +2969,7 @@ if (exportTrackingBtn) {
             resetInactivityTimer();
         });
     }
-});
+
 
     
     // 🆕 新增用戶表單事件監聽器
@@ -2983,6 +2981,7 @@ if (exportTrackingBtn) {
             resetInactivityTimer();
         });
     }
+});
 // 🆕 新增處理用戶提交的函數
 async function handleAddUserSubmit() {
     try {
