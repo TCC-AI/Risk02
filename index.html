@@ -2926,6 +2926,10 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
+    document.addEventListener('DOMContentLoaded', function() {
+       
+    
+    
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
     if (recentHighRiskBtn) {
@@ -3272,11 +3276,6 @@ async function checkForNewAlerts() {
     }
 }
 
-    document.addEventListener('DOMContentLoaded', function() {
-       
-    
-    
-    
 // 🆕 顯示新預警通知
 function showNewAlertsNotification(alerts) {
     alerts.forEach((alert, index) => {
