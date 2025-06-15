@@ -1983,174 +1983,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 #riskNotificationModal.show .modal-dialog {
     transform: none;
 }
-/* 🆕 追蹤事項頁面樣式 */
-.tracking-section {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
-                0 4px 8px rgba(31, 38, 135, 0.2),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    width: 100%;
-    max-width: 1200px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 20px;
-    transition: all 0.3s ease;
-}
-
-.tracking-section:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
-                0 6px 12px rgba(31, 38, 135, 0.25),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-.tracking-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-/* 追蹤事項按鈕樣式 */
-#tracking-btn {
-    background: linear-gradient(to right, #9b59b6, #8e44ad);
-}
-
-#tracking-btn:hover {
-    background: linear-gradient(to right, #8e44ad, #7d3c98);
-}
-
-/* 狀態標籤樣式 */
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.status-pending {
-    background-color: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.status-in-progress {
-    background-color: #cce5ff;
-    color: #004085;
-    border: 1px solid #74b9ff;
-}
-
-.status-completed {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #00b894;
-}
-
-.status-overdue {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #e17055;
-    animation: pulse 2s infinite;
-}
-
-/* 優先級標籤樣式 */
-.priority-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.priority-high {
-    background-color: #ffebee;
-    color: #c62828;
-    border: 1px solid #ef5350;
-}
-
-.priority-medium {
-    background-color: #fff8e1;
-    color: #f57c00;
-    border: 1px solid #ffb74d;
-}
-
-.priority-low {
-    background-color: #e8f5e8;
-    color: #2e7d32;
-    border: 1px solid #66bb6a;
-}
-
-/* 操作按鈕樣式 */
-.action-btn {
-    padding: 4px 8px;
-    margin: 0 2px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s ease;
-}
-
-.btn-edit {
-    background-color: #17a2b8;
-    color: white;
-}
-
-.btn-edit:hover {
-    background-color: #138496;
-    transform: translateY(-1px);
-}
-
-.btn-delete {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #c82333;
-    transform: translateY(-1px);
-}
-
-.btn-complete {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-complete:hover {
-    background-color: #218838;
-    transform: translateY(-1px);
-}
-
-/* 響應式設計 */
-@media (max-width: 768px) {
-    .tracking-section {
-        padding: 20px;
-        margin-top: 10px;
-    }
-    
-    .tracking-header h1 {
-        font-size: 24px;
-    }
-    
-    .stat-card {
-        margin-bottom: 15px;
-    }
-    
-    .table-responsive {
-        font-size: 14px;
-    }
-    
-    .action-btn {
-        padding: 2px 4px;
-        font-size: 10px;
-    }
-}
 
 
     </style>
@@ -2215,8 +2047,10 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                  <button class="feature-btn" id="dept-risk-index-btn" style="background: linear-gradient(to right, #1a6fc4, #34c3aa);">🚥<br>風險燈號<br>⚛︎AI⚛︎評析</button>
     <button id="inventory-btn" class="feature-btn">📝<br>部門定期全面盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>單一突發事件登錄</button>
-                 <button id="tracking-btn" class="feature-btn">📋<br>追蹤事項</button>
-               
+<button id="tracking-btn" class="feature-btn" style="background: linear-gradient(to right, #f39c12, #e67e22);">
+    📋<br>追蹤事項
+</button>
+  
                  
             </div>
           
@@ -2917,7 +2751,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbxc8BNDYxRK0LKU1Gxnl7qMsfZzAZMRLfxwR4wlMcql6etPLrAFU3lZmUkBrIV_TtaA/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbyADa_WVr8Bq0HPPFn30NAl51Rdoox7mAXNkMFAVt_sMdxUW3ULC4PlMo06Qhb3fh4u/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -3057,6 +2891,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
+    const trackingBtn = document.getElementById('tracking-btn');
+const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+const exportTrackingBtn = document.getElementById('exportTrackingBtn');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
     
@@ -3092,6 +2930,39 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
+    // 追蹤事項按鈕點擊事件
+if (trackingBtn) {
+    trackingBtn.addEventListener('click', function() {
+        showTrackingPage();
+        loadTrackingData();
+        resetInactivityTimer();
+    });
+}
+
+// 返回按鈕
+if (backFromTrackingBtn) {
+    backFromTrackingBtn.addEventListener('click', function() {
+        document.getElementById('tracking-page').style.display = 'none';
+        showDashboard();
+        resetInactivityTimer();
+    });
+}
+
+// 重新整理按鈕
+if (refreshTrackingBtn) {
+    refreshTrackingBtn.addEventListener('click', function() {
+        loadTrackingData();
+        resetInactivityTimer();
+    });
+}
+
+// 匯出報告按鈕
+if (exportTrackingBtn) {
+    exportTrackingBtn.addEventListener('click', function() {
+        exportTrackingReport();
+        resetInactivityTimer();
+    });
+}
     
     const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
     if (exportHighRiskBtn) {
@@ -4007,6 +3878,7 @@ function showDashboard() {
     document.querySelector('.container').classList.remove('hidden');
     dashboardSection.classList.remove('hidden');
     document.querySelector('.container').style.maxWidth = '500px';
+    document.getElementById('tracking-page').style.display = 'none'; 
         // 🆕 隱藏 s4 專屬頁面 (新增這段)
     const s4Pages = ['user-management-page', 'system-settings-page', 'data-backup-page'];
     s4Pages.forEach(pageId => {
@@ -6567,7 +6439,7 @@ function hideAllPages() {
         'login-section', 'dashboard-section', 'inventory-section',
         'dept-risk-index-page', 'data-analytics-page', 'event-registration-page',
         'alert-settings-page', 'risk-prediction-page', 'user-management-page',
-        'system-settings-page', 'data-backup-page'
+        'system-settings-page', 'data-backup-page', 'tracking-page' 
     ];
     
     pages.forEach(pageId => {
@@ -7236,10 +7108,38 @@ function filterHighRiskData() {
     loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
 }
 
-// 🆕 其他按鈕事件
-document.getElementById('refreshHighRiskBtn').addEventListener('click', loadRecentHighRiskData);
-document.getElementById('backFromHighRiskBtn').addEventListener('click', showDashboard);
-document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
+// ✅ 修正後的代碼 - 一次性解決所有按鈕問題
+function safeAddEventListener(elementId, eventType, handler) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.addEventListener(eventType, handler);
+    }
+}
+
+// 高風險頁面按鈕
+safeAddEventListener('refreshHighRiskBtn', 'click', loadRecentHighRiskData);
+safeAddEventListener('backFromHighRiskBtn', 'click', showDashboard);
+safeAddEventListener('exportHighRiskBtn', 'click', exportHighRiskReport);
+
+// 🔧 追蹤事項按鈕 - 新增這4行
+safeAddEventListener('tracking-btn', 'click', function() {
+    showTrackingPage();
+    loadTrackingData();
+    resetInactivityTimer();
+});
+safeAddEventListener('backFromTrackingBtn', 'click', function() {
+    document.getElementById('tracking-page').style.display = 'none';
+    showDashboard();
+    resetInactivityTimer();
+});
+safeAddEventListener('refreshTrackingBtn', 'click', function() {
+    loadTrackingData();
+    resetInactivityTimer();
+});
+safeAddEventListener('exportTrackingBtn', 'click', function() {
+    exportTrackingReport();
+    resetInactivityTimer();
+});
 
 // 🆕 匯出功能
 function exportHighRiskReport() {
@@ -7550,371 +7450,191 @@ function showRiskNotificationModal() {
         alert('請注意風險通報機制：\n- A級(8-10)：1小時內通報\n- B級(5-7)：6小時內通報\n- C級(1-4)：12小時內通報');
     }
 }
-// 🆕 追蹤事項相關變數
-let trackingData = [];
-let currentTrackingFilter = {
-    department: 'all',
-    status: 'all',
-    priority: 'all'
-};
-
-// 🆕 追蹤事項按鈕事件監聽器
-document.getElementById('tracking-btn').addEventListener('click', function() {
-    showTrackingPage();
-});
-
-// 🆕 顯示追蹤事項頁面
+/**
+ * 顯示追蹤事項頁面
+ */
 function showTrackingPage() {
     // 隱藏所有其他頁面
-    hideAllSections();
+    hideAllPages();
     
     // 顯示追蹤事項頁面
-    document.getElementById('tracking-section').classList.remove('hidden');
-    
-    // 載入追蹤事項數據
-    loadTrackingData();
-    
-    // 載入部門列表
-    loadDepartmentsForTracking();
+    document.getElementById('tracking-page').style.display = 'block';
 }
 
-// 🆕 載入追蹤事項數據
+/**
+ * 載入追蹤事項數據
+ */
 async function loadTrackingData() {
     try {
-        showLoadingMessage('trackingTableBody', '載入追蹤事項中...');
+        // 顯示載入狀態
+        document.getElementById('trackingLoadingMsg').style.display = 'block';
+        document.getElementById('trackingStatsContainer').style.display = 'none';
+        document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
+            '<tr><td colspan="6" class="text-center">分析中...</td></tr>';
         
-        const response = await fetch(`${API_BASE_URL}?action=getTrackingItems&department=${currentTrackingFilter.department}&status=${currentTrackingFilter.status}&priority=${currentTrackingFilter.priority}`);
+        // 發送請求到後端
+        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryDepartments`);
         const result = await response.json();
         
         if (result.success) {
-            trackingData = result.data || [];
-            displayTrackingData(trackingData);
-            updateTrackingStats(result.stats || {});
+            // 更新統計資訊
+            updateTrackingStats(result.stats);
+            
+            // 更新表格
+            updateIncompleteDeptsTable(result.data);
+            
+            // 顯示統計容器
+            document.getElementById('trackingStatsContainer').style.display = 'block';
         } else {
-            showError('載入追蹤事項失敗: ' + result.message);
-            document.getElementById('trackingTableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">載入失敗</td></tr>';
+            document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
+                `<tr><td colspan="6" class="text-center text-danger">載入失敗：${result.message}</td></tr>`;
         }
+        
     } catch (error) {
-        console.error('載入追蹤事項時出錯:', error);
-        showError('載入追蹤事項時發生錯誤');
-        document.getElementById('trackingTableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">載入錯誤</td></tr>';
+        console.error('載入追蹤事項數據時發生錯誤:', error);
+        document.getElementById('incompleteDepartmentsTableBody').innerHTML = 
+            '<tr><td colspan="6" class="text-center text-danger">載入失敗，請稍後再試</td></tr>';
+    } finally {
+        document.getElementById('trackingLoadingMsg').style.display = 'none';
     }
 }
 
-// 🆕 顯示追蹤事項數據
-function displayTrackingData(data) {
-    const tbody = document.getElementById('trackingTableBody');
+/**
+ * 更新追蹤統計資訊
+ */
+function updateTrackingStats(stats) {
+    document.getElementById('totalDepartments').textContent = stats.totalDepartments || 0;
+    document.getElementById('incompleteDepartments').textContent = stats.incompleteDepartments || 0;
+    document.getElementById('completionRate').textContent = `${stats.completionRate || 0}%`;
+}
+
+/**
+ * 更新未完成部門表格
+ */
+function updateIncompleteDeptsTable(data) {
+    const tableBody = document.getElementById('incompleteDepartmentsTableBody');
     
-    if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center">暫無追蹤事項</td></tr>';
+    if (data.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center text-success">
+                    <i class="fas fa-check-circle"></i> 所有部門都已完成上月風險盤點！
+                </td>
+            </tr>
+        `;
         return;
     }
     
-    tbody.innerHTML = data.map(item => `
-        <tr class="${isOverdue(item.dueDate, item.status) ? 'table-warning' : ''}">
-            <td>${item.id}</td>
-            <td>${formatDate(item.createDate)}</td>
-            <td>${item.department}</td>
-            <td>
-                <strong>${item.title}</strong>
-                ${item.description ? `<br><small class="text-muted">${item.description}</small>` : ''}
-            </td>
-            <td><span class="priority-badge priority-${item.priority}">${getPriorityText(item.priority)}</span></td>
-            <td>${item.assignee}</td>
-            <td>${formatDate(item.dueDate)}</td>
-            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-            <td>
-                <button class="action-btn btn-edit" onclick="editTrackingItem('${item.id}')" title="編輯">
-                    <i class="fas fa-edit"></i>
-                </button>
-                ${item.status !== 'completed' ? `
-                <button class="action-btn btn-complete" onclick="completeTrackingItem('${item.id}')" title="標記完成">
-                    <i class="fas fa-check"></i>
-                </button>
-                ` : ''}
-                <button class="action-btn btn-delete" onclick="deleteTrackingItem('${item.id}')" title="刪除">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
+    const rows = data.map((dept, index) => {
+        const missingCount = 25 - dept.reportCount;
+        const statusClass = dept.reportCount < 10 ? 'bg-danger' : 
+                           dept.reportCount < 20 ? 'bg-warning' : 'bg-info';
+        const statusText = dept.reportCount < 10 ? '嚴重不足' : 
+                          dept.reportCount < 20 ? '不足' : '接近達標';
+        
+        return `
+            <tr>
+                <td class="text-center">${index + 1}</td>
+                <td><strong>${dept.department}</strong></td>
+                <td class="text-center">
+                    <span class="badge ${statusClass}">${dept.reportCount} 筆</span>
+                </td>
+                <td class="text-center">
+                    <span class="text-danger"><strong>${missingCount} 筆</strong></span>
+                </td>
+                <td class="text-center">
+                    ${dept.lastReportTime ? formatDateTime(dept.lastReportTime) : '無記錄'}
+                </td>
+                <td class="text-center">
+                    <span class="badge ${statusClass}">${statusText}</span>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = rows;
 }
 
-// 🆕 更新統計資訊
-function updateTrackingStats(stats) {
-    document.getElementById('totalTrackingItems').textContent = stats.total || 0;
-    document.getElementById('overdueItems').textContent = stats.overdue || 0;
-    document.getElementById('inProgressItems').textContent = stats.inProgress || 0;
-    document.getElementById('completedItems').textContent = stats.completed || 0;
-}
-
-// 🆕 載入部門列表（用於追蹤事項）
-async function loadDepartmentsForTracking() {
+/**
+ * 匯出追蹤報告
+ */
+async function exportTrackingReport() {
     try {
-        const response = await fetch(`${API_BASE_URL}?action=getDepartmentList`);
+        const response = await fetch(`${scriptUrl}?action=getIncompleteInventoryDepartments`);
         const result = await response.json();
         
         if (result.success) {
-            const departmentFilter = document.getElementById('trackingDepartmentFilter');
-            const departmentSelect = document.getElementById('trackingDepartment');
+            const reportContent = generateTrackingReport(result);
             
-            // 更新篩選器
-            departmentFilter.innerHTML = '<option value="all">全部部門</option>' + 
-                result.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('');
+            // 創建並下載文件
+            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `追蹤事項報告_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
             
-            // 更新新增表單
-            departmentSelect.innerHTML = '<option value="">請選擇部門</option>' + 
-                result.departments.map(dept => `<option value="${dept}">${dept}</option>`).join('');
-        }
-    } catch (error) {
-        console.error('載入部門列表時出錯:', error);
-    }
-}
-
-// 🆕 輔助函數
-function getPriorityText(priority) {
-    const priorityMap = {
-        'high': '高',
-        'medium': '中',
-        'low': '低'
-    };
-    return priorityMap[priority] || priority;
-}
-
-function getStatusText(status) {
-    const statusMap = {
-        'pending': '待處理',
-        'in-progress': '處理中',
-        'completed': '已完成',
-        'overdue': '逾期'
-    };
-    return statusMap[status] || status;
-}
-
-function isOverdue(dueDate, status) {
-    if (status === 'completed') return false;
-    const due = new Date(dueDate);
-    const now = new Date();
-    return due < now;
-}
-
-function formatDate(dateString) {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('zh-TW');
-}
-
-// 🆕 事件監聽器
-document.addEventListener('DOMContentLoaded', function() {
-    // 返回按鈕
-    document.getElementById('backFromTrackingBtn').addEventListener('click', function() {
-        document.getElementById('tracking-section').classList.add('hidden');
-        document.getElementById('dashboard-section').classList.remove('hidden');
-    });
-    
-    // 篩選器變更事件
-    document.getElementById('trackingDepartmentFilter').addEventListener('change', function() {
-        currentTrackingFilter.department = this.value;
-        loadTrackingData();
-    });
-    
-    document.getElementById('trackingStatusFilter').addEventListener('change', function() {
-        currentTrackingFilter.status = this.value;
-        loadTrackingData();
-    });
-    
-    document.getElementById('trackingPriorityFilter').addEventListener('change', function() {
-        currentTrackingFilter.priority = this.value;
-        loadTrackingData();
-    });
-    
-    // 重新整理按鈕
-    document.getElementById('refreshTrackingBtn').addEventListener('click', function() {
-        loadTrackingData();
-    });
-    
-    // 新增事項按鈕
-    document.getElementById('addTrackingBtn').addEventListener('click', function() {
-        showTrackingModal();
-    });
-    
-    // 儲存按鈕
-    document.getElementById('saveTrackingBtn').addEventListener('click', function() {
-        saveTrackingItem();
-    });
-});
-
-// 🆕 顯示新增/編輯彈出視窗
-function showTrackingModal(item = null) {
-    const modal = new bootstrap.Modal(document.getElementById('trackingModal'));
-    const form = document.getElementById('trackingForm');
-    
-    // 重置表單
-    form.reset();
-    
-    if (item) {
-        // 編輯模式
-        document.getElementById('trackingModalLabel').textContent = '編輯追蹤事項';
-        document.getElementById('trackingId').value = item.id;
-        document.getElementById('trackingDepartment').value = item.department;
-        document.getElementById('trackingPriority').value = item.priority;
-        document.getElementById('trackingTitle').value = item.title;
-        document.getElementById('trackingDescription').value = item.description || '';
-        document.getElementById('trackingAssignee').value = item.assignee;
-        document.getElementById('trackingDueDate').value = item.dueDate;
-        document.getElementById('trackingStatus').value = item.status;
-        document.getElementById('trackingProgress').value = item.progress || 0;
-    } else {
-        // 新增模式
-        document.getElementById('trackingModalLabel').textContent = '新增追蹤事項';
-        document.getElementById('trackingId').value = '';
-        // 設定預設到期日（一週後）
-        const nextWeek = new Date();
-        nextWeek.setDate(nextWeek.getDate() + 7);
-        document.getElementById('trackingDueDate').value = nextWeek.toISOString().split('T')[0];
-    }
-    
-    modal.show();
-}
-
-// 🆕 儲存追蹤事項
-async function saveTrackingItem() {
-    try {
-        const form = document.getElementById('trackingForm');
-        const formData = new FormData(form);
-        
-        // 驗證必填欄位
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-        
-        const trackingData = {
-            id: document.getElementById('trackingId').value,
-            department: document.getElementById('trackingDepartment').value,
-            priority: document.getElementById('trackingPriority').value,
-            title: document.getElementById('trackingTitle').value,
-            description: document.getElementById('trackingDescription').value,
-            assignee: document.getElementById('trackingAssignee').value,
-            dueDate: document.getElementById('trackingDueDate').value,
-            status: document.getElementById('trackingStatus').value,
-            progress: document.getElementById('trackingProgress').value,
-            userInfo: {
-                department: currentUser.department,
-                name: currentUser.name,
-                username: currentUser.username
-            }
-        };
-        
-        const action = trackingData.id ? 'updateTrackingItem' : 'addTrackingItem';
-        
-        const response = await fetch(API_BASE_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(trackingData)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showSuccess(trackingData.id ? '追蹤事項更新成功' : '追蹤事項新增成功');
-            
-            // 關閉彈出視窗
-            const modal = bootstrap.Modal.getInstance(document.getElementById('trackingModal'));
-            modal.hide();
-            
-            // 重新載入數據
-            loadTrackingData();
+            showNotification('追蹤報告已成功匯出！', 'success');
         } else {
-            showError('儲存失敗: ' + result.message);
+            showNotification('匯出報告失敗：' + result.message, 'error');
         }
     } catch (error) {
-        console.error('儲存追蹤事項時出錯:', error);
-        showError('儲存時發生錯誤');
+        console.error('匯出追蹤報告時發生錯誤:', error);
+        showNotification('匯出報告失敗，請稍後再試', 'error');
     }
 }
 
-// 🆕 編輯追蹤事項
-function editTrackingItem(id) {
-    const item = trackingData.find(item => item.id === id);
-    if (item) {
-        showTrackingModal(item);
-    }
-}
-
-// 🆕 標記完成
-async function completeTrackingItem(id) {
-    if (confirm('確定要標記此事項為已完成嗎？')) {
-        try {
-            const response = await fetch(`${API_BASE_URL}?action=completeTrackingItem&id=${id}`, {
-                method: 'POST'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showSuccess('事項已標記為完成');
-                loadTrackingData();
-            } else {
-                showError('操作失敗: ' + result.message);
-            }
-        } catch (error) {
-            console.error('標記完成時出錯:', error);
-            showError('操作時發生錯誤');
-        }
-    }
-}
-
-// 🆕 刪除追蹤事項（續）
-async function deleteTrackingItem(id) {
-    if (confirm('確定要刪除此追蹤事項嗎？此操作無法復原。')) {
-        try {
-            const response = await fetch(`${API_BASE_URL}?action=deleteTrackingItem&id=${id}`, {
-                method: 'POST'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showSuccess('追蹤事項已刪除');
-                loadTrackingData();
-            } else {
-                showError('刪除失敗: ' + result.message);
-            }
-        } catch (error) {
-            console.error('刪除追蹤事項時出錯:', error);
-            showError('刪除時發生錯誤');
-        }
-    }
-}
-
-// 🆕 修改現有的 hideAllSections 函數，加入追蹤事項頁面
-function hideAllSections() {
-    const sections = [
-        'dashboard-section',
-        'inventory-section', 
-        'event-section',
-        'tracking-section', // 🆕 新增
-        'data-analytics-section',
-        'dept-risk-index-section',
-        'alert-settings-section',
-        'prediction-analysis-section',
-        'user-management-section',
-        'system-settings-section',
-        'data-backup-section',
-        'recent-high-risk-section'
-    ];
+/**
+ * 生成追蹤報告內容
+ */
+function generateTrackingReport(data) {
+    const now = new Date();
+    const reportDate = now.toLocaleString('zh-TW');
     
-    sections.forEach(sectionId => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.classList.add('hidden');
-        }
-    });
-}
+    let report = `昶青實業 - 追蹤事項報告
+========================================
 
+生成時間：${reportDate}
+報告類型：尚未完成上個月風險盤點部門
+
+統計摘要：
+- 總部門數：${data.stats.totalDepartments}
+- 未完成部門數：${data.stats.incompleteDepartments}
+- 完成率：${data.stats.completionRate}%
+
+`;
+
+    if (data.data.length === 0) {
+        report += `✅ 所有部門都已完成上月風險盤點！
+
+`;
+    } else {
+        report += `⚠️ 以下部門尚未完成上月風險盤點：
+
+`;
+        data.data.forEach((dept, index) => {
+            const missingCount = 25 - dept.reportCount;
+            report += `${index + 1}. ${dept.department}
+   - 上月提報筆數：${dept.reportCount} 筆
+   - 缺少筆數：${missingCount} 筆
+   - 最後提報時間：${dept.lastReportTime ? formatDateTime(dept.lastReportTime) : '無記錄'}
+
+`;
+        });
+    }
+
+    report += `========================================
+報告結束
+
+此報告由昶青實業風險管理系統自動生成
+T.C.C.管理本部
+`;
+
+    return report;
+}
 
 </script>
 
@@ -8279,192 +7999,94 @@ function hideAllSections() {
         </div>
     </div>
 </div>
-<!-- 🆕 追蹤事項頁面 -->
-<div id="tracking-section" class="tracking-section hidden">
-    <div class="tracking-header">
-        <div class="logo-container">
-            <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+<!-- 追蹤事項頁面 -->
+<div id="tracking-page" class="dashboard-page" style="display: none;">
+    <div class="logo-container">
+        <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+    </div>
+    <h2 class="text-center mb-4">
+        <i class="fas fa-clipboard-list text-warning"></i> 追蹤事項
+    </h2>
+    
+    <!-- 尚未完成上個月風險盤點部門 -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">
+                <i class="fas fa-exclamation-triangle"></i> 尚未完成上個月風險盤點部門
+            </h5>
         </div>
-        <h1 class="centered-title">追蹤事項</h1>
+        <div class="card-body">
+            <div class="alert alert-info mb-3">
+                <strong>篩選條件：</strong> 上個月提報資料少於25筆的部門
+            </div>
+            
+            <!-- 載入提示 -->
+            <div id="trackingLoadingMsg" class="text-center" style="display: none;">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">載入中...</span>
+                </div>
+                <p class="mt-2">正在分析部門盤點狀況...</p>
+            </div>
+            
+            <!-- 統計資訊 -->
+            <div id="trackingStatsContainer" class="row mb-3" style="display: none;">
+                <div class="col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="totalDepartments">-</div>
+                        <div class="stat-label">總部門數</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-value" id="incompleteDepartments">-</div>
+                        <div class="stat-label">未完成部門</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-value" id="completionRate">-</div>
+                        <div class="stat-label">完成率</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 部門清單表格 -->
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="incompleteDepartmentsTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 25%">部門名稱</th>
+                            <th style="width: 15%">上月提報筆數</th>
+                            <th style="width: 15%">缺少筆數</th>
+                            <th style="width: 20%">最後提報時間</th>
+                            <th style="width: 20%">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incompleteDepartmentsTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     
-    <!-- 篩選控制區 -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <label for="trackingDepartmentFilter" class="form-label">部門篩選：</label>
-            <select id="trackingDepartmentFilter" class="form-select">
-                <option value="all">全部部門</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="trackingStatusFilter" class="form-label">狀態篩選：</label>
-            <select id="trackingStatusFilter" class="form-select">
-                <option value="all">全部狀態</option>
-                <option value="pending">待處理</option>
-                <option value="in-progress">處理中</option>
-                <option value="completed">已完成</option>
-                <option value="overdue">逾期</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="trackingPriorityFilter" class="form-label">優先級篩選：</label>
-            <select id="trackingPriorityFilter" class="form-select">
-                <option value="all">全部優先級</option>
-                <option value="high">高</option>
-                <option value="medium">中</option>
-                <option value="low">低</option>
-            </select>
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button type="button" class="btn btn-primary me-2" id="refreshTrackingBtn">
-                <i class="fas fa-sync-alt"></i> 重新整理
-            </button>
-            <button type="button" class="btn btn-success" id="addTrackingBtn">
-                <i class="fas fa-plus"></i> 新增事項
-            </button>
-        </div>
-    </div>
-
-    <!-- 統計卡片 -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
-                <div class="stat-icon">📋</div>
-                <div class="stat-value" id="totalTrackingItems">-</div>
-                <div class="stat-label">總追蹤事項</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
-                <div class="stat-icon">⚠️</div>
-                <div class="stat-value" id="overdueItems">-</div>
-                <div class="stat-label">逾期事項</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-value" id="inProgressItems">-</div>
-                <div class="stat-label">處理中</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
-                <div class="stat-icon">✅</div>
-                <div class="stat-value" id="completedItems">-</div>
-                <div class="stat-label">已完成</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 追蹤事項表格 -->
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered" id="trackingTable">
-            <thead class="table-dark">
-                <tr>
-                    <th style="width: 8%">編號</th>
-                    <th style="width: 12%">建立日期</th>
-                    <th style="width: 10%">部門</th>
-                    <th style="width: 20%">追蹤事項</th>
-                    <th style="width: 8%">優先級</th>
-                    <th style="width: 10%">負責人</th>
-                    <th style="width: 12%">預計完成日</th>
-                    <th style="width: 8%">狀態</th>
-                    <th style="width: 12%">操作</th>
-                </tr>
-            </thead>
-            <tbody id="trackingTableBody">
-                <tr>
-                    <td colspan="9" class="text-center">載入中...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 返回按鈕 -->
-    <div class="text-center mt-4">
+    <!-- 操作按鈕 -->
+    <div class="text-center">
+        <button type="button" class="btn btn-primary me-3" id="refreshTrackingBtn">
+            <i class="fas fa-sync-alt"></i> 重新整理
+        </button>
+        <button type="button" class="btn btn-outline-success me-3" id="exportTrackingBtn">
+            <i class="fas fa-download"></i> 匯出報告
+        </button>
         <button type="button" class="btn btn-secondary" id="backFromTrackingBtn">
             <i class="fas fa-arrow-left"></i> 返回
         </button>
-    </div>
-</div>
-
-<!-- 🆕 新增/編輯追蹤事項的彈出視窗 -->
-<div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="trackingModalLabel">新增追蹤事項</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="trackingForm">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="trackingDepartment" class="form-label">部門 <span class="text-danger">*</span></label>
-                            <select class="form-select" id="trackingDepartment" required>
-                                <option value="">請選擇部門</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="trackingPriority" class="form-label">優先級 <span class="text-danger">*</span></label>
-                            <select class="form-select" id="trackingPriority" required>
-                                <option value="">請選擇優先級</option>
-                                <option value="high">高</option>
-                                <option value="medium">中</option>
-                                <option value="low">低</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="trackingTitle" class="form-label">追蹤事項標題 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="trackingTitle" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="trackingDescription" class="form-label">詳細描述</label>
-                            <textarea class="form-control" id="trackingDescription" rows="3"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="trackingAssignee" class="form-label">負責人 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="trackingAssignee" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="trackingDueDate" class="form-label">預計完成日期 <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="trackingDueDate" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="trackingStatus" class="form-label">狀態</label>
-                            <select class="form-select" id="trackingStatus">
-                                <option value="pending">待處理</option>
-                                <option value="in-progress">處理中</option>
-                                <option value="completed">已完成</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="trackingProgress" class="form-label">完成進度 (%)</label>
-                            <input type="number" class="form-control" id="trackingProgress" min="0" max="100" value="0">
-                        </div>
-                    </div>
-                    
-                    <input type="hidden" id="trackingId" value="">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="saveTrackingBtn">儲存</button>
-            </div>
-        </div>
     </div>
 </div>
 
