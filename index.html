@@ -2891,12 +2891,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromSystemSettings = document.getElementById('backFromSystemSettings');
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
-    const trackingBtn = document.getElementById('tracking-btn');
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const trackingBtn = document.getElementById('tracking-btn');
     const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
     const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
     const exportTrackingBtn = document.getElementById('exportTrackingBtn');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
+    
     
     // 🔧 確保近期高風險按鈕事件正確綁定
     const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
