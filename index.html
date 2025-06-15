@@ -7501,6 +7501,8 @@ function displayRiskTrackingData(data) {
     
     const rows = data.map((item, index) => {
         const rowId = `risk-tracking-row-${index}`;
+        // 🆕 格式化時間為 yyyy/mm/dd hh:mm 格式
+        const formattedTime = formatTimeForTracking(item.columnA);
         return `
             <tr id="${rowId}">
                 <td>${item.columnA || '-'}</td>
@@ -7663,6 +7665,48 @@ if (refreshTrackingBtn) {
         loadTrackingData(); // 載入所有追蹤資料
         resetInactivityTimer();
     });
+}
+/**
+ * 🆕 格式化時間為追蹤事項專用格式 (yyyy/mm/dd hh:mm)
+ */
+function formatTimeForTracking(dateValue) {
+    if (!dateValue) return '-';
+    
+    try {
+        let date;
+        
+        // 處理不同的日期格式
+        if (typeof dateValue === 'string') {
+            // 處理 ISO 格式 (如: 2025-05-27T13:56:57.000Z)
+            if (dateValue.includes('T')) {
+                date = new Date(dateValue);
+            } 
+            // 處理其他字串格式
+            else {
+                date = new Date(dateValue);
+            }
+        } else {
+            date = new Date(dateValue);
+        }
+        
+        // 檢查日期是否有效
+        if (isNaN(date.getTime())) {
+            return dateValue.toString();
+        }
+        
+        // 格式化為 yyyy/mm/dd hh:mm
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${year}/${month}/${day} ${hours}:${minutes}`;
+        
+    } catch (error) {
+        console.error('時間格式化錯誤:', error);
+        return dateValue ? dateValue.toString() : '-';
+    }
 }
 
 
