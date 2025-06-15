@@ -3971,49 +3971,6 @@ function showDashboard() {
     resetInactivityTimer();
 }
 
-// 🔧 修正追蹤事項返回按鈕事件
-document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
-    
-    // 🔧 修正追蹤事項按鈕事件
-    const trackingBtn = document.getElementById('tracking-btn');
-    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-    
-    if (trackingBtn) {
-        trackingBtn.addEventListener('click', function() {
-            showTrackingPage();
-            loadTrackingData();
-            resetInactivityTimer();
-        });
-    }
-    
-    // 🔧 修正返回按鈕 - 這是關鍵修正
-    if (backFromTrackingBtn) {
-        backFromTrackingBtn.addEventListener('click', function() {
-            console.log('返回按鈕被點擊'); // 調試用
-            
-            // 隱藏追蹤事項頁面
-            const trackingPage = document.getElementById('tracking-page');
-            if (trackingPage) {
-                trackingPage.style.display = 'none';
-            }
-            
-            // 顯示主頁面
-            showDashboard();
-            
-            resetInactivityTimer();
-        });
-    }
-    
-    // 重新整理按鈕
-    if (refreshTrackingBtn) {
-        refreshTrackingBtn.addEventListener('click', function() {
-            loadTrackingData();
-            resetInactivityTimer();
-        });
-    }
-});
 
 // 🔧 修正 showTrackingPage 函數
 function showTrackingPage() {
