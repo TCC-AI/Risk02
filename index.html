@@ -2845,15 +2845,6 @@ function checkPermission(requiredLevel) {
 }
 
 
-// 🆕 全域變數定義
-const loginSection = document.getElementById('login-section');
-const dashboardSection = document.getElementById('dashboard-section');
-const inventorySection = document.getElementById('inventory-section');
-const deptRiskIndexPage = document.getElementById('dept-risk-index-page');
-const dataAnalyticsPage = document.getElementById('data-analytics-page');
-const eventRegistrationPage = document.getElementById('event-registration-page');
-const alertSettingsPage = document.getElementById('alert-settings-page');
-const riskPredictionPage = document.getElementById('risk-prediction-page');
 document.addEventListener('DOMContentLoaded', function() {
     
     const loginBtn = document.getElementById('login-btn');
@@ -2882,71 +2873,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const resetEventBtn = document.getElementById('resetEventBtn');
     const eventForm = document.getElementById('eventRegistrationForm');
     const alertSettingsBtn = document.getElementById('alert-settings-btn');
-    
     const backFromAlertBtn = document.getElementById('backFromAlertBtn');
     const saveAlertSettingsBtn = document.getElementById('saveAlertSettingsBtn');
     const riskPredictionBtn = document.getElementById('risk-prediction-btn');
-   // 🆕 添加管理頁面的返回按鈕事件監聽器
-    const backFromUserManagement = document.getElementById('backFromUserManagement');
-    const backFromSystemSettings = document.getElementById('backFromSystemSettings');
-    const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
+    
+    // 🔧 修正：將追蹤事項相關變數移到主要作用域
     const trackingBtn = document.getElementById('tracking-btn');
-const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-const exportTrackingBtn = document.getElementById('exportTrackingBtn');
-    document.addEventListener('DOMContentLoaded', function() {
-    // ... 其他現有代碼 ...
-    
-    // 🔧 確保近期高風險按鈕事件正確綁定
-    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
-    if (recentHighRiskBtn) {
-        recentHighRiskBtn.addEventListener('click', function() {
-            // 🆕 檢查s2以上權限
-            if (!checkPermission('s2')) {
-                alert('權限不足，無法訪問近期5級以上風險功能\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-                return;
-            }
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+
+    // 🔧 修正：將追蹤事項按鈕事件監聽器移到主要位置
+    // 追蹤事項按鈕點擊事件
+    if (trackingBtn) {
+        trackingBtn.addEventListener('click', function() {
+            // 🆕 添加權限檢查（如果需要的話）
+            // if (!checkPermission('s2')) {
+            //     alert('權限不足，無法訪問追蹤事項功能\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
+            //     return;
+            // }
             
-            showRecentHighRiskSection();
+            showTrackingPage();
+            loadTrackingData();
             resetInactivityTimer();
         });
     }
-    
-    // 其他按鈕事件綁定
-    const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
-    if (refreshHighRiskBtn) {
-        refreshHighRiskBtn.addEventListener('click', function() {
-            loadRecentHighRiskData();
-            resetInactivityTimer();
-        });
-    }
-    
-    const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
-    if (backFromHighRiskBtn) {
-        backFromHighRiskBtn.addEventListener('click', function() {
-            document.getElementById('recent-high-risk-section').classList.add('hidden');
+
+    // 返回按鈕
+    if (backFromTrackingBtn) {
+        backFromTrackingBtn.addEventListener('click', function() {
+            document.getElementById('tracking-page').style.display = 'none';
             showDashboard();
             resetInactivityTimer();
         });
     }
-    // 追蹤事項按鈕點擊事件
-if (trackingBtn) {
-    trackingBtn.addEventListener('click', function() {
-        showTrackingPage();
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
-
-// 返回按鈕
-if (backFromTrackingBtn) {
-    backFromTrackingBtn.addEventListener('click', function() {
-        document.getElementById('tracking-page').style.display = 'none';
-        showDashboard();
-        resetInactivityTimer();
-    });
-}
 
 // 重新整理按鈕
 if (refreshTrackingBtn) {
