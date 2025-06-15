@@ -1983,6 +1983,64 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 #riskNotificationModal.show .modal-dialog {
     transform: none;
 }
+/* 追蹤事項相關樣式 */
+.follow-up-items {
+  padding: 20px;
+}
+
+.section-title {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+#follow-up-items-table th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#follow-up-items-table tbody tr:hover {
+  background-color: #f1f9ff;
+}
+
+/* 優先級顏色 */
+.text-danger {
+  font-weight: bold;
+}
+
+/* 狀態標籤樣式 */
+.badge {
+  font-size: 0.8rem;
+  padding: 5px 8px;
+}
+
+/* 按鈕間距 */
+.btn-sm + .btn-sm {
+  margin-left: 5px;
+}
+
+/* 表單樣式 */
+#follow-up-form label {
+  font-weight: 500;
+}
+
+.form-label .text-danger {
+  font-weight: bold;
+}
+
+/* 模態框樣式 */
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
 
 
     </style>
@@ -2047,6 +2105,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
                  <button class="feature-btn" id="dept-risk-index-btn" style="background: linear-gradient(to right, #1a6fc4, #34c3aa);">🚥<br>風險燈號<br>⚛︎AI⚛︎評析</button>
     <button id="inventory-btn" class="feature-btn">📝<br>部門定期全面盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>單一突發事件登錄</button>
+                <button class="feature-btn" id="follow-up-items-btn" style="background: linear-gradient(to right, #9b59b6, #8e44ad);">📋<br>追蹤事項<br>管理</button>
                
                  
             </div>
@@ -2748,7 +2807,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 <script>
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbx4yfQovv4EMDbRKlYMmCfkY-EE5myOPI076343jB4eX4MXLofUcHH8aSppRk-zdryA/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycby1MzVvcoDc6LVLjBX61crzHGgkHWWnmKT6L0zP9TnlM7D9WpYjiwbFb-AxeyfAfus7/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -7381,6 +7440,418 @@ function showRiskNotificationModal() {
         alert('請注意風險通報機制：\n- A級(8-10)：1小時內通報\n- B級(5-7)：6小時內通報\n- C級(1-4)：12小時內通報');
     }
 }
+<!-- 追蹤事項頁面 -->
+<div id="follow-up-items-section" class="follow-up-items hidden">
+    <h2 class="section-title">追蹤事項管理</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="follow-up-search" placeholder="搜尋追蹤事項...">
+                <button class="btn btn-outline-secondary" type="button" id="follow-up-search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" id="add-follow-up-btn">
+                <i class="fas fa-plus"></i> 新增追蹤事項
+            </button>
+            <div class="btn-group ms-2">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter"></i> 篩選
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#" data-filter="all">全部</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="pending">待處理</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="in-progress">處理中</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="completed">已完成</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" data-filter="high">高優先級</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="medium">中優先級</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="low">低優先級</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" id="follow-up-items-table">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%">#</th>
+                    <th scope="col" style="width: 15%">追蹤項目</th>
+                    <th scope="col" style="width: 20%">描述</th>
+                    <th scope="col" style="width: 10%">負責人</th>
+                    <th scope="col" style="width: 10%">部門</th>
+                    <th scope="col" style="width: 10%">截止日期</th>
+                    <th scope="col" style="width: 10%">優先級</th>
+                    <th scope="col" style="width: 10%">狀態</th>
+                    <th scope="col" style="width: 10%">操作</th>
+                </tr>
+            </thead>
+            <tbody id="follow-up-items-body">
+                <tr>
+                    <td colspan="9" class="text-center">載入中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <button class="btn btn-secondary mt-3" id="back-from-follow-up-btn">返回</button>
+</div>
+
+<!-- 新增/編輯追蹤事項的彈出視窗 -->
+<div class="modal fade" id="follow-up-modal" tabindex="-1" aria-labelledby="follow-up-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="follow-up-modal-label">新增追蹤事項</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="follow-up-form">
+                    <input type="hidden" id="follow-up-id">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="follow-up-title" class="form-label">追蹤項目 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="follow-up-title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="follow-up-department" class="form-label">部門 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="follow-up-department" required>
+                                <option value="">請選擇部門</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="follow-up-description" class="form-label">描述</label>
+                        <textarea class="form-control" id="follow-up-description" rows="3"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="follow-up-assignee" class="form-label">負責人 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="follow-up-assignee" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="follow-up-deadline" class="form-label">截止日期</label>
+                            <input type="date" class="form-control" id="follow-up-deadline">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="follow-up-priority" class="form-label">優先級</label>
+                            <select class="form-select" id="follow-up-priority">
+                                <option value="high">高</option>
+                                <option value="medium" selected>中</option>
+                                <option value="low">低</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="follow-up-status" class="form-label">狀態</label>
+                            <select class="form-select" id="follow-up-status">
+                                <option value="pending" selected>待處理</option>
+                                <option value="in-progress">處理中</option>
+                                <option value="completed">已完成</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="follow-up-notes" class="form-label">備註</label>
+                        <textarea class="form-control" id="follow-up-notes" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="save-follow-up-btn">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>
+// 追蹤事項按鈕點擊事件
+document.getElementById('follow-up-items-btn').addEventListener('click', function() {
+    // 隱藏儀表板
+    document.getElementById('dashboard-section').classList.add('hidden');
+    // 顯示追蹤事項頁面
+    document.getElementById('follow-up-items-section').classList.remove('hidden');
+    // 加載追蹤事項數據
+    loadFollowUpItems();
+});
+
+// 返回按鈕點擊事件
+document.getElementById('back-from-follow-up-btn').addEventListener('click', function() {
+    // 隱藏追蹤事項頁面
+    document.getElementById('follow-up-items-section').classList.add('hidden');
+    // 顯示儀表板
+    document.getElementById('dashboard-section').classList.remove('hidden');
+});
+
+// 新增追蹤事項按鈕點擊事件
+document.getElementById('add-follow-up-btn').addEventListener('click', function() {
+    // 清空表單
+    document.getElementById('follow-up-form').reset();
+    document.getElementById('follow-up-id').value = '';
+    document.getElementById('follow-up-modal-label').textContent = '新增追蹤事項';
+    
+    // 加載部門下拉選單
+    loadDepartmentsForDropdown('follow-up-department');
+    
+    // 顯示彈出視窗
+    const modal = new bootstrap.Modal(document.getElementById('follow-up-modal'));
+    modal.show();
+});
+
+// 儲存追蹤事項按鈕點擊事件
+document.getElementById('save-follow-up-btn').addEventListener('click', function() {
+    // 驗證表單
+    const form = document.getElementById('follow-up-form');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // 收集表單數據
+    const followUpData = {
+        id: document.getElementById('follow-up-id').value || null,
+        title: document.getElementById('follow-up-title').value,
+        description: document.getElementById('follow-up-description').value,
+        department: document.getElementById('follow-up-department').value,
+        assignee: document.getElementById('follow-up-assignee').value,
+        deadline: document.getElementById('follow-up-deadline').value,
+        priority: document.getElementById('follow-up-priority').value,
+        status: document.getElementById('follow-up-status').value,
+        notes: document.getElementById('follow-up-notes').value
+    };
+    
+    // 保存數據
+    saveFollowUpItem(followUpData);
+    
+    // 關閉彈出視窗
+    const modal = bootstrap.Modal.getInstance(document.getElementById('follow-up-modal'));
+    modal.hide();
+});
+
+// 加載追蹤事項數據
+function loadFollowUpItems() {
+    // 顯示載入中
+    document.getElementById('follow-up-items-body').innerHTML = '<tr><td colspan="9" class="text-center">載入中...</td></tr>';
+    
+    // 發送 API 請求
+    google.script.run
+        .withSuccessHandler(function(result) {
+            if (result.success) {
+                displayFollowUpItems(result.items);
+            } else {
+                document.getElementById('follow-up-items-body').innerHTML = 
+                    '<tr><td colspan="9" class="text-center text-danger">載入失敗：' + result.message + '</td></tr>';
+            }
+        })
+        .withFailureHandler(function(error) {
+            document.getElementById('follow-up-items-body').innerHTML = 
+                '<tr><td colspan="9" class="text-center text-danger">系統錯誤：' + error + '</td></tr>';
+        })
+        .getFollowUpItems();
+}
+
+// 顯示追蹤事項數據
+function displayFollowUpItems(items) {
+    const tbody = document.getElementById('follow-up-items-body');
+    
+    if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">暫無追蹤事項</td></tr>';
+        return;
+    }
+    
+    let html = '';
+    items.forEach((item, index) => {
+        // 設定優先級和狀態的樣式
+        let priorityClass = '';
+        switch(item.priority) {
+            case 'high': priorityClass = 'text-danger'; break;
+            case 'medium': priorityClass = 'text-warning'; break;
+            case 'low': priorityClass = 'text-success'; break;
+        }
+        
+        let statusClass = '';
+        switch(item.status) {
+            case 'pending': statusClass = 'badge bg-secondary'; break;
+            case 'in-progress': statusClass = 'badge bg-primary'; break;
+            case 'completed': statusClass = 'badge bg-success'; break;
+        }
+        
+        // 生成表格行
+        html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.title}</td>
+                <td>${item.description || '-'}</td>
+                <td>${item.assignee}</td>
+                <td>${item.department}</td>
+                <td>${item.deadline || '-'}</td>
+                <td class="${priorityClass}">${getPriorityText(item.priority)}</td>
+                <td><span class="${statusClass}">${getStatusText(item.status)}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary edit-follow-up" data-id="${item.id}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-follow-up" data-id="${item.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = html;
+    
+    // 添加編輯和刪除按鈕的事件處理
+    document.querySelectorAll('.edit-follow-up').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            editFollowUpItem(id);
+        });
+    });
+    
+    document.querySelectorAll('.delete-follow-up').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            deleteFollowUpItem(id);
+        });
+    });
+}
+
+// 獲取優先級文字
+function getPriorityText(priority) {
+    switch(priority) {
+        case 'high': return '高';
+        case 'medium': return '中';
+        case 'low': return '低';
+        default: return '未知';
+    }
+}
+
+// 獲取狀態文字
+function getStatusText(status) {
+    switch(status) {
+        case 'pending': return '待處理';
+        case 'in-progress': return '處理中';
+        case 'completed': return '已完成';
+        default: return '未知';
+    }
+}
+
+// 保存追蹤事項
+function saveFollowUpItem(data) {
+    google.script.run
+        .withSuccessHandler(function(result) {
+            if (result.success) {
+                // 重新載入數據
+                loadFollowUpItems();
+                // 顯示成功訊息
+                showToast('成功', '追蹤事項已儲存', 'success');
+            } else {
+                showToast('錯誤', result.message, 'error');
+            }
+        })
+        .withFailureHandler(function(error) {
+            showToast('系統錯誤', error, 'error');
+        })
+        .saveFollowUpItem(data);
+}
+
+// 編輯追蹤事項
+function editFollowUpItem(id) {
+    google.script.run
+        .withSuccessHandler(function(result) {
+            if (result.success) {
+                const item = result.item;
+                
+                // 填充表單
+                document.getElementById('follow-up-id').value = item.id;
+                document.getElementById('follow-up-title').value = item.title;
+                document.getElementById('follow-up-description').value = item.description || '';
+                document.getElementById('follow-up-assignee').value = item.assignee;
+                document.getElementById('follow-up-deadline').value = item.deadline || '';
+                document.getElementById('follow-up-priority').value = item.priority;
+                document.getElementById('follow-up-status').value = item.status;
+                document.getElementById('follow-up-notes').value = item.notes || '';
+                
+                // 加載部門下拉選單並設置選中值
+                loadDepartmentsForDropdown('follow-up-department', item.department);
+                
+                // 更新標題
+                document.getElementById('follow-up-modal-label').textContent = '編輯追蹤事項';
+                
+                // 顯示彈出視窗
+                const modal = new bootstrap.Modal(document.getElementById('follow-up-modal'));
+                modal.show();
+            } else {
+                showToast('錯誤', result.message, 'error');
+            }
+        })
+        .withFailureHandler(function(error) {
+            showToast('系統錯誤', error, 'error');
+        })
+        .getFollowUpItemById(id);
+}
+
+// 刪除追蹤事項
+function deleteFollowUpItem(id) {
+    if (confirm('確定要刪除此追蹤事項嗎？')) {
+        google.script.run
+            .withSuccessHandler(function(result) {
+                if (result.success) {
+                    // 重新載入數據
+                    loadFollowUpItems();
+                    // 顯示成功訊息
+                    showToast('成功', '追蹤事項已刪除', 'success');
+                } else {
+                    showToast('錯誤', result.message, 'error');
+                }
+            })
+            .withFailureHandler(function(error) {
+                showToast('系統錯誤', error, 'error');
+            })
+            .deleteFollowUpItem(id);
+    }
+}
+
+// 加載部門下拉選單
+function loadDepartmentsForDropdown(selectId, selectedValue) {
+    google.script.run
+        .withSuccessHandler(function(result) {
+            if (result.success) {
+                const select = document.getElementById(selectId);
+                // 保留第一個選項
+                select.innerHTML = '<option value="">請選擇部門</option>';
+                
+                // 添加部門選項
+                result.departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    if (selectedValue && dept === selectedValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            } else {
+                console.error('加載部門失敗：', result.message);
+            }
+        })
+        .withFailureHandler(function(error) {
+            console.error('系統錯誤：', error);
+        })
+        .getDepartmentList();
+}
+
+// 顯示通知訊息
+function showToast(title, message, type) {
+    // 假設您已經有一個顯示通知的函數
+    // 如果沒有，您可以使用 Bootstrap Toast 或其他通知庫
+    console.log(`${title}: ${message} (${type})`);
+}
 
 </script>
 
@@ -7741,6 +8212,135 @@ function showRiskNotificationModal() {
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                     <i class="fas fa-check"></i> 我已了解
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 追蹤事項頁面 -->
+<div id="follow-up-items-section" class="follow-up-items hidden">
+    <h2 class="section-title">追蹤事項管理</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="follow-up-search" placeholder="搜尋追蹤事項...">
+                <button class="btn btn-outline-secondary" type="button" id="follow-up-search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" id="add-follow-up-btn">
+                <i class="fas fa-plus"></i> 新增追蹤事項
+            </button>
+            <div class="btn-group ms-2">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter"></i> 篩選
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#" data-filter="all">全部</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="pending">待處理</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="in-progress">處理中</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="completed">已完成</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" data-filter="high">高優先級</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="medium">中優先級</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="low">低優先級</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" id="follow-up-items-table">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%">#</th>
+                    <th scope="col" style="width: 15%">追蹤項目</th>
+                    <th scope="col" style="width: 20%">描述</th>
+                    <th scope="col" style="width: 10%">負責人</th>
+                    <th scope="col" style="width: 10%">部門</th>
+                    <th scope="col" style="width: 10%">截止日期</th>
+                    <th scope="col" style="width: 10%">優先級</th>
+                    <th scope="col" style="width: 10%">狀態</th>
+                    <th scope="col" style="width: 10%">操作</th>
+                </tr>
+            </thead>
+            <tbody id="follow-up-items-body">
+                <tr>
+                    <td colspan="9" class="text-center">載入中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <button class="btn btn-secondary mt-3" id="back-from-follow-up-btn">返回</button>
+</div>
+
+<!-- 新增/編輯追蹤事項的彈出視窗 -->
+<div class="modal fade" id="follow-up-modal" tabindex="-1" aria-labelledby="follow-up-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="follow-up-modal-label">新增追蹤事項</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="follow-up-form">
+                    <input type="hidden" id="follow-up-id">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="follow-up-title" class="form-label">追蹤項目 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="follow-up-title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="follow-up-department" class="form-label">部門 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="follow-up-department" required>
+                                <option value="">請選擇部門</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="follow-up-description" class="form-label">描述</label>
+                        <textarea class="form-control" id="follow-up-description" rows="3"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="follow-up-assignee" class="form-label">負責人 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="follow-up-assignee" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="follow-up-deadline" class="form-label">截止日期</label>
+                            <input type="date" class="form-control" id="follow-up-deadline">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="follow-up-priority" class="form-label">優先級</label>
+                            <select class="form-select" id="follow-up-priority">
+                                <option value="high">高</option>
+                                <option value="medium" selected>中</option>
+                                <option value="low">低</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="follow-up-status" class="form-label">狀態</label>
+                            <select class="form-select" id="follow-up-status">
+                                <option value="pending" selected>待處理</option>
+                                <option value="in-progress">處理中</option>
+                                <option value="completed">已完成</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="follow-up-notes" class="form-label">備註</label>
+                        <textarea class="form-control" id="follow-up-notes" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="save-follow-up-btn">儲存</button>
             </div>
         </div>
     </div>
