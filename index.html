@@ -7924,6 +7924,121 @@ function hideAllSections() {
     });
 }
 
+// 🔧 調試版本 - 追蹤事項功能
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM 載入完成');
+    
+    // 檢查按鈕是否存在
+    const trackingBtn = document.getElementById('tracking-btn');
+    console.log('追蹤事項按鈕:', trackingBtn);
+    
+    if (trackingBtn) {
+        // 添加點擊事件監聽器
+        trackingBtn.addEventListener('click', function(event) {
+            console.log('追蹤事項按鈕被點擊了！');
+            event.preventDefault(); // 防止預設行為
+            
+            try {
+                showTrackingPage();
+                console.log('showTrackingPage() 函數執行完成');
+            } catch (error) {
+                console.error('執行 showTrackingPage() 時出錯:', error);
+            }
+        });
+        
+        // 添加滑鼠懸停效果測試
+        trackingBtn.addEventListener('mouseenter', function() {
+            console.log('滑鼠進入追蹤事項按鈕');
+        });
+        
+        trackingBtn.addEventListener('mouseleave', function() {
+            console.log('滑鼠離開追蹤事項按鈕');
+        });
+        
+    } else {
+        console.error('❌ 找不到 ID 為 "tracking-btn" 的按鈕元素');
+        
+        // 列出所有按鈕來調試
+        const allButtons = document.querySelectorAll('button');
+        console.log('頁面中所有按鈕:', allButtons);
+        
+        allButtons.forEach((btn, index) => {
+            console.log(`按鈕 ${index}:`, {
+                id: btn.id,
+                className: btn.className,
+                textContent: btn.textContent.trim()
+            });
+        });
+    }
+});
+
+// 🔧 調試版本 - showTrackingPage 函數
+function showTrackingPage() {
+    console.log('🚀 開始執行 showTrackingPage()');
+    
+    try {
+        // 隱藏所有其他頁面
+        console.log('隱藏所有頁面...');
+        hideAllSections();
+        
+        // 檢查追蹤事項頁面是否存在
+        const trackingSection = document.getElementById('tracking-section');
+        console.log('追蹤事項頁面元素:', trackingSection);
+        
+        if (trackingSection) {
+            // 顯示追蹤事項頁面
+            console.log('顯示追蹤事項頁面...');
+            trackingSection.classList.remove('hidden');
+            
+            // 載入追蹤事項數據
+            console.log('載入追蹤事項數據...');
+            loadTrackingData();
+            
+            // 載入部門列表
+            console.log('載入部門列表...');
+            loadDepartmentsForTracking();
+            
+            console.log('✅ 追蹤事項頁面顯示成功');
+        } else {
+            console.error('❌ 找不到 ID 為 "tracking-section" 的頁面元素');
+        }
+        
+    } catch (error) {
+        console.error('❌ showTrackingPage() 執行時出錯:', error);
+    }
+}
+
+// 🔧 調試版本 - hideAllSections 函數
+function hideAllSections() {
+    console.log('🔄 開始隱藏所有頁面');
+    
+    const sections = [
+        'dashboard-section',
+        'inventory-section', 
+        'event-section',
+        'tracking-section',
+        'data-analytics-section',
+        'dept-risk-index-section',
+        'alert-settings-section',
+        'prediction-analysis-section',
+        'user-management-section',
+        'system-settings-section',
+        'data-backup-section',
+        'recent-high-risk-section'
+    ];
+    
+    sections.forEach(sectionId => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.classList.add('hidden');
+            console.log(`✅ 隱藏頁面: ${sectionId}`);
+        } else {
+            console.warn(`⚠️ 找不到頁面: ${sectionId}`);
+        }
+    });
+    
+    console.log('✅ 所有頁面隱藏完成');
+}
 
 </script>
 
