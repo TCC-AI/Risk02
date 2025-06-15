@@ -3723,7 +3723,7 @@ function formatDateTime(dateTime) {
         document.addEventListener(event, resetInactivityTimer, true);
     });
     
-// 🆕 設置按鈕權限狀態 (修正版)
+// 🔧 修正 setButtonPermissions 函數
 function setButtonPermissions() {
     const userPermission = localStorage.getItem('permission') || 's1';
     
@@ -3737,7 +3737,7 @@ function setButtonPermissions() {
             recentHighRiskBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
             recentHighRiskBtn.title = '此功能需要 s2 以上權限';
             
-            // 🔧 修正：不使用 replaceWith，而是移除原有事件並添加權限提示
+            // 🔧 修正：不使用 replaceWith，而是直接設置 onclick
             recentHighRiskBtn.onclick = function(e) {
                 e.preventDefault();
                 alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s2 以上\n您的權限：' + userPermission);
@@ -3756,6 +3756,7 @@ function setButtonPermissions() {
             };
         }
     }
+
     // 🔄 部門定期全面盤點按鈕 - 所有權限都可以使用
     const inventoryBtn = document.getElementById('inventory-btn');
     if (inventoryBtn) {
@@ -3766,50 +3767,67 @@ function setButtonPermissions() {
             resetInactivityTimer();
         };
     }
+
     // 🔄 部門風險係數按鈕 - s1不行，其餘皆可 (需要s2以上)
-    if (!checkPermission('s2')) {
-        deptRiskIndexBtn.disabled = true;
-        deptRiskIndexBtn.style.opacity = '0.5';
-        deptRiskIndexBtn.style.cursor = 'not-allowed';
-        deptRiskIndexBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
-        deptRiskIndexBtn.title = '此功能需要 s2 以上權限';
-        
-        // 移除原有事件並添加權限提示
-        deptRiskIndexBtn.replaceWith(deptRiskIndexBtn.cloneNode(true));
-        const newDeptBtn = document.getElementById('dept-risk-index-btn');
-        newDeptBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-        });
-    } else {
-        deptRiskIndexBtn.disabled = false;
-        deptRiskIndexBtn.style.opacity = '1';
-        deptRiskIndexBtn.style.cursor = 'pointer';
-        deptRiskIndexBtn.style.background = 'linear-gradient(to right, #1a6fc4, #34c3aa)';
-        deptRiskIndexBtn.title = '';
+    const deptRiskIndexBtn = document.getElementById('dept-risk-index-btn');
+    if (deptRiskIndexBtn) {
+        if (!checkPermission('s2')) {
+            deptRiskIndexBtn.disabled = true;
+            deptRiskIndexBtn.style.opacity = '0.5';
+            deptRiskIndexBtn.style.cursor = 'not-allowed';
+            deptRiskIndexBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+            deptRiskIndexBtn.title = '此功能需要 s2 以上權限';
+            
+            deptRiskIndexBtn.onclick = function(e) {
+                e.preventDefault();
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s2 以上\n您的權限：' + userPermission);
+            };
+        } else {
+            deptRiskIndexBtn.disabled = false;
+            deptRiskIndexBtn.style.opacity = '1';
+            deptRiskIndexBtn.style.cursor = 'pointer';
+            deptRiskIndexBtn.style.background = 'linear-gradient(to right, #1a6fc4, #34c3aa)';
+            deptRiskIndexBtn.title = '';
+            
+            // 🔧 重新綁定正確的事件
+            deptRiskIndexBtn.onclick = function() {
+                dashboardSection.style.display = 'none';
+                deptRiskIndexPage.style.display = 'block';
+                loadRiskIndexData();
+                resetInactivityTimer();
+            };
+        }
     }
 
     // 🔄 數據分析儀表板按鈕 - s1、s2不行，其餘皆可 (需要s3以上)
-    if (!checkPermission('s3')) {
-        dataAnalyticsBtn.disabled = true;
-        dataAnalyticsBtn.style.opacity = '0.5';
-        dataAnalyticsBtn.style.cursor = 'not-allowed';
-        dataAnalyticsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
-        dataAnalyticsBtn.title = '此功能需要 s3 以上權限';
-        
-        // 移除原有事件並添加權限提示
-        dataAnalyticsBtn.replaceWith(dataAnalyticsBtn.cloneNode(true));
-        const newAnalyticsBtn = document.getElementById('data-analytics-btn');
-        newAnalyticsBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-        });
-    } else {
-        dataAnalyticsBtn.disabled = false;
-        dataAnalyticsBtn.style.opacity = '1';
-        dataAnalyticsBtn.style.cursor = 'pointer';
-        dataAnalyticsBtn.style.background = 'linear-gradient(to right, #9c27b0, #e91e63)';
-        dataAnalyticsBtn.title = '';
+    const dataAnalyticsBtn = document.getElementById('data-analytics-btn');
+    if (dataAnalyticsBtn) {
+        if (!checkPermission('s3')) {
+            dataAnalyticsBtn.disabled = true;
+            dataAnalyticsBtn.style.opacity = '0.5';
+            dataAnalyticsBtn.style.cursor = 'not-allowed';
+            dataAnalyticsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
+            dataAnalyticsBtn.title = '此功能需要 s3 以上權限';
+            
+            dataAnalyticsBtn.onclick = function(e) {
+                e.preventDefault();
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3 以上\n您的權限：' + userPermission);
+            };
+        } else {
+            dataAnalyticsBtn.disabled = false;
+            dataAnalyticsBtn.style.opacity = '1';
+            dataAnalyticsBtn.style.cursor = 'pointer';
+            dataAnalyticsBtn.style.background = 'linear-gradient(to right, #9c27b0, #e91e63)';
+            dataAnalyticsBtn.title = '';
+            
+            // 🔧 重新綁定正確的事件
+            dataAnalyticsBtn.onclick = function() {
+                dashboardSection.style.display = 'none';
+                dataAnalyticsPage.style.display = 'block';
+                loadAnalyticsData();
+                resetInactivityTimer();
+            };
+        }
     }
 
     // 🔄 風險趨勢預判分析按鈕 - s1、s2不行，其餘皆可 (需要s3以上)
@@ -3822,67 +3840,23 @@ function setButtonPermissions() {
             riskPredictionBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
             riskPredictionBtn.title = '此功能需要 s3 以上權限';
             
-            // 移除原有事件並添加權限提示
-            riskPredictionBtn.replaceWith(riskPredictionBtn.cloneNode(true));
-            const newPredictionBtn = document.getElementById('risk-prediction-btn');
-            newPredictionBtn.addEventListener('click', function(e) {
+            riskPredictionBtn.onclick = function(e) {
                 e.preventDefault();
-                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            });
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s3 以上\n您的權限：' + userPermission);
+            };
         } else {
             riskPredictionBtn.disabled = false;
             riskPredictionBtn.style.opacity = '1';
             riskPredictionBtn.style.cursor = 'pointer';
             riskPredictionBtn.style.background = 'linear-gradient(to right, #8e44ad, #3498db)';
             riskPredictionBtn.title = '';
-        }
-    }
-     // 🆕 檢查並設置現有預警詳情按鈕的權限
-    const existingViewDetailsBtn = document.getElementById('viewDetailsBtn');
-    if (existingViewDetailsBtn) {
-        if (!checkPermission('s2')) {
-            existingViewDetailsBtn.disabled = true;
-            existingViewDetailsBtn.style.opacity = '0.5';
-            existingViewDetailsBtn.style.cursor = 'not-allowed';
-            existingViewDetailsBtn.title = '此功能需要 s2 以上權限';
             
-            // 移除原有事件並添加權限提示
-            existingViewDetailsBtn.replaceWith(existingViewDetailsBtn.cloneNode(true));
-            const newViewDetailsBtn = document.getElementById('viewDetailsBtn');
-            newViewDetailsBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('抱歉，您的權限等級不足，無法查看緊急預警詳情。\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            });
-        } else {
-            existingViewDetailsBtn.disabled = false;
-            existingViewDetailsBtn.style.opacity = '1';
-            existingViewDetailsBtn.style.cursor = 'pointer';
-            existingViewDetailsBtn.title = '';
-        }
-    }
-     // 🆕 近期5級以上風險按鈕 - s1不行，s2、s3、s4可以 (需要s2以上)
-    const recentHighRiskBtn = document.getElementById('recent-high-risk-btn');
-    if (recentHighRiskBtn) {
-        if (!checkPermission('s2')) {
-            recentHighRiskBtn.disabled = true;
-            recentHighRiskBtn.style.opacity = '0.5';
-            recentHighRiskBtn.style.cursor = 'not-allowed';
-            recentHighRiskBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
-            recentHighRiskBtn.title = '此功能需要 s2 以上權限';
-            
-            // 移除原有事件並添加權限提示
-            recentHighRiskBtn.replaceWith(recentHighRiskBtn.cloneNode(true));
-            const newRecentHighRiskBtn = document.getElementById('recent-high-risk-btn');
-            newRecentHighRiskBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s2 以上\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            });
-        } else {
-            recentHighRiskBtn.disabled = false;
-            recentHighRiskBtn.style.opacity = '1';
-            recentHighRiskBtn.style.cursor = 'pointer';
-            recentHighRiskBtn.style.background = 'linear-gradient(to right, #e74c3c, #c0392b)';
-            recentHighRiskBtn.title = '';
+            // 🔧 重新綁定正確的事件
+            riskPredictionBtn.onclick = function() {
+                showRiskPredictionPage();
+                loadStandalonePredictionAnalysis();
+                resetInactivityTimer();
+            };
         }
     }
 
@@ -3896,22 +3870,30 @@ function setButtonPermissions() {
             alertSettingsBtn.style.background = 'linear-gradient(to right, #6c757d, #495057)';
             alertSettingsBtn.title = '此功能僅限 s4 管理權限';
             
-            // 移除原有事件並添加權限提示
-            alertSettingsBtn.replaceWith(alertSettingsBtn.cloneNode(true));
-            const newAlertBtn = document.getElementById('alert-settings-btn');
-            newAlertBtn.addEventListener('click', function(e) {
+            alertSettingsBtn.onclick = function(e) {
                 e.preventDefault();
-                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s4 管理權限\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            });
+                alert('抱歉，您的權限等級不足，無法使用此功能。\n需要權限：s4 管理權限\n您的權限：' + userPermission);
+            };
         } else {
             alertSettingsBtn.disabled = false;
             alertSettingsBtn.style.opacity = '1';
             alertSettingsBtn.style.cursor = 'pointer';
             alertSettingsBtn.style.background = 'linear-gradient(to right, #ff6b35, #f7931e)';
             alertSettingsBtn.title = '';
+            
+            // 🔧 重新綁定正確的事件
+            alertSettingsBtn.onclick = function() {
+                // 移除閃爍效果
+                this.classList.remove('alert-button-warning');
+                showAlertSettingsPage();
+                loadAlertSettings();
+                loadAlertHistory();
+                resetInactivityTimer();
+            };
         }
     }
 }
+
 
 
     
@@ -4275,37 +4257,9 @@ function showEventRegistrationPage() {
             });
     });
 
-    // 部門風險係數按鈕點擊事件 - 添加s2權限檢查
-deptRiskIndexBtn.addEventListener('click', function() {
-    // 🆕 檢查s2權限
-    if (!checkPermission('s2')) {
-        alert('權限不足，無法訪問部門風險係數功能\n需要權限：s2\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-        return;
-    }
-    
-    dashboardSection.style.display = 'none';
-    deptRiskIndexPage.style.display = 'block';
-    
-    // 載入風險係數數據
-    loadRiskIndexData();
-    
-    // 重置計時器
-    resetInactivityTimer();
-});
 
-    // 🆕 風險趨勢預判分析按鈕點擊事件 - 添加s3權限檢查
-if (riskPredictionBtn) {
-    riskPredictionBtn.addEventListener('click', function() {
-        // 🆕 檢查s3權限
-        if (!checkPermission('s3')) {
-            alert('權限不足，無法訪問風險趨勢預判分析功能\n需要權限：s3\n您的權限：' + (localStorage.getItem('permission') || 's1'));
-            return;
-        }
-        
-        showRiskPredictionPage();
-        loadStandalonePredictionAnalysis();
-        resetInactivityTimer();
-    });
+
+
 }
 // 檢查預警設定按鈕是否存在並添加s4權限檢查
 if (alertSettingsBtn) {
