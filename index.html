@@ -2892,9 +2892,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const backFromDataBackup = document.getElementById('backFromDataBackup');
     const backFromPredictionBtn = document.getElementById('back-to-dashboard-from-prediction');
     const trackingBtn = document.getElementById('tracking-btn');
-const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
-const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
-const exportTrackingBtn = document.getElementById('exportTrackingBtn');
+    const backFromTrackingBtn = document.getElementById('backFromTrackingBtn');
+    const refreshTrackingBtn = document.getElementById('refreshTrackingBtn');
+    const exportTrackingBtn = document.getElementById('exportTrackingBtn');
     document.addEventListener('DOMContentLoaded', function() {
     // ... 其他現有代碼 ...
     
@@ -2930,14 +2930,7 @@ const exportTrackingBtn = document.getElementById('exportTrackingBtn');
             resetInactivityTimer();
         });
     }
-    // 追蹤事項按鈕點擊事件
-if (trackingBtn) {
-    trackingBtn.addEventListener('click', function() {
-        showTrackingPage();
-        loadTrackingData();
-        resetInactivityTimer();
-    });
-}
+   
 
 // 返回按鈕
 if (backFromTrackingBtn) {
@@ -2971,6 +2964,14 @@ if (exportTrackingBtn) {
             resetInactivityTimer();
         });
     }
+         // 追蹤事項按鈕點擊事件
+if (trackingBtn) {
+    trackingBtn.addEventListener('click', function() {
+        showTrackingPage();
+        loadTrackingData();
+        resetInactivityTimer();
+    });
+}
 });
 
     
