@@ -7108,28 +7108,10 @@ function filterHighRiskData() {
     loadRecentHighRiskDataWithFilter(departmentFilter, riskLevelFilter);
 }
 
-// ✅ 修正後的代碼 - 添加 null 檢查
-const refreshHighRiskBtn = document.getElementById('refreshHighRiskBtn');
-if (refreshHighRiskBtn) {
-    refreshHighRiskBtn.addEventListener('click', loadRecentHighRiskData);
-} else {
-    console.warn('⚠️ 找不到 refreshHighRiskBtn 按鈕');
-}
-
-const backFromHighRiskBtn = document.getElementById('backFromHighRiskBtn');
-if (backFromHighRiskBtn) {
-    backFromHighRiskBtn.addEventListener('click', showDashboard);
-} else {
-    console.warn('⚠️ 找不到 backFromHighRiskBtn 按鈕');
-}
-
-const exportHighRiskBtn = document.getElementById('exportHighRiskBtn');
-if (exportHighRiskBtn) {
-    exportHighRiskBtn.addEventListener('click', exportHighRiskReport);
-} else {
-    console.warn('⚠️ 找不到 exportHighRiskBtn 按鈕');
-}
-
+// 🆕 其他按鈕事件
+document.getElementById('refreshHighRiskBtn').addEventListener('click', loadRecentHighRiskData);
+document.getElementById('backFromHighRiskBtn').addEventListener('click', showDashboard);
+document.getElementById('exportHighRiskBtn').addEventListener('click', exportHighRiskReport);
 
 // 🆕 匯出功能
 function exportHighRiskReport() {
