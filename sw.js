@@ -1,4 +1,4 @@
-const CACHE_NAME = 'risk02-v1.0.0';
+const CACHE_NAME = 'Risk02-v1.0.0';
 const urlsToCache = [
   'https://tcc-ai.github.io/Risk02/',
   'https://tcc-ai.github.io/Risk02/index.html',
