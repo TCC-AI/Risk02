@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risk02 風險評估系統</title>
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- iOS 支援 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Risk02">
-    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
-    
-    <!-- 主題色彩 -->
-    <meta name="theme-color" content="#2196F3">
-    <meta name="msapplication-TileColor" content="#2196F3">
     <!-- 在 <head> 標籤中添加 Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta charset="UTF-8">
@@ -43,11 +27,6 @@
             position: relative;
             padding: 10px;
             overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
         }
 
         body::before {
@@ -76,6 +55,7 @@
             width: 100%;
             max-width: 540px;
             padding: 20px;
+            margin: 0 auto;
             position: relative;
         }
 
@@ -7728,69 +7708,6 @@ function formatTimeForTracking(dateValue) {
         return dateValue ? dateValue.toString() : '-';
     }
 }
-// 註冊 Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/Risk02/sw.js')
-      .then((registration) => {
-        console.log('SW 註冊成功: ', registration.scope);
-      })
-      .catch((registrationError) => {
-        console.log('SW 註冊失敗: ', registrationError);
-      });
-  });
-}
-
-// PWA 安裝提示
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  console.log('beforeinstallprompt 事件觸發');
-  e.preventDefault();
-  deferredPrompt = e;
-  
-  // 顯示自訂安裝按鈕
-  showInstallButton();
-});
-
-function showInstallButton() {
-  // 創建安裝按鈕
-  const installBtn = document.createElement('button');
-  installBtn.innerHTML = '📱 安裝到桌面';
-  installBtn.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: #2196F3;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 25px;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  `;
-  
-  installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`使用者選擇: ${outcome}`);
-      deferredPrompt = null;
-      installBtn.remove();
-    }
-  });
-  
-  document.body.appendChild(installBtn);
-}
-
-// 安裝完成後隱藏按鈕
-window.addEventListener('appinstalled', (evt) => {
-  console.log('PWA 已安裝');
-  const installBtn = document.querySelector('button');
-  if (installBtn) installBtn.remove();
-});
 
 
 </script>
