@@ -1,10 +1,10 @@
 const CACHE_NAME = 'risk02-v1.0.0';
 const urlsToCache = [
-  './',
-  './index.html',
-  './style.css',
-  './script.js',
-  './manifest.json'
+  'https://tcc-ai.github.io/Risk02/',
+  'https://tcc-ai.github.io/Risk02/index.html',
+  'https://tcc-ai.github.io/Risk02/style.css',
+  'https://tcc-ai.github.io/Risk02/script.js',
+  'https://tcc-ai.github.io/Risk02/manifest.json'
 ];
 
 // 安裝 Service Worker
