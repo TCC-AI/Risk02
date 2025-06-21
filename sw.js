@@ -1,11 +1,10 @@
 const CACHE_NAME = 'risk02-v1.0.0';
 const urlsToCache = [
-  '/Risk02/',
-  '/Risk02/index.html',
-  '/Risk02/style.css',
-  '/Risk02/script.js',
-  '/Risk02/manifest.json',
-  // 加入您的其他重要檔案
+  './',
+  './index.html',
+  './style.css',
+  './script.js',
+  './manifest.json'
 ];
 
 // 安裝 Service Worker
@@ -13,8 +12,11 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('快取已開啟');
+        console.log('✅ 快取已開啟');
         return cache.addAll(urlsToCache);
+      })
+      .catch((error) => {
+        console.error('❌ 快取失敗:', error);
       })
   );
 });
@@ -30,8 +32,7 @@ self.addEventListener('fetch', (event) => {
         }
         // 否則從網路取得
         return fetch(event.request);
-      }
-    )
+      })
   );
 });
 
