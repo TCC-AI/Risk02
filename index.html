@@ -2763,18 +2763,175 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 
 <script>
-// 註冊 Service Worker
+// 🔥 完整的 Service Worker 註冊與更新檢測
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('./sw.js')
       .then((registration) => {
-        console.log('SW 註冊成功: ', registration.scope);
+        console.log('✅ SW 註冊成功: ', registration.scope);
+        
+        // 🔥 立即檢查更新
+        registration.update();
+        
+        // 🔥 監聽更新事件
+        registration.addEventListener('updatefound', () => {
+          console.log('🔄 發現 SW 更新！');
+          const newWorker = registration.installing;
+          
+          newWorker.addEventListener('statechange', () => {
+            console.log('📱 SW 狀態變更:', newWorker.state);
+            
+            if (newWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                console.log('🎉 新版本已準備就緒！');
+                showUpdatePrompt();
+              } else {
+                console.log('🆕 SW 首次安裝完成');
+              }
+            }
+          });
+        });
+        
+        // 🔥 檢查是否有等待中的 SW
+        if (registration.waiting) {
+          console.log('⏳ 發現等待中的 SW');
+          showUpdatePrompt();
+        }
+        
+        // 🔥 監聽控制權變更
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log('🔄 SW 控制權已變更，重新載入頁面');
+          window.location.reload();
+        });
+        
       })
-      .catch((registrationError) => {
-        console.log('SW 註冊失敗: ', registrationError);
+      .catch((error) => {
+        console.log('❌ SW 註冊失敗: ', error);
       });
   });
 }
+
+// 🔥 顯示更新提示
+function showUpdatePrompt() {
+  // 避免重複顯示
+  if (document.querySelector('#update-prompt')) {
+    console.log('⚠️ 更新提示已存在，跳過顯示');
+    return;
+  }
+  
+  console.log('📢 顯示更新提示');
+  
+  const updatePrompt = document.createElement('div');
+  updatePrompt.id = 'update-prompt';
+  updatePrompt.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 12px;
+      text-align: center;
+      z-index: 10001;
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4), 
+                  0 4px 12px rgba(0, 0, 0, 0.2);
+      font-family: Arial, sans-serif;
+      min-width: 320px;
+      animation: slideDown 0.5s ease-out;
+    ">
+      <div style="margin-bottom: 15px; font-size: 16px; font-weight: 600;">
+        🔄 發現新版本！
+      </div>
+      <div style="margin-bottom: 15px; font-size: 14px; opacity: 0.9;">
+        有新功能和改進可用
+      </div>
+      <button onclick="updateApp()" style="
+        background: white;
+        color: #4CAF50;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 10px;
+        font-weight: bold;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        立即更新
+      </button>
+      <button onclick="dismissUpdate()" style="
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+        稍後
+      </button>
+    </div>
+  `;
+  
+  // 添加動畫樣式
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideDown {
+      from { 
+        transform: translateX(-50%) translateY(-100%); 
+        opacity: 0; 
+      }
+      to { 
+        transform: translateX(-50%) translateY(0); 
+        opacity: 1; 
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  document.body.appendChild(updatePrompt);
+  
+  // 10秒後自動提醒
+  setTimeout(() => {
+    if (document.querySelector('#update-prompt')) {
+      console.log('⏰ 更新提示已顯示 10 秒');
+    }
+  }, 10000);
+}
+
+// 🔥 立即更新
+function updateApp() {
+  console.log('👆 使用者選擇立即更新');
+  
+  navigator.serviceWorker.getRegistration('./sw.js')
+    .then((registration) => {
+      if (registration && registration.waiting) {
+        console.log('📤 發送跳過等待訊息');
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+    });
+  
+  // 移除提示
+  const prompt = document.querySelector('#update-prompt');
+  if (prompt) {
+    prompt.remove();
+    console.log('🗑️ 移除更新提示');
+  }
+}
+
+// 🔥 稍後更新
+function dismissUpdate() {
+  console.log('⏭️ 使用者選擇稍後更新');
+  const prompt = document.querySelector('#update-prompt');
+  if (prompt) {
+    prompt.remove();
+    console.log('🗑️ 移除更新提示');
+  }
+}
+
 
 // PWA 安裝提示
 let deferredPrompt;
