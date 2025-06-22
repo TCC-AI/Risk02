@@ -3207,29 +3207,13 @@ document.addEventListener('DOMContentLoaded', function() {
             resetInactivityTimer();
         });
     }
-    // 修改追蹤事項返回按鈕事件監聽器
+        // 返回按鈕
     if (backFromTrackingBtn) {
         backFromTrackingBtn.addEventListener('click', function() {
-            // 隱藏追蹤事項頁面
             document.getElementById('tracking-page').style.display = 'none';
-            
-            // 顯示主容器和儀表板
-            document.querySelector('.container').classList.remove('hidden');
-            document.getElementById('dashboard-section').classList.remove('hidden');
-            
-            // 確保其他頁面都隱藏
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('inventory-section').classList.add('hidden');
-            document.getElementById('dept-risk-index-page').style.display = 'none';
-            document.getElementById('data-analytics-page').style.display = 'none';
-            document.getElementById('event-registration-page').style.display = 'none';
-            document.getElementById('alert-settings-page').style.display = 'none';
-            document.getElementById('risk-prediction-page').style.display = 'none';
-            
-            // 重置計時器
+            showDashboard();
             resetInactivityTimer();
         });
-    }
     }
     
     // 重新整理按鈕
