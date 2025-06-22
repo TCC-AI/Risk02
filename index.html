@@ -71,7 +71,6 @@
             width: 100%;
             max-width: 540px;
             padding: 20px;
-           
             position: relative;
         }
 
@@ -655,7 +654,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 30px;
     margin-top: 20px;
-    width: 110%;
+    
     max-width: 1000px;
     margin-left: auto;
    margin-right: auto;
@@ -706,6 +705,8 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 @media (max-width: 767px) {
     .dashboard-page {
         padding: 15px;
+        margin: 10px;     /* 加上外邊距避免貼邊 */
+        width: calc(100% - 20px); /* 扣除外邊距 */
     }
     
     .table th,
