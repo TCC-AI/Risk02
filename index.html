@@ -2762,6 +2762,70 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 
 <script>
+// 註冊 Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Risk02/sw.js')
+      .then((registration) => {
+        console.log('SW 註冊成功: ', registration.scope);
+      })
+      .catch((registrationError) => {
+        console.log('SW 註冊失敗: ', registrationError);
+      });
+  });
+}
+
+// PWA 安裝提示
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('beforeinstallprompt 事件觸發');
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // 顯示自訂安裝按鈕
+  showInstallButton();
+});
+
+function showInstallButton() {
+  // 創建安裝按鈕
+  const installBtn = document.createElement('button');
+  installBtn.innerHTML = '📱 安裝到桌面';
+  installBtn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  `;
+  
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`使用者選擇: ${outcome}`);
+      deferredPrompt = null;
+      installBtn.remove();
+    }
+  });
+  
+  document.body.appendChild(installBtn);
+}
+
+// 安裝完成後隱藏按鈕
+window.addEventListener('appinstalled', (evt) => {
+  console.log('PWA 已安裝');
+  const installBtn = document.querySelector('button');
+  if (installBtn) installBtn.remove();
+});
+
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
 const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
 
