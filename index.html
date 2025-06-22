@@ -7856,6 +7856,117 @@ function formatTimeForTracking(dateValue) {
         return dateValue ? dateValue.toString() : '-';
     }
 }
+// 檢測 Service Worker 更新
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Risk02/sw.js')
+      .then((registration) => {
+        console.log('SW 註冊成功: ', registration.scope);
+        
+        // 🔥 檢測更新
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // 🔥 發現新版本，提示使用者更新
+              showUpdatePrompt();
+            }
+          });
+        });
+      })
+      .catch((registrationError) => {
+        console.log('SW 註冊失敗: ', registrationError);
+      });
+  });
+}
+
+// 顯示更新提示
+function showUpdatePrompt() {
+  const updatePrompt = document.createElement('div');
+  updatePrompt.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      z-index: 1001;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    ">
+      <div style="margin-bottom: 10px;">🔄 發現新版本！</div>
+      <button onclick="updateApp()" style="
+        background: white;
+        color: #4CAF50;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      ">立即更新</button>
+      <button onclick="this.parentElement.parentElement.remove()" style="
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      ">稍後</button>
+    </div>
+  `;
+  document.body.appendChild(updatePrompt);
+}
+
+// 更新應用程式
+function updateApp() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        registration.unregister();
+      });
+      // 清除所有快取
+      caches.keys().then((cacheNames) => {
+        cacheNames.forEach((cacheName) => {
+          caches.delete(cacheName);
+        });
+        // 重新載入頁面
+        window.location.reload(true);
+      });
+    });
+  }
+}
+// 添加清除快取按鈕（可放在設定頁面）
+function addClearCacheButton() {
+  const clearBtn = document.createElement('button');
+  clearBtn.innerHTML = '🔄 清除快取並更新';
+  clearBtn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: #FF5722;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+  `;
+  
+  clearBtn.addEventListener('click', () => {
+    if (confirm('清除快取並重新載入？')) {
+      updateApp();
+    }
+  });
+  
+  document.body.appendChild(clearBtn);
+}
+
+// 開發時可以啟用
+// addClearCacheButton();
 
 
 </script>
