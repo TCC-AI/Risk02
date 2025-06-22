@@ -33,19 +33,13 @@
             font-family: '微軟正黑體', Arial, sans-serif;
         }
 
-                /* 一般頁面的 body 樣式 */
+        /* 非對稱漸層背景 */
         body {
             background: linear-gradient(135deg, #1a6fc4 0%, #2a9dd9 25%, #34c3aa 50%, #3ed9a0 75%, #4aeb97 100%);
             min-height: 100vh;
             position: relative;
             padding: 10px;
             overflow-x: hidden;
-        }
-        
-        /* 僅登入頁面使用置中 */
-        body.login-page {
-            display: grid;
-            place-items: center;
         }
 
         body::before {
@@ -70,17 +64,13 @@
             z-index: -1;
         }
 
-                .container {
+        .container {
             width: 100%;
             max-width: 540px;
             padding: 20px;
+            
             position: relative;
         }
-                /* 一般頁面的容器需要恢復 margin */
-        body:not(.login-page) .container {
-            margin: 0 auto;
-        }
-
 
         /* Logo 樣式 */
         .logo-container {
@@ -2010,7 +2000,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
     </style>
 </head>
-<body class="login-page">
+<body>
     <div class="container">
         <!-- 登入表單 -->
         <div id="login-section" class="login-form">
