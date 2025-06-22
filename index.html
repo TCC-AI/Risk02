@@ -39,10 +39,6 @@
             position: relative;
             padding: 10px;
             overflow-x: hidden;
-             display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
         }
 
         body::before {
@@ -71,6 +67,7 @@
             width: 100%;
             max-width: 540px;
             padding: 20px;
+            margin: 0 auto;
             position: relative;
         }
 
@@ -654,10 +651,10 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 30px;
     margin-top: 20px;
-    
-    max-width: 1000px;
+    width: 100%;
+    max-width: 800px;
     margin-left: auto;
-   margin-right: auto;
+    margin-right: auto;
 }
 
 .table-responsive {
@@ -705,8 +702,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 @media (max-width: 767px) {
     .dashboard-page {
         padding: 15px;
-        margin: 10px;     /* 加上外邊距避免貼邊 */
-        width: calc(100% - 20px); /* 扣除外邊距 */
     }
     
     .table th,
@@ -2767,141 +2762,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 
 <script>
-// 註冊 Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/Risk02/sw.js')
-      .then((registration) => {
-        console.log('SW 註冊成功: ', registration.scope);
-      })
-      .catch((registrationError) => {
-        console.log('SW 註冊失敗: ', registrationError);
-      });
-  });
-}
-
-// PWA 安裝提示
-let deferredPrompt;
-
-// 檢測裝置類型
-function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  console.log('beforeinstallprompt 事件觸發');
-  
-  // 🔥 關鍵修正：手機版不阻止預設行為
-  if (isMobile()) {
-    console.log('手機版：顯示原生安裝提示');
-    // 不調用 e.preventDefault()，讓手機顯示原生提示
-    return;
-  }
-  
-  // 電腦版：使用自訂按鈕
-  console.log('電腦版：使用自訂安裝按鈕');
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallButton();
-});
-
-function showInstallButton() {
-  // 檢查是否已有安裝按鈕
-  if (document.querySelector('#pwa-install-btn')) return;
-  
-  // 創建安裝按鈕
-  const installBtn = document.createElement('button');
-  installBtn.id = 'pwa-install-btn';
-  installBtn.innerHTML = '📱 安裝到桌面';
-  installBtn.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: #084cc9;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 25px;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-  `;
-  
-  installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`使用者選擇: ${outcome}`);
-      deferredPrompt = null;
-      installBtn.remove();
-    }
-  });
-  
-  document.body.appendChild(installBtn);
-}
-
-// 安裝完成後隱藏按鈕
-window.addEventListener('appinstalled', (evt) => {
-  console.log('PWA 已安裝');
-  const installBtn = document.querySelector('#pwa-install-btn');
-  if (installBtn) installBtn.remove();
-});
-
-// iOS Safari 特殊處理
-if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-  // iOS 不支援 beforeinstallprompt，顯示手動安裝提示
-  setTimeout(() => {
-    if (!window.navigator.standalone) {
-      showIOSInstallPrompt();
-    }
-  }, 3000);
-}
-
-function showIOSInstallPrompt() {
-  const iosPrompt = document.createElement('div');
-  iosPrompt.innerHTML = `
-    <div style="
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      background: #007AFF;
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      z-index: 1000;
-      font-size: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    ">
-      <div>📲 安裝此應用程式到主畫面</div>
-      <div style="font-size: 12px; margin-top: 10px;">
-        點選畫面右上角的 「<strong>分享</strong>」 按鈕，<br>然後選擇 <strong>「加入主畫面螢幕」</strong>
-      </div>
-      <button onclick="this.parentElement.parentElement.remove()" style="
-        background: rgba(255,255,255,0.2);
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        margin-top: 10px;
-        cursor: pointer;
-      ">知道了</button>
-    </div>
-  `;
-  document.body.appendChild(iosPrompt);
-  
-  // 10秒後自動隱藏
-  setTimeout(() => {
-    if (iosPrompt.parentElement) {
-      iosPrompt.remove();
-    }
-  }, 10000);
-}
-
-
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
 const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
 
