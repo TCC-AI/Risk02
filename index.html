@@ -2778,18 +2778,35 @@ if ('serviceWorker' in navigator) {
 // PWA 安裝提示
 let deferredPrompt;
 
+// 檢測裝置類型
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   console.log('beforeinstallprompt 事件觸發');
+  
+  // 🔥 關鍵修正：手機版不阻止預設行為
+  if (isMobile()) {
+    console.log('手機版：顯示原生安裝提示');
+    // 不調用 e.preventDefault()，讓手機顯示原生提示
+    return;
+  }
+  
+  // 電腦版：使用自訂按鈕
+  console.log('電腦版：使用自訂安裝按鈕');
   e.preventDefault();
   deferredPrompt = e;
-  
-  // 顯示自訂安裝按鈕
   showInstallButton();
 });
 
 function showInstallButton() {
+  // 檢查是否已有安裝按鈕
+  if (document.querySelector('#pwa-install-btn')) return;
+  
   // 創建安裝按鈕
   const installBtn = document.createElement('button');
+  installBtn.id = 'pwa-install-btn';
   installBtn.innerHTML = '📱 安裝到桌面';
   installBtn.style.cssText = `
     position: fixed;
@@ -2804,6 +2821,7 @@ function showInstallButton() {
     font-size: 14px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
   `;
   
   installBtn.addEventListener('click', async () => {
@@ -2822,9 +2840,62 @@ function showInstallButton() {
 // 安裝完成後隱藏按鈕
 window.addEventListener('appinstalled', (evt) => {
   console.log('PWA 已安裝');
-  const installBtn = document.querySelector('button');
+  const installBtn = document.querySelector('#pwa-install-btn');
   if (installBtn) installBtn.remove();
 });
+
+// iOS Safari 特殊處理
+if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+  // iOS 不支援 beforeinstallprompt，顯示手動安裝提示
+  setTimeout(() => {
+    if (!window.navigator.standalone) {
+      showIOSInstallPrompt();
+    }
+  }, 3000);
+}
+
+function showIOSInstallPrompt() {
+  const iosPrompt = document.createElement('div');
+  iosPrompt.innerHTML = `
+    <div style="
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #007AFF;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 1000;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    ">
+      <div>📱 安裝此應用程式到主畫面</div>
+      <div style="font-size: 12px; margin-top: 5px;">
+        點選 <strong>分享</strong> 按鈕，然後選擇 <strong>「加入主畫面螢幕」</strong>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+      ">知道了</button>
+    </div>
+  `;
+  document.body.appendChild(iosPrompt);
+  
+  // 10秒後自動隱藏
+  setTimeout(() => {
+    if (iosPrompt.parentElement) {
+      iosPrompt.remove();
+    }
+  }, 10000);
+}
+
 
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
 const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
