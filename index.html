@@ -2766,7 +2766,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 // 註冊 Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/Risk02/sw.js')
+    navigator.serviceWorker.register('./sw.js')
       .then((registration) => {
         console.log('SW 註冊成功: ', registration.scope);
       })
