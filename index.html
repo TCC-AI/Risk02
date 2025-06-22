@@ -3056,7 +3056,7 @@ function showIOSInstallPrompt() {
 
 
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbzOC7ey7-xl3fEd8nLibJWRTWjqrDUFAemOCaTjgPwlRdCOLnZiO2zs-7DkivJswcJ3/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -8124,6 +8124,213 @@ function addClearCacheButton() {
 
 // 開發時可以啟用
 // addClearCacheButton();
+// 🔄 即時更新系統
+class RealTimeUpdater {
+    constructor() {
+        this.lastUpdateTime = Date.now();
+        this.updateInterval = 30000; // 30秒
+        this.isRunning = false;
+    }
+    
+    // 啟動即時更新
+    start() {
+        if (this.isRunning) return;
+        
+        this.isRunning = true;
+        console.log('🔄 啟動即時更新系統');
+        
+        this.intervalId = setInterval(async () => {
+            await this.checkForUpdates();
+        }, this.updateInterval);
+        
+        // 立即執行一次檢查
+        this.checkForUpdates();
+    }
+    
+    // 停止即時更新
+    stop() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+        this.isRunning = false;
+        console.log('⏹️ 停止即時更新系統');
+    }
+    
+    // 檢查更新
+    async checkForUpdates() {
+        try {
+            const response = await fetch(`${scriptUrl}?action=getUpdates&lastCheck=${this.lastUpdateTime}&userId=${currentUser.id}`);
+            const result = await response.json();
+            
+            if (result.success && result.hasNewData) {
+                this.handleUpdates(result.updates);
+                this.lastUpdateTime = Date.now();
+            }
+        } catch (error) {
+            console.error('❌ 即時更新檢查失敗:', error);
+            // 不顯示錯誤給用戶，避免干擾
+        }
+    }
+    
+    // 處理收到的更新
+    handleUpdates(updates) {
+        updates.forEach(update => {
+            switch (update.type) {
+                case 'NEW_RISK_EVENT':
+                    this.handleNewRiskEvent(update.data);
+                    break;
+                case 'RISK_LEVEL_CHANGE':
+                    this.handleRiskLevelChange(update.data);
+                    break;
+                case 'ALERT_TRIGGERED':
+                    this.handleAlertTriggered(update.data);
+                    break;
+                case 'USER_ACTION':
+                    this.handleUserAction(update.data);
+                    break;
+            }
+        });
+    }
+    
+    // 處理新風險事件
+    handleNewRiskEvent(data) {
+        // 更新統計數據
+        this.updateDashboardStats();
+        
+        // 顯示通知
+        showNotification(
+            `🚨 新風險事件：${data.department} - 風險等級 ${data.riskLevel}`,
+            'warning',
+            5000
+        );
+        
+        // 如果用戶正在查看相關頁面，自動刷新
+        if (this.isViewingRelevantPage(data)) {
+            this.refreshCurrentPage();
+        }
+    }
+    
+    // 處理風險等級變化
+    handleRiskLevelChange(data) {
+        showNotification(
+            `📊 ${data.department} 風險指數變化：${data.oldLevel} → ${data.newLevel}`,
+            data.newLevel > data.oldLevel ? 'warning' : 'success'
+        );
+        
+        // 更新圖表
+        this.updateCharts();
+    }
+    
+    // 處理預警觸發
+    handleAlertTriggered(data) {
+        showNotification(
+            `🚨 預警觸發：${data.alertName}`,
+            'error',
+            10000 // 預警通知顯示更久
+        );
+        
+        // 播放提示音（如果用戶允許）
+        this.playNotificationSound();
+    }
+    
+    // 處理用戶操作
+    handleUserAction(data) {
+        if (data.userId !== currentUser.id) {
+            showNotification(
+                `👤 ${data.userName} ${data.action}`,
+                'info',
+                3000
+            );
+        }
+    }
+    
+    // 檢查是否正在查看相關頁面
+    isViewingRelevantPage(data) {
+        const currentPage = this.getCurrentPage();
+        return (
+            currentPage === 'dashboard' ||
+            (currentPage === 'analytics' && data.department) ||
+            (currentPage === 'tracking' && data.trackingId)
+        );
+    }
+    
+    // 獲取當前頁面
+    getCurrentPage() {
+        if (!document.getElementById('dashboard-section').classList.contains('hidden')) {
+            return 'dashboard';
+        }
+        if (document.getElementById('data-analytics-page').style.display !== 'none') {
+            return 'analytics';
+        }
+        if (document.getElementById('tracking-page').style.display !== 'none') {
+            return 'tracking';
+        }
+        return 'other';
+    }
+    
+    // 刷新當前頁面數據
+    refreshCurrentPage() {
+        const currentPage = this.getCurrentPage();
+        switch (currentPage) {
+            case 'dashboard':
+                loadDashboardData();
+                break;
+            case 'analytics':
+                loadAnalyticsData();
+                break;
+            case 'tracking':
+                loadTrackingData();
+                break;
+        }
+    }
+    
+    // 更新儀表板統計
+    updateDashboardStats() {
+        // 重新載入統計數據
+        loadDashboardData();
+    }
+    
+    // 更新圖表
+    updateCharts() {
+        // 如果正在顯示圖表，重新繪製
+        if (window.myChart) {
+            loadAnalyticsData();
+        }
+    }
+    
+    // 播放通知音效
+    playNotificationSound() {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            // 使用瀏覽器通知API播放系統音效
+            new Notification('風險管控系統預警', {
+                body: '請注意查看最新風險狀況',
+                icon: '/favicon.ico',
+                tag: 'risk-alert'
+            });
+        }
+    }
+}
+
+// 🚀 啟動即時更新系統
+const realTimeUpdater = new RealTimeUpdater();
+
+// 在用戶登入後啟動
+function startRealTimeFeatures() {
+    if (currentUser && currentUser.username) {
+        realTimeUpdater.start();
+        
+        // 請求通知權限
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    }
+}
+
+// 在用戶登出時停止
+function stopRealTimeFeatures() {
+    realTimeUpdater.stop();
+}
 
 
 </script>
