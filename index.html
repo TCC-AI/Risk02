@@ -35,16 +35,12 @@
 
         /* 非對稱漸層背景 */
         body {
-    background: linear-gradient(135deg, #1a6fc4 0%, #2a9dd9 25%, #34c3aa 50%, #3ed9a0 75%, #4aeb97 100%);
-    min-height: 100vh;
-    position: relative;
-    padding: 10px;
-    overflow-x: hidden;
-    /* 新增以下三行 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+            background: linear-gradient(135deg, #1a6fc4 0%, #2a9dd9 25%, #34c3aa 50%, #3ed9a0 75%, #4aeb97 100%);
+            min-height: 100vh;
+            position: relative;
+            padding: 10px;
+            overflow-x: hidden;
+        }
 
         body::before {
             content: "";
@@ -69,12 +65,15 @@
         }
 
         .container {
-    width: 100%;
-    max-width: 540px;
-    padding: 20px;
-    /* 移除 margin: 0 auto; */
-    position: relative;
-}
+            width: 100%;
+            max-width: 540px;
+            padding: 20px;
+            /* 替換原有的 margin: 0 auto; */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
         /* Logo 樣式 */
         .logo-container {
