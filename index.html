@@ -2763,28 +2763,6 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 
 
 <script>
-    // 前端統一時間格式化函數
-function formatToTaiwanTime(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleString('zh-TW', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-}
-
-// 處理從後端接收的資料
-function processAnalyticsData(data) {
-  data.events.forEach(event => {
-    // 確保前端顯示的時間格式一致
-    event.timestamp = formatToTaiwanTime(event.timestamp);
-  });
-  return data;
-}
 // 🔥 完整的 Service Worker 註冊與更新檢測
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -3078,7 +3056,7 @@ function showIOSInstallPrompt() {
 
 
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbzJcWTK_NsxVlrT1aRkMvunYoVwGEZiDFF21eGmXjauw1vH7N4ak8Thj5KHuHYxSQSq/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
