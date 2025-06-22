@@ -64,3 +64,10 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+// 🔥 監聽來自頁面的訊息（添加到 sw.js 最後）
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('SW: 收到跳過等待訊息');
+    self.skipWaiting();
+  }
+});
