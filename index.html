@@ -8584,9 +8584,10 @@ function addClearCacheButton() {
         <button type="button" class="btn btn-primary me-3" id="refreshTrackingBtn">
             <i class="fas fa-sync-alt"></i> 重新整理
         </button>
-        <button type="button" class="btn btn-secondary" id="backFromTrackingBtn">
-            <i class="fas fa-arrow-left"></i> 返回
-        </button>
+        <button type="button" class="btn btn-secondary" id="backFromTrackingBtn" onclick="document.querySelector('.risk-tracking-container').classList.add('hidden'); document.getElementById('dashboard-section').classList.remove('hidden');">
+    <i class="fas fa-arrow-left"></i> 返回
+</button>
+
     </div>
 </div>
 
