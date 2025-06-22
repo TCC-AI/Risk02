@@ -34,21 +34,12 @@
         }
 
         /* 非對稱漸層背景 */
-        /* 預設：所有頁面都頂部對齊 */
         body {
-            display: flex;
-            align-items: flex-start;    /* 頂部對齊 */
-            justify-content: center;    /* 水平置中 */
+            background: linear-gradient(135deg, #1a6fc4 0%, #2a9dd9 25%, #34c3aa 50%, #3ed9a0 75%, #4aeb97 100%);
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        
-        /* 只有登入頁面完全置中 */
-        body.login-section {
-            align-items: center;        /* 垂直置中 */
-            justify-content: center;    /* 水平置中 */
+            position: relative;
+            padding: 10px;
+            overflow-x: hidden;
         }
 
         body::before {
