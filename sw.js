@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'risk02-v1.0.3.1'; // 🔥 每次更新都要改版本號！
+const CACHE_NAME = 'risk02-v1.0.2'; // 🔥 每次更新都要改版本號！
 const urlsToCache = [
   './',
   './index.html',
