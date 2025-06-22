@@ -4195,42 +4195,64 @@ function setButtonPermissions() {
 
 
     
-    // 顯示主頁面
-// 修改 showDashboard 函數
-function showDashboard() {
-    loginSection.classList.add('hidden');
-    inventorySection.classList.add('hidden');
-    deptRiskIndexPage.style.display = 'none';
-    dataAnalyticsPage.style.display = 'none';
-    eventRegistrationPage.style.display = 'none';
-    alertSettingsPage.style.display = 'none'; // 🆕 添加這行
-    riskPredictionPage.style.display = 'none'; // 🆕 使用全域變數
-    document.getElementById('risk-prediction-page').style.display = 'none';
-    document.querySelector('.container').classList.remove('hidden');
-    dashboardSection.classList.remove('hidden');
-    document.querySelector('.container').style.maxWidth = '500px';
-    document.getElementById('tracking-page').style.display = 'none'; 
-        // 🆕 隱藏 s4 專屬頁面 (新增這段)
-    const s4Pages = ['user-management-page', 'system-settings-page', 'data-backup-page'];
-    s4Pages.forEach(pageId => {
-        const page = document.getElementById(pageId);
-        if (page) page.style.display = 'none';
+   // 🆕 統一的頁面管理函數（新添加）
+function hideAllPages() {
+    const sections = [
+        'login-section',
+        'dashboard-section', 
+        'inventory-section',
+        'dept-risk-index-page',
+        'data-analytics-page',
+        'event-registration-page',
+        'alert-settings-page',
+        'risk-prediction-page',
+        'tracking-page', // 🔑 關鍵：確保包含追蹤頁面
+        'user-management-page',
+        'system-settings-page', 
+        'data-backup-page',
+        'recent-high-risk-section'
+    ];
+    
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.style.display = 'none';
+            section.classList.add('hidden');
+        }
     });
-    // 設置按鈕權限
-    setButtonPermissions();
     
-    // 更新使用者資訊顯示
-    updateUserInfo();
-    
-    // 🆕 檢查當前預警狀態
-    checkCurrentAlertStatus();
+    const container = document.querySelector('.container');
+    if (container) {
+        container.classList.add('hidden');
+    }
+}
 
-    // 🆕 為 s4 用戶添加管理功能 (新增這行)
-    addManagementFeatures();
+// 🔧 修正後的 showDashboard 函數（替換現有的）
+function showDashboard() {
+    hideAllPages(); // 統一隱藏所有頁面
     
-    // 重置計時器
+    // 顯示主頁面
+    const container = document.querySelector('.container');
+    const dashboard = document.getElementById('dashboard-section');
+    
+    if (container) {
+        container.classList.remove('hidden');
+        container.style.maxWidth = '500px';
+    }
+    
+    if (dashboard) {
+        dashboard.classList.remove('hidden');
+        dashboard.style.display = 'block';
+    }
+    
+    // 恢復主頁面功能
+    setButtonPermissions();
+    updateUserInfo();
+    checkCurrentAlertStatus();
+    addManagementFeatures();
     resetInactivityTimer();
 }
+
 
 // 🆕 檢查當前預警狀態 (修正版)
 async function checkCurrentAlertStatus() {
