@@ -5191,8 +5191,8 @@ function updateDetailTable(events) {
                 
                 // 延遲返回主頁面，讓用戶有時間查看彈出視窗
                 setTimeout(() => {
-                    showDashboard();
-                }, 1000);
+                window.location.reload(); // 強制刷新頁面
+            }, 1000);
             } else {
                 alert(data.message || '送出失敗，請稍後再試');
             }
@@ -5698,7 +5698,7 @@ async function submitEventRegistration() {
             
             // 可選：延遲返回主頁面
             setTimeout(() => {
-                // showDashboard(); // 如果需要自動返回主頁面
+                window.location.reload(); // 強制刷新頁面
             }, 1000);
         } else {
             alert('提交失敗: ' + result.message);
@@ -7885,6 +7885,11 @@ async function submitRiskTrackingRow(index, rowNumber) {
         
         if (result.success) {
             showNotification('資料已成功更新！', 'success');
+            // 新增: 延遲後重新載入頁面
+            setTimeout(() => {
+                window.location.reload(); // 強制刷新頁面
+            }, 1000);
+        
         } else {
             showNotification('更新失敗：' + result.message, 'error');
         }
