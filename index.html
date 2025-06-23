@@ -3056,7 +3056,7 @@ function showIOSInstallPrompt() {
 
 
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbx2x1cYFzxgiRtQae13U9CfAaqRkgwLzYKGEFprFan2ENbnciJx9wYnX4lzxFMDa9ln/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -5191,8 +5191,8 @@ function updateDetailTable(events) {
                 
                 // 延遲返回主頁面，讓用戶有時間查看彈出視窗
                 setTimeout(() => {
-                window.location.reload(); // 強制刷新頁面
-            }, 1000);
+                    showDashboard();
+                }, 1000);
             } else {
                 alert(data.message || '送出失敗，請稍後再試');
             }
@@ -5698,7 +5698,7 @@ async function submitEventRegistration() {
             
             // 可選：延遲返回主頁面
             setTimeout(() => {
-                window.location.reload(); // 強制刷新頁面
+                // showDashboard(); // 如果需要自動返回主頁面
             }, 1000);
         } else {
             alert('提交失敗: ' + result.message);
@@ -7885,11 +7885,6 @@ async function submitRiskTrackingRow(index, rowNumber) {
         
         if (result.success) {
             showNotification('資料已成功更新！', 'success');
-            // 新增: 延遲後重新載入頁面
-            setTimeout(() => {
-                window.location.reload(); // 強制刷新頁面
-            }, 1000);
-        
         } else {
             showNotification('更新失敗：' + result.message, 'error');
         }
