@@ -1996,7 +1996,47 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 #riskNotificationModal.show .modal-dialog {
     transform: none;
 }
+/* 🔧 修正近期高風險按鈕的滑鼠問題 */
+#recent-high-risk-btn {
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 1 !important;
+}
 
+/* 🚫 移除可能的脈衝波效果 */
+#recent-high-risk-btn::after,
+#recent-high-risk-btn::before {
+    display: none !important;
+}
+
+/* 🔧 確保懸停效果正常 */
+#recent-high-risk-btn:hover {
+    cursor: pointer !important;
+    background: linear-gradient(to right, #c0392b, #a93226) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 🔧 移除可能的禁用狀態 */
+#recent-high-risk-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+}
+
+/* 🔧 確保按鈕內容可點擊 */
+#recent-high-risk-btn * {
+    pointer-events: none !important;
+}
+
+/* 🔧 移動端特殊處理 */
+@media (max-width: 768px) {
+    #recent-high-risk-btn {
+        cursor: pointer !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+}
 
     </style>
 </head>
