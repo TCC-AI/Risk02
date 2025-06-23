@@ -7807,7 +7807,7 @@ function displayRiskTrackingData(data) {
     const rows = data.map((item, index) => {
         const rowId = `risk-tracking-row-${index}`;
         // 🆕 格式化時間為 yyyy/mm/dd hh:mm 格式
-        const formattedTime = formatTimeForTracking(item.columnA);
+        const formattedTime = format(item.columnA, 'MM/dd HH:mm');
         return `
             <tr id="${rowId}">
                 <td>${item.columnA || '-'}</td>
