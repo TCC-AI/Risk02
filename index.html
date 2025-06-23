@@ -7972,7 +7972,7 @@ if (refreshTrackingBtn) {
     });
 }
 /**
- * 🆕 格式化時間為追蹤事項專用格式 (yyyy/mm/dd hh:mm)
+ * 🆕 格式化時間為追蹤事項專用格式 (MM/DD HH:MM)
  */
 function formatTimeForTracking(dateValue) {
     if (!dateValue) return '-';
@@ -7999,20 +7999,20 @@ function formatTimeForTracking(dateValue) {
             return dateValue.toString();
         }
         
-        // 格式化為 yyyy/mm/dd hh:mm
-        const year = date.getFullYear();
+        // 格式化為 MM/DD HH:MM (移除年份)
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         
-        return `${year}/${month}/${day} ${hours}:${minutes}`;
+        return `${month}/${day} ${hours}:${minutes}`;
         
     } catch (error) {
         console.error('時間格式化錯誤:', error);
         return dateValue ? dateValue.toString() : '-';
     }
 }
+
 // 檢測 Service Worker 更新
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
