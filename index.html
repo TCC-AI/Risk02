@@ -7932,9 +7932,12 @@ function displayIncompleteInventoryData(data) {
     }
     
     const rows = data.map(item => {
+        // 🆕 格式化時間為 yyyy/mm 格式
+        const formattedTime = formatTimeForInventory(item.columnA);
+        
         return `
             <tr>
-                <td>${item.columnA || '-'}</td>
+                <td>${formattedTime}</td>
                 <td>${item.columnB || '-'}</td>
             </tr>
         `;
@@ -7944,24 +7947,45 @@ function displayIncompleteInventoryData(data) {
 }
 
 /**
- * 格式化日期為輸入框格式
+ * 🆕 格式化時間為盤點專用格式 (yyyy/mm)
  */
-function formatDateForInput(dateValue) {
-    if (!dateValue) return '';
+function formatTimeForInventory(dateValue) {
+    if (!dateValue) return '-';
     
     try {
-        const date = new Date(dateValue);
-        if (isNaN(date.getTime())) return '';
+        let date;
         
+        // 處理不同的日期格式
+        if (typeof dateValue === 'string') {
+            // 處理 ISO 格式 (如: 2025-05-27T13:56:57.000Z)
+            if (dateValue.includes('T')) {
+                date = new Date(dateValue);
+            } 
+            // 處理其他字串格式
+            else {
+                date = new Date(dateValue);
+            }
+        } else {
+            date = new Date(dateValue);
+        }
+        
+        // 檢查日期是否有效
+        if (isNaN(date.getTime())) {
+            return dateValue.toString();
+        }
+        
+        // 格式化為 yyyy/mm
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
         
-        return `${year}-${month}-${day}`;
+        return `${year}/${month}`;
+        
     } catch (error) {
-        return '';
+        console.error('時間格式化錯誤:', error);
+        return dateValue ? dateValue.toString() : '-';
     }
 }
+
 
 // 修改原有的 refreshTrackingBtn 事件監聽器
 if (refreshTrackingBtn) {
