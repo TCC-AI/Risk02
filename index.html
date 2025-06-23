@@ -3096,7 +3096,7 @@ function showIOSInstallPrompt() {
 
 
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbz1_MBoDD9T_lW_UZol5OuHI9UFI27WspUBTc2hH0vJsp-ImKZD9ey_txRnWclTHAjl/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbw4pOmm1bU0fKh4Fma9VD_uuEQKVkByMQ2AK0nrE4bFaEatPeThghZpeLhk0Z3Ex9WN/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -7834,7 +7834,7 @@ async function loadRiskTrackingData() {
 }
 
 /**
- * 🔧 修正版：顯示風險追蹤資料
+ * 顯示風險追蹤資料
  */
 function displayRiskTrackingData(data) {
     const tableBody = document.getElementById('riskTrackingTableBody');
@@ -7847,49 +7847,42 @@ function displayRiskTrackingData(data) {
     const rows = data.map((item, index) => {
         const rowId = `risk-tracking-row-${index}`;
         const formattedTime = formatTimeForTracking(item.columnA);
-        
         return `
             <tr id="${rowId}">
-                <td>${formattedTime}</td>
+                <td>${formattedTime}</td>  <!-- 🔧 使用格式化後的時間 -->
                 <td>${item.columnB || '-'}</td>
                 <td>${item.columnE || '-'}</td>
-                <td title="${item.columnF || '-'}">${truncateText(item.columnF, 20)}</td>
+                <td>${item.columnF || '-'}</td>
                 <td>${item.columnG || '-'}</td>
-                <td class="text-center">
-                    <span class="badge ${getRiskBadgeClass(item.columnH)}">${item.columnH || '-'}</span>
-                </td>
-                <td class="text-center">${item.columnK || '-'}</td>
-                <td title="${item.columnL || '-'}">${truncateText(item.columnL, 15)}</td>
+                <td>${item.columnH || '-'}</td>
+                <td>${item.columnK || '-'}</td>
+                <td>${item.columnL || '-'}</td>
                 <td>${item.columnM || '-'}</td>
                 <td>
-                    <textarea class="form-control form-control-sm" 
-                             id="solution_${index}" 
-                             rows="2"
-                             placeholder="請輸入解決方案"
-                             style="min-width: 150px;">${item.columnN || ''}</textarea>
+                    <input type="text" 
+                           class="form-control form-control-sm" 
+                           id="trackingContent_${index}" 
+                           value="${item.columnN || ''}"
+                           placeholder="請輸入追蹤內容">
                 </td>
                 <td>
                     <input type="date" 
                            class="form-control form-control-sm" 
                            id="expectedDate_${index}" 
-                           value="${formatDateForInput(item.columnO)}"
-                           style="min-width: 120px;">
+                           value="${formatDateForInput(item.columnO)}">
                 </td>
                 <td>
-                    <select class="form-select form-select-sm" 
-                            id="isCompleted_${index}"
-                            style="min-width: 80px;">
+                    <select class="form-select form-select-sm" id="isCompleted_${index}">
                         <option value="">請選擇</option>
                         <option value="是" ${item.columnP === '是' ? 'selected' : ''}>是</option>
                         <option value="否" ${item.columnP === '否' ? 'selected' : ''}>否</option>
                     </select>
                 </td>
-                <td class="text-center">
+                <td>
                     <button type="button" 
                             class="btn btn-primary btn-sm" 
-                            onclick="submitRiskTrackingRow(${index}, ${item.rowNumber})"
-                            style="min-width: 60px;">
-                        <i class="fas fa-paper-plane"></i>
+                            onclick="submitRiskTrackingRow(${index}, ${item.rowNumber})">
+                        <i class="fas fa-paper-plane"></i> 送出
                     </button>
                 </td>
             </tr>
@@ -7899,48 +7892,21 @@ function displayRiskTrackingData(data) {
     tableBody.innerHTML = rows;
 }
 
-
 /**
- * 🔧 修正版：送出風險追蹤資料
+ * 送出風險追蹤資料
  */
 async function submitRiskTrackingRow(index, rowNumber) {
     try {
-        // 獲取表單值
-        const solutionElement = document.getElementById(`solution_${index}`);
-        const expectedDateElement = document.getElementById(`expectedDate_${index}`);
-        const isCompletedElement = document.getElementById(`isCompleted_${index}`);
-        
-        if (!solutionElement || !expectedDateElement || !isCompletedElement) {
-            console.error('找不到表單元素');
-            showNotification('表單元素錯誤，請重新載入頁面', 'error');
-            return;
-        }
-        
-        const solution = solutionElement.value.trim();
-        const expectedDate = expectedDateElement.value;
-        const isCompleted = isCompletedElement.value;
-        
-        // 驗證必填欄位
-        if (!solution) {
-            showNotification('請填入解決方案', 'warning');
-            solutionElement.focus();
-            return;
-        }
-        
-        console.log('準備送出資料:', {
-            rowNumber,
-            solution,
-            expectedDate,
-            isCompleted
-        });
+        const trackingContent = document.getElementById(`trackingContent_${index}`).value;
+        const expectedDate = document.getElementById(`expectedDate_${index}`).value;
+        const isCompleted = document.getElementById(`isCompleted_${index}`).value;
         
         // 顯示載入狀態
-        const submitBtn = event.target.closest('button');
-        const originalHTML = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        const submitBtn = event.target;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 送出中...';
         submitBtn.disabled = true;
         
-        // 發送請求
         const response = await fetch(`${scriptUrl}?action=updateRiskTrackingData`, {
             method: 'POST',
             headers: {
@@ -7948,43 +7914,30 @@ async function submitRiskTrackingRow(index, rowNumber) {
             },
             body: JSON.stringify({
                 rowNumber: rowNumber,
-                trackingContent: solution,
+                trackingContent: trackingContent,
                 expectedDate: expectedDate,
                 isCompleted: isCompleted
             })
         });
         
         const result = await response.json();
-        console.log('API 回應:', result);
         
         if (result.success) {
             showNotification('資料已成功更新！', 'success');
-            
-            // 視覺化反饋：短暫高亮該行
-            const row = document.getElementById(`risk-tracking-row-${index}`);
-            if (row) {
-                row.style.backgroundColor = '#d4edda';
-                setTimeout(() => {
-                    row.style.backgroundColor = '';
-                }, 2000);
-            }
         } else {
-            showNotification('更新失敗：' + (result.message || '未知錯誤'), 'error');
+            showNotification('更新失敗：' + result.message, 'error');
         }
         
     } catch (error) {
         console.error('送出風險追蹤資料時發生錯誤:', error);
-        showNotification('送出失敗：' + error.message, 'error');
+        showNotification('送出失敗，請稍後再試', 'error');
     } finally {
         // 恢復按鈕狀態
-        const submitBtn = event.target.closest('button');
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-            submitBtn.disabled = false;
-        }
+        const submitBtn = event.target;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 送出';
+        submitBtn.disabled = false;
     }
 }
-
 
 /**
  * 載入上月未盤點部門資料
@@ -8592,72 +8545,51 @@ function addClearCacheButton() {
         <i class="fas fa-clipboard-list text-warning"></i> 追蹤考核
     </h2>
     
-      <!-- 追蹤考核頁面 - 完整版 -->
-    <div id="tracking-page" class="dashboard-page" style="display: none;">
-        <div class="logo-container">
-            <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
+    <!-- 風險追蹤區塊 -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-search"></i> 風險追蹤
+            </h5>
         </div>
-        <h2 class="text-center mb-4">
-            <i class="fas fa-clipboard-list text-warning"></i> 追蹤考核
-        </h2>
-        
-        <!-- 風險追蹤區塊 -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-search"></i> 風險追蹤
-                </h5>
-            </div>
-            <div class="card-body">
-                <!-- 載入提示 -->
-                <div id="riskTrackingLoadingMsg" class="text-center" style="display: none;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">載入中...</span>
-                    </div>
-                    <p class="mt-2">正在載入風險追蹤資料...</p>
+        <div class="card-body">
+            <!-- 載入提示 -->
+            <div id="riskTrackingLoadingMsg" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">載入中...</span>
                 </div>
-                
-                <!-- 風險追蹤表格 -->
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered" id="riskTrackingTable">
-                        <thead class="table-dark">
-                            <tr>
-                                <th style="width: 5%">時間</th>
-                                <th style="width: 5%">部門</th>
-                                <th style="width: 8%">風險項目</th>
-                                <th style="width: 12%">風險描述</th>
-                                <th style="width: 5%">類別</th>
-                                <th style="width: 5%">等級</th>
-                                <th style="width: 5%">次數</th>
-                                <th style="width: 15%">原因說明</th>
-                                <th style="width: 5%">提報部門</th>
-                                <th style="width: 20%">解決方案</th>
-                                <th style="width: 5%">預計完成日</th>
-                                <th style="width: 3%">是否結案</th>
-                                <th style="width: 7%">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="riskTrackingTableBody">
-                            <tr>
-                                <td colspan="13" class="text-center">載入中...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <p class="mt-2">正在載入風險追蹤資料...</p>
             </div>
-        </div>
-        
-        <!-- 操作按鈕 -->
-        <div class="text-center">
-            <button type="button" class="btn btn-primary me-3" id="refreshTrackingBtn">
-                <i class="fas fa-sync-alt"></i> 重新整理
-            </button>
-            <button type="button" class="btn btn-secondary" id="backFromTrackingBtn">
-                <i class="fas fa-arrow-left"></i> 返回
-            </button>
+            
+            <!-- 風險追蹤表格 -->
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="riskTrackingTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>時間</th>
+                            <th>風險部門</th>
+                            <th>項目</th>
+                            <th>風險描述</th>
+                            <th>類別</th>
+                            <th>風險等級</th>
+                            <th>次數</th>
+                            <th>原因說明</th>
+                            <th>提報部門</th>
+                            <th>解決方案</th>
+                            <th>預計完成日</th>
+                            <th>是否結案</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riskTrackingTableBody">
+                        <tr>
+                            <td colspan="13" class="text-center">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
     
     <!-- 尚未完成上個月風險盤點部門 -->
     <div class="card mb-4">
