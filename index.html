@@ -1238,24 +1238,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     margin-bottom: 8px;
 }
 
-.form-control, .form-select {
-    border: 1px solid rgba(0, 100, 150, 0.2);
-    border-radius: 8px;
-    padding: 10px 12px;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.9);
-}
 
-.form-control:focus, .form-select:focus {
-    border-color: #34c3aa;
-    box-shadow: 0 0 0 3px rgba(52, 195, 170, 0.25);
-    outline: none;
-}
-
-.form-control[readonly] {
-    background-color: rgba(233, 236, 239, 0.6);
-    border-color: rgba(0, 0, 0, 0.1);
-}
 
 .text-danger {
     color: #dc3545 !important;
@@ -1996,7 +1979,47 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
 #riskNotificationModal.show .modal-dialog {
     transform: none;
 }
+/* 🔧 修正近期高風險按鈕的滑鼠問題 */
+#recent-high-risk-btn {
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 1 !important;
+}
 
+/* 🚫 移除可能的脈衝波效果 */
+#recent-high-risk-btn::after,
+#recent-high-risk-btn::before {
+    display: none !important;
+}
+
+/* 🔧 確保懸停效果正常 */
+#recent-high-risk-btn:hover {
+    cursor: pointer !important;
+    background: linear-gradient(to right, #c0392b, #a93226) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 🔧 移除可能的禁用狀態 */
+#recent-high-risk-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+}
+
+/* 🔧 確保按鈕內容可點擊 */
+#recent-high-risk-btn * {
+    pointer-events: none !important;
+}
+
+/* 🔧 移動端特殊處理 */
+@media (max-width: 768px) {
+    #recent-high-risk-btn {
+        cursor: pointer !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+}
 
     </style>
 </head>
@@ -2061,7 +2084,7 @@ div:contains("歡迎"), /* 針對包含「歡迎」文字的元素 */
     <button id="inventory-btn" class="feature-btn">📝<br>部門定期全面盤點</button>
     <button id="event-btn" class="feature-btn">🔖<br>單一突發事件登錄</button>
 <button id="tracking-btn" class="feature-btn" style="background: linear-gradient(to right, #f39c12, #e67e22);">
-    📋<br>追蹤事項
+    📋<br>追蹤考核
 </button>
   
                  
@@ -3056,7 +3079,7 @@ function showIOSInstallPrompt() {
 
 
 // Google Apps Script Web App URL (部署為網頁應用程式後的URL)
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbzgfuDAngs4z61IBLdYtD75Z3PFsAftwseA2REU_hIJt9-oeH7p_tT0CWSQzt5m-94/exec';
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbz5RX2NGp6uxwmWX1-R9LaPojS6pOXDm7G63REiF4J3HXxf6tOcZsdbVx-J4MHVDdGY/exec';
 
 // 全域變數存儲圖表實例
 let riskTrendChart, departmentRiskChart, riskCategoryChart, riskLevelChart, monthlyComparisonChart;
@@ -5191,8 +5214,8 @@ function updateDetailTable(events) {
                 
                 // 延遲返回主頁面，讓用戶有時間查看彈出視窗
                 setTimeout(() => {
-                window.location.reload(); // 強制刷新頁面
-            }, 1000);
+                    showDashboard();
+                }, 1000);
             } else {
                 alert(data.message || '送出失敗，請稍後再試');
             }
@@ -5698,7 +5721,7 @@ async function submitEventRegistration() {
             
             // 可選：延遲返回主頁面
             setTimeout(() => {
-                window.location.reload(); // 強制刷新頁面
+                // showDashboard(); // 如果需要自動返回主頁面
             }, 1000);
         } else {
             alert('提交失敗: ' + result.message);
@@ -7794,57 +7817,47 @@ async function loadRiskTrackingData() {
 }
 
 /**
- * 顯示風險追蹤資料
+ * 🔧 修改版：顯示風險追蹤資料（純顯示模式）
  */
 function displayRiskTrackingData(data) {
     const tableBody = document.getElementById('riskTrackingTableBody');
     
     if (!data || data.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="13" class="text-center text-muted">暫無風險追蹤資料</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="12" class="text-center text-muted">暫無風險追蹤資料</td></tr>';
         return;
     }
     
     const rows = data.map((item, index) => {
         const rowId = `risk-tracking-row-${index}`;
-        // 🆕 格式化時間為 yyyy/mm/dd hh:mm 格式
         const formattedTime = formatTimeForTracking(item.columnA);
+        
+        // 🆕 格式化解決方案、時限、是否已解決的顯示
+        const solutionDisplay = item.columnN || '-';
+        const deadlineDisplay = formatDateForDisplay(item.columnO);
+        const resolvedDisplay = item.columnP || '-';
+        
+        // 🆕 根據是否已解決狀態添加樣式
+        const resolvedClass = item.columnP === '是' ? 'text-success fw-bold' : 
+                             item.columnP === '否' ? 'text-danger' : '';
+        
         return `
             <tr id="${rowId}">
-                <td>${item.columnA || '-'}</td>
+                <td>${formattedTime}</td>
                 <td>${item.columnB || '-'}</td>
                 <td>${item.columnE || '-'}</td>
-                <td>${item.columnF || '-'}</td>
+                <td title="${item.columnF || '-'}">${truncateText(item.columnF, 20)}</td>
                 <td>${item.columnG || '-'}</td>
-                <td>${item.columnH || '-'}</td>
-                <td>${item.columnK || '-'}</td>
-                <td>${item.columnL || '-'}</td>
+                <td class="text-center">
+                    <span class="badge ${getRiskBadgeClass(item.columnH)}">${item.columnH || '-'}</span>
+                </td>
+                <td class="text-center">${item.columnK || '-'}</td>
+                <td title="${item.columnL || '-'}">${truncateText(item.columnL, 15)}</td>
                 <td>${item.columnM || '-'}</td>
-                <td>
-                    <input type="text" 
-                           class="form-control form-control-sm" 
-                           id="trackingContent_${index}" 
-                           value="${item.columnN || ''}"
-                           placeholder="請輸入追蹤內容">
-                </td>
-                <td>
-                    <input type="date" 
-                           class="form-control form-control-sm" 
-                           id="expectedDate_${index}" 
-                           value="${formatDateForInput(item.columnO)}">
-                </td>
-                <td>
-                    <select class="form-select form-select-sm" id="isCompleted_${index}">
-                        <option value="">請選擇</option>
-                        <option value="是" ${item.columnP === '是' ? 'selected' : ''}>是</option>
-                        <option value="否" ${item.columnP === '否' ? 'selected' : ''}>否</option>
-                    </select>
-                </td>
-                <td>
-                    <button type="button" 
-                            class="btn btn-primary btn-sm" 
-                            onclick="submitRiskTrackingRow(${index}, ${item.rowNumber})">
-                        <i class="fas fa-paper-plane"></i> 送出
-                    </button>
+                <!-- 🆕 修改：純顯示模式 -->
+                <td title="${solutionDisplay}">${truncateText(solutionDisplay, 30)}</td>
+                <td class="text-center">${deadlineDisplay}</td>
+                <td class="text-center">
+                    <span class="${resolvedClass}">${resolvedDisplay}</span>
                 </td>
             </tr>
         `;
@@ -7854,56 +7867,43 @@ function displayRiskTrackingData(data) {
 }
 
 /**
- * 送出風險追蹤資料
+ * 🆕 格式化日期為顯示格式
  */
-async function submitRiskTrackingRow(index, rowNumber) {
+function formatDateForDisplay(dateValue) {
+    if (!dateValue) return '-';
+    
     try {
-        const trackingContent = document.getElementById(`trackingContent_${index}`).value;
-        const expectedDate = document.getElementById(`expectedDate_${index}`).value;
-        const isCompleted = document.getElementById(`isCompleted_${index}`).value;
+        let date;
         
-        // 顯示載入狀態
-        const submitBtn = event.target;
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 送出中...';
-        submitBtn.disabled = true;
-        
-        const response = await fetch(`${scriptUrl}?action=updateRiskTrackingData`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                rowNumber: rowNumber,
-                trackingContent: trackingContent,
-                expectedDate: expectedDate,
-                isCompleted: isCompleted
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification('資料已成功更新！', 'success');
-            // 新增: 延遲後重新載入頁面
-            setTimeout(() => {
-                window.location.reload(); // 強制刷新頁面
-            }, 1000);
-        
+        if (dateValue instanceof Date) {
+            date = dateValue;
+        } else if (typeof dateValue === 'string') {
+            date = new Date(dateValue);
         } else {
-            showNotification('更新失敗：' + result.message, 'error');
+            return dateValue.toString();
         }
         
+        // 檢查日期是否有效
+        if (isNaN(date.getTime())) {
+            return dateValue.toString();
+        }
+        
+        // 格式化為 MM/DD 格式
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${month}/${day}`;
+        
     } catch (error) {
-        console.error('送出風險追蹤資料時發生錯誤:', error);
-        showNotification('送出失敗，請稍後再試', 'error');
-    } finally {
-        // 恢復按鈕狀態
-        const submitBtn = event.target;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 送出';
-        submitBtn.disabled = false;
+        console.error('日期格式化錯誤:', error);
+        return dateValue ? dateValue.toString() : '-';
     }
 }
+
+
+
+
+
 
 /**
  * 載入上月未盤點部門資料
@@ -7977,7 +7977,7 @@ if (refreshTrackingBtn) {
     });
 }
 /**
- * 🆕 格式化時間為追蹤事項專用格式 (yyyy/mm/dd hh:mm)
+ * 🆕 格式化時間為追蹤事項專用格式 (MM/DD HH:MM)
  */
 function formatTimeForTracking(dateValue) {
     if (!dateValue) return '-';
@@ -8004,20 +8004,21 @@ function formatTimeForTracking(dateValue) {
             return dateValue.toString();
         }
         
-        // 格式化為 yyyy/mm/dd hh:mm
-        const year = date.getFullYear();
+        // 格式化為 MM/DD HH:MM
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         
-        return `${year}/${month}/${day} ${hours}:${minutes}`;
+        return `${month}/${day} ${hours}:${minutes}`;
         
     } catch (error) {
         console.error('時間格式化錯誤:', error);
         return dateValue ? dateValue.toString() : '-';
     }
 }
+
+
 // 檢測 Service Worker 更新
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -8501,62 +8502,60 @@ function addClearCacheButton() {
         </div>
     </div>
 </div>
-<!-- 追蹤事項頁面 - 修改版 -->
+<!-- 追蹤考核頁面 - 完整版 -->
 <div id="tracking-page" class="dashboard-page" style="display: none;">
     <div class="logo-container">
         <img src="LOGO.png" alt="昶青實業 Logo" class="logo">
     </div>
     <h2 class="text-center mb-4">
-        <i class="fas fa-clipboard-list text-warning"></i> 追蹤事項
+        <i class="fas fa-clipboard-list text-warning"></i> 追蹤考核
     </h2>
     
-    <!-- 風險追蹤區塊 -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">
-                <i class="fas fa-search"></i> 風險追蹤
-            </h5>
-        </div>
-        <div class="card-body">
-            <!-- 載入提示 -->
-            <div id="riskTrackingLoadingMsg" class="text-center" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">載入中...</span>
+        <!-- 風險追蹤區塊 -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-search"></i> 風險追蹤
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- 載入提示 -->
+                <div id="riskTrackingLoadingMsg" class="text-center" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">載入中...</span>
+                    </div>
+                    <p class="mt-2">正在載入風險追蹤資料...</p>
                 </div>
-                <p class="mt-2">正在載入風險追蹤資料...</p>
-            </div>
-            
-            <!-- 風險追蹤表格 -->
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered" id="riskTrackingTable">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>時間</th>
-                            <th>風險部門</th>
-                            <th>項目</th>
-                            <th>風險描述</th>
-                            <th>類別</th>
-                            <th>風險等級</th>
-                            <th>次數</th>
-                            <th>原因說明</th>
-                            <th>提報部門</th>
-                            <th>解決方案</th>
-                            <th>預計完成日</th>
-                            <th>是否結案</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="riskTrackingTableBody">
-                        <tr>
-                            <td colspan="13" class="text-center">載入中...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                
+                <!-- 風險追蹤表格 -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered" id="riskTrackingTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 5%">時間</th>
+                                <th style="width: 5%">部門</th>
+                                <th style="width: 8%">風險項目</th>
+                                <th style="width: 12%">風險描述</th>
+                                <th style="width: 5%">類別</th>
+                                <th style="width: 3%">等級</th>
+                                <th style="width: 3%">次數</th>
+                                <th style="width: 19%">原因說明</th>
+                                <th style="width: 5%">提報部門</th>
+                               <th style="width: 20%">解決方案</th>
+                                <th style="width: 8%">時限</th>
+                                <th style="width: 7%">是否已解決</th>
+                            </tr>
+                        </thead>
+                        <tbody id="riskTrackingTableBody">
+                            <tr>
+                                <td colspan="13" class="text-center">載入中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- 尚未完成上個月風險盤點部門 -->
+         <!-- 尚未完成上個月風險盤點部門 -->
     <div class="card mb-4">
         <div class="card-header bg-warning text-dark">
             <h5 class="mb-0">
@@ -8588,10 +8587,7 @@ function addClearCacheButton() {
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    
-    <!-- 操作按鈕 -->
+             <!-- 操作按鈕 -->
     <div class="text-center">
         <button type="button" class="btn btn-primary me-3" id="refreshTrackingBtn">
             <i class="fas fa-sync-alt"></i> 重新整理
@@ -8599,9 +8595,16 @@ function addClearCacheButton() {
         <button type="button" class="btn btn-secondary" id="backFromTrackingBtn" onclick="window.location.reload();">
     <i class="fas fa-arrow-left"></i> 返回
 </button>
+        </div>
+    
 
 
     </div>
+
+    
+   
+    
+   
 </div>
 
 
